@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
+      "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
+      "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    @apply bg-bridge-black text-bridge-white font-sans;
+  }
+}
+
+@layer components {
+  .bridge-button {
+    @apply px-8 py-4 border border-bridge-white hover:bg-bridge-white hover:text-bridge-black 
+           transition-all duration-300 font-mono uppercase tracking-wider text-sm;
+  }
+
+  .bridge-option {
+    @apply p-6 border border-bridge-white/30 hover:border-bridge-blue hover:bg-bridge-blue/5
+           transition-all duration-300 cursor-pointer;
+  }
+
+  .bridge-text {
+    @apply font-mono text-sm tracking-wide leading-relaxed;
+  }
+
+  .protocol-indicator {
+    @apply w-12 h-12 border-2 rounded-sm flex items-center justify-center font-mono text-xl font-bold;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  .fade-in-text {
+    animation: fadeIn 0.8s ease-in forwards;
+    opacity: 0;
+  }
+}
