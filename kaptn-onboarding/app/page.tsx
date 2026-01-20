@@ -100,7 +100,7 @@ export default function Home() {
           (o) => o.id === response.selectedOption
         );
         if (option) {
-          generatedProfile[response.protocol] = option.pattern as any;
+          (generatedProfile[response.protocol] as string) = option.pattern;
         }
       }
     });

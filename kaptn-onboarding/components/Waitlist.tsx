@@ -242,7 +242,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
             </button>
             <button
               type="button"
-              onClick={onSkip}
+              onClick={() => onSkip()}
               className="px-6 py-4 border border-bridge-white/30 hover:border-bridge-white/50 transition-all font-mono uppercase tracking-wider text-sm"
             >
               Skip
