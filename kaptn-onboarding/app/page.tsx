@@ -99,8 +99,8 @@ export default function Home() {
         const option = scenario.options.find(
           (o) => o.id === response.selectedOption
         );
-        if (option) {
-          generatedProfile[response.protocol] = option.pattern as any;
+        if (option && response.protocol in generatedProfile) {
+          (generatedProfile as any)[response.protocol] = option.pattern;
         }
       }
     });
