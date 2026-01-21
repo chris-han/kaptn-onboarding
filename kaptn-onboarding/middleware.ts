@@ -4,10 +4,11 @@ import { locales, defaultLocale } from './i18n/config';
 export default createMiddleware({
   locales,
   defaultLocale,
-  localePrefix: 'as-needed'
+  localePrefix: 'as-needed',
+  defaultLocale: 'en'
 });
 
 export const config = {
-  // Exclude /onboarding from i18n routing
-  matcher: ['/((?!api|_next|_vercel|onboarding|.*\\..*).*)']
+  // Match all pathnames except for API routes, static files, and onboarding
+  matcher: ['/((?!api|_next|_vercel|onboarding|.*\\..*).*)', '/', '/(en|zh|ja|ko)/:path*']
 };
