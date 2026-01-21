@@ -1,8 +1,4 @@
 {
-  "version": 2,
-  "buildCommand": "cd kaptn-onboarding && bun run build",
-  "devCommand": "cd kaptn-onboarding && bun run dev",
-  "installCommand": "cd kaptn-onboarding && bun install",
-  "outputDirectory": "kaptn-onboarding/.next"
+  "version": 2
 }
  
