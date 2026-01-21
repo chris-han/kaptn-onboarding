@@ -43,5 +43,4 @@ export type GamePhase =
   | "waitlist"
   | "processing"
   | "profile"
-  | "quote"
   | "welcome";

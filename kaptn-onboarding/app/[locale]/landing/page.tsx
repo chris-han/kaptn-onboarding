@@ -5,6 +5,7 @@ import StarField from '@/components/landing/StarField';
 import Navigation from '@/components/landing/Navigation';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
+import QuoteSection from '@/components/landing/QuoteSection';
 import MissionSection from '@/components/landing/MissionSection';
 import CTASection from '@/components/landing/CTASection';
 
@@ -30,12 +31,14 @@ export default function LandingPage() {
       <main className="relative z-10">
         <HeroSection onCTAClick={handleCTAClick} />
 
-        <div id="features">
-          <FeaturesSection />
-        </div>
+        <QuoteSection />
 
         <div id="mission">
           <MissionSection />
+        </div>
+
+        <div id="features">
+          <FeaturesSection />
         </div>
 
         <div id="contact">

@@ -141,18 +141,18 @@ export default function HeroSection({ onCTAClick }: HeroSectionProps) {
           transition={{ duration: 0.6, delay: 1.6 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="group relative px-8 sm:px-12 py-4 sm:py-5 bg-transparent border-2 border-[#00ff88] text-[#00ff88] font-mono text-sm sm:text-base font-bold tracking-[0.2em] overflow-hidden transition-all hover:text-black"
+          className="group relative px-8 sm:px-12 py-4 sm:py-5 bg-transparent border-2 border-white text-white font-mono text-sm sm:text-base font-bold tracking-[0.2em] overflow-hidden transition-all hover:text-black"
         >
           <span className="relative z-10">{t('cta')}</span>
           <motion.div
-            className="absolute inset-0 bg-[#00ff88]"
+            className="absolute inset-0 bg-white"
             initial={{ scaleX: 0 }}
             whileHover={{ scaleX: 1 }}
             transition={{ duration: 0.3 }}
             style={{ originX: 0 }}
           />
           <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-            <div className="absolute inset-0 bg-[#00ff88] animate-pulse" />
+            <div className="absolute inset-0 bg-white animate-pulse" />
           </div>
         </motion.button>
 

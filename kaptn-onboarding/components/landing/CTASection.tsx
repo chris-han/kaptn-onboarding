@@ -48,13 +48,13 @@ export default function CTASection({ onCTAClick }: CTASectionProps) {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative border-2 border-[#00ff88] bg-[#0a0e1a]/90 backdrop-blur-md p-8 sm:p-12 md:p-16"
+          className="relative border-2 border-white bg-[#0a0e1a]/90 backdrop-blur-md p-8 sm:p-12 md:p-16"
         >
           {/* Corner Decorations */}
-          <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#00ff88]" />
-          <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#00ff88]" />
-          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#00ff88]" />
-          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#00ff88]" />
+          <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-white" />
+          <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-white" />
+          <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-white" />
+          <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-white" />
 
           {/* Content */}
           <motion.h2
@@ -76,7 +76,7 @@ export default function CTASection({ onCTAClick }: CTASectionProps) {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.4 }}
-            className="text-[#00ff88] text-lg sm:text-xl font-mono mb-12"
+            className="text-white text-lg sm:text-xl font-mono mb-12"
           >
             {t('subtitle')}
           </motion.p>
@@ -90,7 +90,7 @@ export default function CTASection({ onCTAClick }: CTASectionProps) {
             transition={{ delay: 0.6 }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="group relative px-10 sm:px-16 py-5 sm:py-6 bg-[#00ff88] text-black font-mono text-base sm:text-lg font-bold tracking-[0.2em] overflow-hidden transition-all hover:shadow-[0_0_30px_rgba(0,255,136,0.5)]"
+            className="group relative px-10 sm:px-16 py-5 sm:py-6 border-2 border-white bg-transparent text-white font-mono text-base sm:text-lg font-bold tracking-[0.2em] overflow-hidden transition-all hover:bg-white hover:text-black"
           >
             <span className="relative z-10">{t('button')}</span>
 
@@ -121,7 +121,7 @@ export default function CTASection({ onCTAClick }: CTASectionProps) {
 
           {/* Pulsing Border Effect */}
           <motion.div
-            className="absolute inset-0 border-2 border-[#00ff88] pointer-events-none"
+            className="absolute inset-0 border-2 border-white pointer-events-none"
             animate={{
               opacity: [0.3, 0.8, 0.3],
             }}

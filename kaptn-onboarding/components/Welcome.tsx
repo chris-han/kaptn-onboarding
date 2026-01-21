@@ -2,14 +2,14 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { QRCodeSVG } from "qrcode.react";
 
 interface WelcomeProps {
   onAssumeCommand: () => void;
-  onRestart: () => void;
   captainName?: string;
 }
 
-export default function Welcome({ onAssumeCommand, onRestart, captainName }: WelcomeProps) {
+export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) {
   const [assumingCommand, setAssumingCommand] = useState(false);
   const [commandPhase, setCommandPhase] = useState<"bell" | "bridge" | "conn" | "badge" | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -64,11 +64,15 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
         .then(data => {
           if (data.success) {
             setUserId(data.userId);
+            // Save captain name to localStorage for badge download page
+            if (captainName) {
+              localStorage.setItem('captainName', captainName);
+            }
           }
         })
         .catch(error => console.error('Error fetching user ID:', error));
     }
-  }, [commandPhase, userId]);
+  }, [commandPhase, userId, captainName]);
 
   const handleAssumeCommand = () => {
     setAssumingCommand(true);
@@ -101,13 +105,13 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
   };
 
   const handleRestartFlow = () => {
-    // Go to the very beginning of onboarding flow (like refresh)
-    onRestart();
+    // Go back to the landing page
+    window.location.href = '/landing';
   };
 
   if (assumingCommand) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8 bg-bridge-black">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 bg-bridge-black relative z-10">
         <AnimatePresence mode="wait">
           {commandPhase === "bell" && (
             <motion.div
@@ -172,7 +176,7 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1 }}
-              className="text-center space-y-8"
+              className="text-center space-y-4 sm:space-y-6"
             >
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -189,8 +193,9 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
                   <img
                     src="/kaptn-badge.svg"
                     alt="KAPTN Bridge Ensignia"
-                    width={240}
-                    height={240}
+                    width={180}
+                    height={180}
+                    className="w-[180px] h-[180px] sm:w-[220px] sm:h-[220px]"
                   />
                   {/* User ID overlay - positioned under the double diamond */}
                   {userId && (
@@ -217,29 +222,61 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.2, duration: 0.6 }}
-                className="space-y-4"
+                className="space-y-2"
               >
-                <h3 className="text-3xl font-mono uppercase tracking-widest text-bridge-gold">
+                <h3 className="text-xl sm:text-2xl font-mono uppercase tracking-widest text-bridge-gold">
                   Bridge Ensignia Issued To
                 </h3>
                 {captainName && (
-                  <p className="text-xl font-inter text-white/90">
+                  <p className="text-base sm:text-lg font-inter text-white/90">
                     Captain <span className="underline">{captainName}</span>
                   </p>
                 )}
-                <p className="text-sm font-inter text-white/50 max-w-md mx-auto leading-relaxed">
-                  The double-diamond: Navigate the unknown through Knowledge, Action, Priority, Thesis, Navigation.
-                </p>
-                {/* <p className="text-sm font-mono text-bridge-gold/60 uppercase tracking-wider">
-                  Design Thinking • Command Protocol
-                </p> */}
+                {userId && (
+                  <p className="text-xs sm:text-sm font-mono text-white/40 tracking-widest mt-1">
+                    SN: {userId.slice(-8).toUpperCase()}
+                  </p>
+                )}
               </motion.div>
+
+              {/* Mil-Spec Barcode */}
+              {userId && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.5, duration: 0.6 }}
+                  className="mt-6 flex flex-col items-center"
+                >
+                  {/* Barcode Container with Mil-Spec Border */}
+                  <div className="relative p-3 border-2 border-white/30 bg-black/40">
+                    {/* Corner Brackets */}
+                    <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-bridge-gold" />
+                    <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-bridge-gold" />
+                    <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-bridge-gold" />
+                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-bridge-gold" />
+
+                    {/* QR Code */}
+                    <QRCodeSVG
+                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/badge/${userId}`}
+                      size={120}
+                      level="M"
+                      fgColor="#ffffff"
+                      bgColor="transparent"
+                    />
+                  </div>
+
+                  {/* Scan Instructions */}
+                  <p className="text-xs font-mono text-white/30 uppercase tracking-wider mt-2">
+                    SCAN TO DOWNLOAD ENSIGNIA
+                  </p>
+                </motion.div>
+              )}
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.8, duration: 0.6 }}
-                className="flex gap-4 justify-center mt-8"
+                className="flex gap-3 justify-center mt-4"
               >
                 <button
                   onClick={handleReplay}
@@ -262,24 +299,24 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
-        className="text-center space-y-12 max-w-3xl"
+        className="text-center space-y-6 max-w-3xl"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.8 }}
-          className="space-y-8"
+          className="space-y-4"
         >
-          <h1 className="text-4xl font-mono uppercase tracking-wider">
+          <h1 className="text-2xl sm:text-3xl font-mono uppercase tracking-wider">
             Welcome Aboard, Captain
           </h1>
 
-          <div className="space-y-4 bridge-text text-lg leading-loose">
+          <div className="space-y-3 bridge-text text-base sm:text-lg leading-relaxed">
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -314,7 +351,7 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 2.2 }}
-            className="space-y-3 text-bridge-white/70"
+            className="space-y-2 text-bridge-white/70 text-sm sm:text-base"
           >
             <p className="bridge-text">The unknown is your territory.</p>
             <p className="bridge-text">KAPTN is your bridge system.</p>
@@ -325,7 +362,7 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.8 }}
-          className="space-y-6"
+          className="space-y-4"
         >
           <div className="flex justify-center space-x-8 bridge-text text-sm">
             <div className="flex items-center space-x-2">

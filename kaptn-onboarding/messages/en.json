@@ -9,7 +9,7 @@
       "badge": "BRIDGE ACTIVATION PROTOCOL",
       "title": "ASSUME COMMAND",
       "subtitle": "Your bridge awaits, Captain.",
-      "description": "KAPTN is a next-generation navigation and command system. Calibrate your decision profile. Chart your course. Lead with precision.",
+      "description": "KAPTN is the enterprise operation system for entrepreneurs. Navigate uncertainty. Calibrate decisions. Command with precision.",
       "cta": "INITIATE PROTOCOL",
       "stats": {
         "captains": "ACTIVE CAPTAINS",
@@ -19,31 +19,31 @@
     },
     "features": {
       "title": "COMMAND SYSTEMS",
-      "subtitle": "Engineered for decisive leadership",
+      "subtitle": "Four bridge systems. One mission.",
       "items": {
-        "profile": {
-          "title": "ADAPTIVE PROFILING",
-          "description": "Real-time behavioral analysis calibrates your unique command style across 5 critical decision protocols."
+        "compass": {
+          "title": "COMPASS",
+          "description": "Intelligence & Decision Support. Real-time AI assistant, 24/7 business intelligence, decision clarity system."
         },
-        "navigation": {
-          "title": "PRECISION NAVIGATION",
-          "description": "Advanced pathfinding algorithms optimize routing through complex operational environments."
+        "ledger": {
+          "title": "LEDGER",
+          "description": "Financial Operations. Professional bookkeeping, monthly reconciliation, financial clarity & insights."
         },
-        "intelligence": {
-          "title": "TACTICAL INTELLIGENCE",
-          "description": "AI-assisted decision support provides strategic insights at critical junctures."
+        "shield": {
+          "title": "SHIELD",
+          "description": "Tax Compliance. Tax preparation & filing, deduction optimization, compliance protection."
         },
-        "communication": {
-          "title": "UNIFIED COMMS",
-          "description": "Seamless multi-channel coordination across distributed command structures."
+        "sonar": {
+          "title": "SONAR",
+          "description": "Analytics & Intelligence. Business data analytics, cash flow tracking, contract proofing."
         }
       }
     },
     "mission": {
       "title": "THE MISSION",
-      "content": "In an age of exponential complexity, leadership demands more than intuition. KAPTN transforms decision-making into a science—calibrating your natural instincts, amplifying your strengths, and providing tactical clarity when it matters most.",
-      "quote": "\"Every captain has a pattern. KAPTN reveals it.\"",
-      "author": "— Bridge Command Archives"
+      "content": "Entrepreneurship is an endless exploration of the unknown. As captain, you need a bridge system to keep your ship afloat through uncharted waters. Your mission is to ASSUME COMMAND of your personalized bridge system—one that calibrates to your unique decision-making patterns and guides you through uncertainty with precision.",
+      "quote": "\"KAPTN is your enterprise operation system. Navigate the unknown with precision.\"",
+      "author": "— Bridge Operations"
     },
     "cta": {
       "title": "READY FOR COMMAND?",

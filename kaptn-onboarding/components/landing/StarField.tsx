@@ -64,16 +64,23 @@ export default function StarField() {
         const size = star.z * 2.5;
         const brightness = star.opacity * (0.5 + star.z * 0.5);
 
-        ctx.fillStyle = `rgba(0, 255, 136, ${brightness})`;
+        // Mix of white and warm yellow stars
+        const isYellow = star.z > 0.6;
+        const starColor = isYellow
+          ? `rgba(255, 220, 150, ${brightness})` // Warm yellow
+          : `rgba(255, 255, 255, ${brightness})`; // White
+
+        ctx.fillStyle = starColor;
         ctx.beginPath();
         ctx.arc(x, y, size, 0, Math.PI * 2);
         ctx.fill();
 
         // Add glow for larger stars
         if (star.z > 0.7) {
+          const glowColor = isYellow ? '255, 220, 150' : '255, 255, 255';
           const gradient = ctx.createRadialGradient(x, y, 0, x, y, size * 4);
-          gradient.addColorStop(0, `rgba(0, 255, 136, ${brightness * 0.3})`);
-          gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+          gradient.addColorStop(0, `rgba(${glowColor}, ${brightness * 0.3})`);
+          gradient.addColorStop(1, `rgba(${glowColor}, 0)`);
           ctx.fillStyle = gradient;
           ctx.beginPath();
           ctx.arc(x, y, size * 4, 0, Math.PI * 2);

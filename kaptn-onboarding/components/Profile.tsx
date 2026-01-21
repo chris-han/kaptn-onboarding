@@ -19,27 +19,27 @@ const protocolInfo = {
 
 export default function Profile({ profile, onContinue }: ProfileProps) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 py-16">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="max-w-4xl w-full space-y-12"
+        className="max-w-4xl w-full space-y-4"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-center space-y-4"
+          className="text-center space-y-2"
         >
-          <h2 className="text-3xl font-mono uppercase tracking-wider">
+          <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
             Your Bridge Configuration
           </h2>
-          <p className="text-sm text-bridge-white/60">
+          <p className="text-xs sm:text-sm text-bridge-white/60">
             Decision Style Profile
           </p>
         </motion.div>
 
-        <div className="space-y-6">
+        <div className="space-y-3">
           {(Object.keys(profile) as Array<keyof DecisionProfile>).map(
             (protocol, index) => {
               const pattern = profile[protocol];
@@ -52,7 +52,7 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + index * 0.15 }}
-                  className={`border ${info.color} bg-black/40 p-6 space-y-3`}
+                  className={`border ${info.color} bg-black/40 p-3 sm:p-4 space-y-2`}
                 >
                   <div className="flex items-center space-x-4">
                     <div
@@ -69,7 +69,7 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
                       </p>
                     </div>
                   </div>
-                  <p className="text-sm text-bridge-white/80 leading-relaxed pl-16">
+                  <p className="text-xs sm:text-sm text-bridge-white/80 leading-snug pl-12 sm:pl-16">
                     {description}
                   </p>
                 </motion.div>
@@ -82,24 +82,24 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className="bg-bridge-white/5 border border-bridge-white/20 p-8 space-y-4"
+          className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6 space-y-2"
         >
-          <p className="bridge-text text-sm leading-loose text-bridge-white/80">
+          <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
             This profile is not an evaluation.
             <br />
             It is a snapshot of how you navigate uncertainty right now.
           </p>
-          <p className="bridge-text text-sm leading-loose text-bridge-white/80">
+          <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
             Your patterns will evolve.
             <br />
             The bridge will adapt with you.
           </p>
-          <p className="bridge-text text-sm leading-loose text-bridge-white/80">
+          <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
             What matters is this:
             <br />
             You are aware of your own navigation system.
           </p>
-          <p className="bridge-text text-sm leading-loose font-bold">
+          <p className="bridge-text text-xs sm:text-sm leading-relaxed font-bold">
             That awareness is your first advantage.
           </p>
         </motion.div>

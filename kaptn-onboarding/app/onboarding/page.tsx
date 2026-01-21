@@ -10,9 +10,9 @@ import Oath from "@/components/Oath";
 import Waitlist from "@/components/Waitlist";
 import Processing from "@/components/Processing";
 import Profile from "@/components/Profile";
-import Quote from "@/components/Quote";
 import Welcome from "@/components/Welcome";
 import BackgroundAudio from "@/components/BackgroundAudio";
+import StarField from "@/components/landing/StarField";
 
 // Utility function to shuffle an array
 function shuffleArray<T>(array: T[]): T[] {
@@ -110,10 +110,6 @@ export default function OnboardingPage() {
   };
 
   const handleProfileContinue = () => {
-    setPhase("quote");
-  };
-
-  const handleQuoteContinue = () => {
     setPhase("welcome");
   };
 
@@ -147,7 +143,8 @@ export default function OnboardingPage() {
   };
 
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen relative">
+      <StarField />
       <BackgroundAudio volume={0.25} />
 
       {phase === "entrance" && <Entrance onBegin={handleBegin} />}
@@ -173,9 +170,7 @@ export default function OnboardingPage() {
         <Profile profile={profile} onContinue={handleProfileContinue} />
       )}
 
-      {phase === "quote" && <Quote onContinue={handleQuoteContinue} />}
-
-      {phase === "welcome" && <Welcome onAssumeCommand={handleAssumeCommand} onRestart={handleRestart} captainName={captainName} />}
+      {phase === "welcome" && <Welcome onAssumeCommand={handleAssumeCommand} captainName={captainName} />}
     </main>
   );
 }

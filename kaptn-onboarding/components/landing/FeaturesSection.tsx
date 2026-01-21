@@ -10,6 +10,46 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+// Mil-spec tactical icons
+const CompassIcon = () => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+    <line x1="12" y1="5" x2="12" y2="2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <polyline points="10.5,4 12,2.5 13.5,4" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <line x1="5" y1="12" x2="3.5" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="19" y1="12" x2="20.5" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const LedgerIcon = () => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <rect x="5" y="5" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+    <line x1="8" y1="7" x2="8" y2="17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="11" y1="7" x2="11" y2="17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="14" y1="7" x2="14" y2="17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="7" y1="15" x2="17" y2="15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+  </svg>
+);
+
+const ShieldIcon = () => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <path d="M5 15a7 7 0 0 1 14 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <circle cx="12" cy="13" r="1.4" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+    <polyline points="7,16.5 5.5,18 7,19.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <polyline points="17,16.5 18.5,18 17,19.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const SonarIcon = () => (
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+    <circle cx="12" cy="10" r="1.3" fill="none" stroke="currentColor" strokeWidth="1.5"/>
+    <path d="M8 12a4 4 0 0 1 8 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M6 13.5a6 6 0 0 1 12 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <path d="M4 15a8 8 0 0 1 16 0" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    <polyline points="10,17.5 12,19.5 14,17.5" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 export default function FeaturesSection() {
   const t = useTranslations('landing.features');
   const sectionRef = useRef<HTMLElement>(null);
@@ -51,24 +91,24 @@ export default function FeaturesSection() {
 
   const features = [
     {
-      key: 'profile',
-      icon: '⟨ ⊗ ⟩',
+      key: 'compass',
+      IconComponent: CompassIcon,
       color: '#00ff88',
     },
     {
-      key: 'navigation',
-      icon: '⟨ ◈ ⟩',
-      color: '#4a90e2',
-    },
-    {
-      key: 'intelligence',
-      icon: '⟨ ◉ ⟩',
+      key: 'ledger',
+      IconComponent: LedgerIcon,
       color: '#ff6b35',
     },
     {
-      key: 'communication',
-      icon: '⟨ ⊕ ⟩',
-      color: '#00ff88',
+      key: 'shield',
+      IconComponent: ShieldIcon,
+      color: '#9b59b6',
+    },
+    {
+      key: 'sonar',
+      IconComponent: SonarIcon,
+      color: '#00d4ff',
     },
   ];
 
@@ -140,10 +180,10 @@ export default function FeaturesSection() {
                 {/* Icon */}
                 <div className="relative mb-6">
                   <div
-                    className="text-5xl sm:text-6xl font-mono opacity-80 group-hover:opacity-100 transition-opacity"
+                    className="w-16 h-16 sm:w-20 sm:h-20 opacity-80 group-hover:opacity-100 transition-opacity"
                     style={{ color: feature.color }}
                   >
-                    {feature.icon}
+                    <feature.IconComponent />
                   </div>
                 </div>
 

@@ -62,11 +62,11 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-6 max-w-2xl"
+          className="text-center space-y-4 max-w-2xl"
         >
           <div className="w-16 h-16 mx-auto border-2 border-bridge-green rounded-full flex items-center justify-center">
             <div className="w-8 h-8 bg-bridge-green rounded-full animate-pulse-glow" />
@@ -85,31 +85,29 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 py-16">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="max-w-5xl w-full space-y-8"
+        className="max-w-5xl w-full space-y-4"
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-center space-y-4"
+          className="text-center space-y-2"
         >
-          <h2 className="text-3xl font-mono uppercase tracking-wider">
+          <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
             KAPTN Enterprise Bridge
           </h2>
-          <p className="text-xl bridge-text">
+          <p className="text-base sm:text-lg bridge-text">
             Pre-Launch Access
           </p>
-          <div className="h-px w-48 bg-bridge-white/30 mx-auto" />
-          <p className="bridge-text text-sm text-bridge-white/70 max-w-2xl mx-auto">
-            Five bridge systems. One mission.
-            <br />
-            Navigate your venture from anywhere.
+          <div className="h-px w-32 bg-bridge-white/30 mx-auto" />
+          <p className="bridge-text text-xs sm:text-sm text-bridge-white/70 max-w-2xl mx-auto">
+            Four bridge systems. One mission. Navigate your venture from anywhere.
           </p>
         </motion.div>
 
@@ -118,7 +116,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid md:grid-cols-2 gap-3"
         >
           {bridgeServices.map((service, index) => {
             const isSelected = interests.includes(service.id);
@@ -129,15 +127,15 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
                 onClick={() => toggleInterest(service.id)}
-                className={`p-6 border text-left transition-all ${
+                className={`p-3 sm:p-4 border text-left transition-all ${
                   isSelected
                     ? "border-bridge-blue bg-bridge-blue/10"
                     : "border-bridge-white/30 hover:border-bridge-white/50"
                 }`}
               >
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-mono font-bold">
+                    <h3 className="text-base sm:text-lg font-mono font-bold">
                       {service.name}
                     </h3>
                     <div
@@ -170,15 +168,15 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           onSubmit={handleSubmit}
-          className="bg-bridge-white/5 border border-bridge-white/20 p-8 space-y-6 max-w-2xl mx-auto"
+          className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6 space-y-4 max-w-2xl mx-auto"
         >
-          <h3 className="font-mono text-lg uppercase text-center">
+          <h3 className="font-mono text-base sm:text-lg uppercase text-center">
             Request Bridge Access
           </h3>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm bridge-text mb-2">
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
                 Name *
               </label>
               <input
@@ -186,13 +184,13 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
                 placeholder="Your name"
               />
             </div>
 
             <div>
-              <label className="block text-sm bridge-text mb-2">
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
                 Email *
               </label>
               <input
@@ -200,20 +198,20 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
                 placeholder="captain@venture.com"
               />
             </div>
 
             <div>
-              <label className="block text-sm bridge-text mb-2">
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
                 Company (Optional)
               </label>
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
                 placeholder="Your venture"
               />
             </div>

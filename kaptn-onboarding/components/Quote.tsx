@@ -12,13 +12,13 @@ export default function Quote({ onContinue }: QuoteProps) {
   const [showButton, setShowButton] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="text-center space-y-16 max-w-4xl"
+        className="text-center space-y-8 max-w-4xl"
       >
-        <div className="space-y-6">
+        <div className="space-y-4">
           {siskoQuote.text.map((line, index) => (
             <motion.p
               key={index}
@@ -31,7 +31,7 @@ export default function Quote({ onContinue }: QuoteProps) {
                 }
               }}
               className={`${
-                line === "" ? "h-4" : "text-2xl bridge-text leading-relaxed"
+                line === "" ? "h-3" : "text-lg sm:text-xl bridge-text leading-relaxed"
               }`}
             >
               {line}
@@ -42,7 +42,7 @@ export default function Quote({ onContinue }: QuoteProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 + siskoQuote.text.length * 0.8 + 0.5 }}
-            className="text-sm text-bridge-white/60 italic mt-8"
+            className="text-xs sm:text-sm text-bridge-white/60 italic mt-6"
           >
             {siskoQuote.author}
           </motion.p>

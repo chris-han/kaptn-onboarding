@@ -62,7 +62,7 @@ export default function MissionSection() {
       </div>
 
       <div ref={contentRef} className="relative z-10 max-w-4xl mx-auto">
-        <div className="border-l-4 border-[#00ff88] pl-6 sm:pl-12">
+        <div className="border-l-4 border-white pl-6 sm:pl-12">
           <motion.h2
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -78,26 +78,10 @@ export default function MissionSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed mb-12"
+            className="text-gray-300 text-base sm:text-lg md:text-xl leading-relaxed"
           >
             {t('content')}
           </motion.p>
-
-          {/* Quote */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.4 }}
-            className="border border-[#00ff88]/30 bg-[#00ff88]/5 p-6 sm:p-8"
-          >
-            <p className="text-[#00ff88] text-lg sm:text-xl md:text-2xl font-mono mb-4 italic">
-              {t('quote')}
-            </p>
-            <p className="text-gray-500 text-sm font-mono">
-              {t('author')}
-            </p>
-          </motion.div>
         </div>
       </div>
     </section>
