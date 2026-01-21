@@ -44,7 +44,7 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
             (protocol, index) => {
               const pattern = profile[protocol];
               const info = protocolInfo[protocol];
-              const description = protocolDescriptions[protocol][pattern];
+              const description = (protocolDescriptions[protocol] as any)[pattern];
 
               return (
                 <motion.div
