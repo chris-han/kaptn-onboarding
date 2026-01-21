@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface WelcomeProps {
   onAssumeCommand: () => void;
@@ -12,6 +12,7 @@ interface WelcomeProps {
 export default function Welcome({ onAssumeCommand, onRestart, captainName }: WelcomeProps) {
   const [assumingCommand, setAssumingCommand] = useState(false);
   const [commandPhase, setCommandPhase] = useState<"bell" | "bridge" | "conn" | "badge" | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   // Bell sound effect using Web Audio API
   const playBellSound = () => {
@@ -54,6 +55,20 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
       window.speechSynthesis.speak(utterance);
     }
   };
+
+  // Fetch user ID when badge phase is reached
+  useEffect(() => {
+    if (commandPhase === "badge" && !userId) {
+      fetch('/api/user-id')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setUserId(data.userId);
+          }
+        })
+        .catch(error => console.error('Error fetching user ID:', error));
+    }
+  }, [commandPhase, userId]);
 
   const handleAssumeCommand = () => {
     setAssumingCommand(true);
@@ -163,17 +178,39 @@ export default function Welcome({ onAssumeCommand, onRestart, captainName }: Wel
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="flex justify-center"
+                className="flex justify-center relative"
               >
-                <motion.img
-                  src="/kaptn-badge.svg"
-                  alt="KAPTN Bridge Ensignia"
-                  width={240}
-                  height={240}
+                <motion.div
+                  className="relative"
                   initial={{ scale: 0, rotate: -180 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ duration: 1.2, type: "spring", stiffness: 100 }}
-                />
+                >
+                  <img
+                    src="/kaptn-badge.svg"
+                    alt="KAPTN Bridge Ensignia"
+                    width={240}
+                    height={240}
+                  />
+                  {/* User ID overlay - positioned under the double diamond */}
+                  {userId && (
+                    <div
+                      className="absolute w-full"
+                      style={{ top: '65%', left: 0, right: 0 }}
+                    >
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.5, duration: 0.6 }}
+                        className="flex justify-center"
+                      >
+                        <div className="text-white font-mono font-light text-lg tracking-wider">
+                          {userId.slice(-8)}
+                        </div>
+                      </motion.div>
+                    </div>
+                  )}
+                </motion.div>
               </motion.div>
 
               <motion.div

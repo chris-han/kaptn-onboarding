@@ -72,7 +72,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
             <div className="w-8 h-8 bg-bridge-green rounded-full animate-pulse-glow" />
           </div>
           <h2 className="text-2xl font-mono uppercase">
-            Registration Complete, Permission Granted, Captain!
+            Permission Granted, Captain!
           </h2>
           <p className="bridge-text text-bridge-white/80">
             Welcome to the bridge, Captain.

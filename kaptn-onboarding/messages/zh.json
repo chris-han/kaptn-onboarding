@@ -1,0 +1,55 @@
+{
+  "landing": {
+    "nav": {
+      "features": "系统",
+      "mission": "使命",
+      "contact": "联系"
+    },
+    "hero": {
+      "badge": "舰桥激活协议",
+      "title": "担任指挥",
+      "subtitle": "舰长，您的舰桥已就绪。",
+      "description": "KAPTN是下一代导航和指挥系统。校准您的决策档案。绘制您的航线。精准领导。",
+      "cta": "启动协议",
+      "stats": {
+        "captains": "活跃舰长",
+        "protocols": "已执行协议",
+        "uptime": "系统正常运行时间"
+      }
+    },
+    "features": {
+      "title": "指挥系统",
+      "subtitle": "为果断领导而设计",
+      "items": {
+        "profile": {
+          "title": "自适应分析",
+          "description": "实时行为分析在5个关键决策协议中校准您独特的指挥风格。"
+        },
+        "navigation": {
+          "title": "精准导航",
+          "description": "先进的寻路算法优化复杂操作环境中的路线规划。"
+        },
+        "intelligence": {
+          "title": "战术情报",
+          "description": "AI辅助决策支持在关键时刻提供战略洞察。"
+        },
+        "communication": {
+          "title": "统一通信",
+          "description": "跨分布式指挥结构的无缝多渠道协调。"
+        }
+      }
+    },
+    "mission": {
+      "title": "使命",
+      "content": "在指数级复杂的时代，领导力需要的不仅仅是直觉。KAPTN将决策转化为一门科学——校准您的自然本能，放大您的优势，并在最关键的时刻提供战术清晰度。",
+      "quote": "\"每位舰长都有一种模式。KAPTN揭示它。\"",
+      "author": "— 舰桥指挥档案"
+    },
+    "cta": {
+      "title": "准备好指挥了吗？",
+      "subtitle": "开始您的校准序列",
+      "button": "进入舰桥",
+      "note": "协议需要3-5分钟"
+    }
+  }
+}
