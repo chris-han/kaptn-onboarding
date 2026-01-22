@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { Scenario, ScenarioOption } from "@/types/game";
 
 interface ScenarioViewProps {
@@ -12,6 +13,8 @@ export default function ScenarioView({
   scenario,
   onSelect,
 }: ScenarioViewProps) {
+  const t = useTranslations(`onboarding.scenarios.${scenario.id}`);
+
   const protocolColors = {
     K: "border-bridge-blue text-bridge-blue",
     T: "border-bridge-purple text-bridge-purple",
@@ -36,19 +39,9 @@ export default function ScenarioView({
             {scenario.id}
           </div>
           <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
-            {scenario.title}
+            {t('title')}
           </h2>
         </div>
-
-        {/* Visual Description */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="text-center text-sm text-bridge-white/50 italic"
-        >
-          {scenario.visual}
-        </motion.p>
 
         {/* Context */}
         <motion.div
@@ -58,7 +51,7 @@ export default function ScenarioView({
           className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6"
         >
           <pre className="bridge-text text-bridge-white/90 whitespace-pre-wrap">
-            {scenario.context}
+            {t('context')}
           </pre>
         </motion.div>
 
@@ -69,7 +62,7 @@ export default function ScenarioView({
           transition={{ delay: 0.6 }}
           className="bridge-text text-lg text-center"
         >
-          {scenario.question}
+          {t('question')}
         </motion.p>
 
         {/* Options */}
@@ -94,10 +87,10 @@ export default function ScenarioView({
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="font-mono text-sm font-bold tracking-wide">
-                    {option.label}
+                    {t(`options.${option.id}.label`)}
                   </p>
                   <p className="text-xs sm:text-sm text-bridge-white/70 leading-snug">
-                    {option.description}
+                    {t(`options.${option.id}.description`)}
                   </p>
                 </div>
               </div>

@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { DecisionProfile } from "@/types/game";
-import { protocolDescriptions } from "@/lib/gameData";
 
 interface ProfileProps {
   profile: DecisionProfile;
@@ -18,6 +18,9 @@ const protocolInfo = {
 };
 
 export default function Profile({ profile, onContinue }: ProfileProps) {
+  const t = useTranslations("onboarding.profile");
+  const tPatterns = useTranslations("onboarding.patterns");
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
@@ -32,10 +35,10 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
           className="text-center space-y-2"
         >
           <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
-            Your Bridge Configuration
+            {t("title")}
           </h2>
           <p className="text-xs sm:text-sm text-bridge-white/60">
-            Decision Style Profile
+            {t("subtitle")}
           </p>
         </motion.div>
 
@@ -44,7 +47,7 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
             (protocol, index) => {
               const pattern = profile[protocol];
               const info = protocolInfo[protocol];
-              const description = (protocolDescriptions[protocol] as any)[pattern];
+              const description = tPatterns(`${protocol}.${pattern}`);
 
               return (
                 <motion.div
@@ -111,7 +114,7 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
           className="flex justify-center"
         >
           <button onClick={onContinue} className="bridge-button">
-            Continue
+            {t("button")}
           </button>
         </motion.div>
       </motion.div>

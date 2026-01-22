@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { bridgeServices } from "@/types/waitlist";
 
 interface WaitlistProps {
@@ -9,6 +10,7 @@ interface WaitlistProps {
 }
 
 export default function Waitlist({ onSkip }: WaitlistProps) {
+  const t = useTranslations("onboarding.waitlist");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
@@ -72,12 +74,10 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
             <div className="w-8 h-8 bg-bridge-green rounded-full animate-pulse-glow" />
           </div>
           <h2 className="text-2xl font-mono uppercase">
-            Permission Granted, Captain!
+            {t("title")}
           </h2>
           <p className="bridge-text text-bridge-white/80">
-            Welcome to the bridge, Captain.
-            <br />
-            We'll contact you when systems are operational.
+            {t("subtitle")}
           </p>
         </motion.div>
       </div>
@@ -177,7 +177,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           <div className="space-y-3">
             <div>
               <label className="block text-xs sm:text-sm bridge-text mb-1">
-                Name *
+                {t("form.name")}
               </label>
               <input
                 type="text"
@@ -185,13 +185,13 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 onChange={(e) => setName(e.target.value)}
                 required
                 className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="Your name"
+                placeholder={t("form.namePlaceholder")}
               />
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm bridge-text mb-1">
-                Email *
+                {t("form.email")}
               </label>
               <input
                 type="email"
@@ -199,20 +199,20 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="captain@venture.com"
+                placeholder={t("form.emailPlaceholder")}
               />
             </div>
 
             <div>
               <label className="block text-xs sm:text-sm bridge-text mb-1">
-                Company (Optional)
+                {t("form.company")}
               </label>
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
                 className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="Your venture"
+                placeholder={t("form.companyPlaceholder")}
               />
             </div>
           </div>
@@ -236,14 +236,14 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
               disabled={status === "submitting"}
               className="flex-1 bridge-button disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {status === "submitting" ? "Processing..." : "Permission to come aboard"}
+              {t("form.submit")}
             </button>
             <button
               type="button"
               onClick={() => onSkip()}
               className="px-6 py-4 border border-bridge-white/30 hover:border-bridge-white/50 transition-all font-mono uppercase tracking-wider text-sm"
             >
-              Skip
+              {t("form.skip")}
             </button>
           </div>
 
