@@ -2,20 +2,27 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ProcessingProps {
   onComplete: () => void;
 }
 
-const protocols = [
-  { id: "K", label: "Knowledge protocol: Calibrated", color: "text-bridge-blue" },
-  { id: "T", label: "Thesis protocol: Calibrated", color: "text-bridge-purple" },
-  { id: "P", label: "Prioritize protocol: Calibrated", color: "text-bridge-gold" },
-  { id: "A", label: "Action protocol: Calibrated", color: "text-bridge-red" },
-  { id: "N", label: "Navigation protocol: Calibrated", color: "text-bridge-green" },
+const protocolColors = [
+  { id: "K", color: "text-bridge-blue" },
+  { id: "T", color: "text-bridge-purple" },
+  { id: "P", color: "text-bridge-gold" },
+  { id: "A", color: "text-bridge-red" },
+  { id: "N", color: "text-bridge-green" },
 ];
 
 export default function Processing({ onComplete }: ProcessingProps) {
+  const t = useTranslations("onboarding.processing");
+
+  const protocols = protocolColors.map(p => ({
+    ...p,
+    label: t(`protocols.${p.id}`)
+  }));
   const [currentProtocol, setCurrentProtocol] = useState(0);
 
   useEffect(() => {

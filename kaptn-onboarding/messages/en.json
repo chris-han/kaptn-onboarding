@@ -111,7 +111,28 @@
     "processing": {
       "analyzing": "ANALYZING DECISION PATTERNS",
       "calibrating": "CALIBRATING BRIDGE SYSTEMS",
-      "complete": "CALIBRATION COMPLETE"
+      "complete": "CALIBRATION COMPLETE",
+      "protocols": {
+        "K": "Knowledge protocol: Calibrated",
+        "T": "Thesis protocol: Calibrated",
+        "P": "Priority protocol: Calibrated",
+        "A": "Action protocol: Calibrated",
+        "N": "Navigation protocol: Calibrated"
+      }
+    },
+    "quote": {
+      "text": [
+        "It is the unknown that defines our existence.",
+        "",
+        "We are constantly searching, not just for answers to our questions,",
+        "but for new questions."
+      ],
+      "author": "— Captain Benjamin Sisko",
+      "button": "Proceed"
+    },
+    "badge": {
+      "title": "KAPTN",
+      "subtitle": "BRIDGE SYSTEM"
     },
     "profile": {
       "title": "Your Command Profile",

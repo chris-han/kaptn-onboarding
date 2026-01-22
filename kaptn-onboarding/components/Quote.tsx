@@ -1,15 +1,19 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { siskoQuote } from "@/lib/gameData";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface QuoteProps {
   onContinue: () => void;
 }
 
 export default function Quote({ onContinue }: QuoteProps) {
+  const t = useTranslations("onboarding.quote");
   const [showButton, setShowButton] = useState(false);
+
+  const quoteText = t.raw("text") as string[];
+  const author = t("author");
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
@@ -19,14 +23,14 @@ export default function Quote({ onContinue }: QuoteProps) {
         className="text-center space-y-8 max-w-4xl"
       >
         <div className="space-y-4">
-          {siskoQuote.text.map((line, index) => (
+          {quoteText.map((line, index) => (
             <motion.p
               key={index}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 + index * 0.8 }}
               onAnimationComplete={() => {
-                if (index === siskoQuote.text.length - 1) {
+                if (index === quoteText.length - 1) {
                   setTimeout(() => setShowButton(true), 1500);
                 }
               }}
@@ -41,10 +45,10 @@ export default function Quote({ onContinue }: QuoteProps) {
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 + siskoQuote.text.length * 0.8 + 0.5 }}
+            transition={{ delay: 0.5 + quoteText.length * 0.8 + 0.5 }}
             className="text-xs sm:text-sm text-bridge-white/60 italic mt-6"
           >
-            {siskoQuote.author}
+            {author}
           </motion.p>
         </div>
 
@@ -56,7 +60,7 @@ export default function Quote({ onContinue }: QuoteProps) {
             onClick={onContinue}
             className="bridge-button"
           >
-            Proceed
+            {t("button")}
           </motion.button>
         )}
       </motion.div>
