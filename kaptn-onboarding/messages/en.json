@@ -137,7 +137,16 @@
     "profile": {
       "title": "Your Command Profile",
       "subtitle": "This is your bridge signature — how you navigate uncertainty.",
-      "button": "CONTINUE"
+      "button": "CONTINUE",
+      "disclaimer": {
+        "line1": "This profile is not an evaluation.",
+        "line2": "It is a snapshot of how you navigate uncertainty right now.",
+        "line3": "Your patterns will evolve.",
+        "line4": "The bridge will adapt with you.",
+        "line5": "What matters is this:",
+        "line6": "You are aware of your own navigation system.",
+        "line7": "That awareness is your first advantage."
+      }
     },
     "welcome": {
       "title": "Welcome Aboard, Captain",

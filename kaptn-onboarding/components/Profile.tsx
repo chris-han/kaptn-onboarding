@@ -88,22 +88,22 @@ export default function Profile({ profile, onContinue }: ProfileProps) {
           className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6 space-y-2"
         >
           <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
-            This profile is not an evaluation.
+            {t("disclaimer.line1")}
             <br />
-            It is a snapshot of how you navigate uncertainty right now.
+            {t("disclaimer.line2")}
           </p>
           <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
-            Your patterns will evolve.
+            {t("disclaimer.line3")}
             <br />
-            The bridge will adapt with you.
+            {t("disclaimer.line4")}
           </p>
           <p className="bridge-text text-xs sm:text-sm leading-relaxed text-bridge-white/80">
-            What matters is this:
+            {t("disclaimer.line5")}
             <br />
-            You are aware of your own navigation system.
+            {t("disclaimer.line6")}
           </p>
           <p className="bridge-text text-xs sm:text-sm leading-relaxed font-bold">
-            That awareness is your first advantage.
+            {t("disclaimer.line7")}
           </p>
         </motion.div>
 
