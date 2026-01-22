@@ -3,7 +3,7 @@ import { getLogtoContext } from '@logto/next/server-actions';
 import { NextRequest, NextResponse } from 'next/server';
 import { redirect } from 'next/navigation';
 import { logtoConfig } from '@/lib/logto';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
 export async function GET(request: NextRequest) {
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     // Get user info from Logto
     const { claims } = await getLogtoContext(logtoConfig);
 
-    if (claims?.sub) {
+    if (claims?.sub && isDatabaseConfigured && prisma) {
       try {
         // Find or create user in database
         let user = await prisma.user.findUnique({
@@ -42,6 +42,8 @@ export async function GET(request: NextRequest) {
       } catch (dbError) {
         console.error('Error syncing user with database:', dbError);
       }
+    } else if (claims?.sub) {
+      console.log('Database not configured, skipping user sync');
     }
 
     // Get post-redirect URI from cookie

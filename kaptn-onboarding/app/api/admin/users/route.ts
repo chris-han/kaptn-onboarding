@@ -1,9 +1,17 @@
 // Admin API: User Management
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
+    // Check if database is configured
+    if (!isDatabaseConfigured || !prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured. Admin features require database access.' },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -49,12 +57,12 @@ export async function GET(request: Request) {
     ]);
 
     // Get user stats
-    const stats = await prisma.user.aggregate({
+    const stats = await prisma!.user.aggregate({
       _count: { id: true },
     });
 
-    const profileCount = await prisma.userProfile.count();
-    const badgeCount = await prisma.badge.count();
+    const profileCount = await prisma!.userProfile.count();
+    const badgeCount = await prisma!.badge.count();
 
     return NextResponse.json({
       users,
@@ -92,7 +100,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma!.user.findUnique({
       where: { id: userId },
       include: {
         waitlistEntry: true,

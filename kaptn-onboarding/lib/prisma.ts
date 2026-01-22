@@ -9,21 +9,38 @@ const globalForPrisma = globalThis as unknown as {
   pool: Pool | undefined;
 };
 
-// Create connection pool
-const pool = globalForPrisma.pool ?? new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+// Check if DATABASE_URL is configured
+const isDatabaseConfigured = !!process.env.DATABASE_URL;
 
-// Create Prisma adapter
-const adapter = new PrismaPg(pool);
+let prisma: PrismaClient | null = null;
+let pool: Pool | undefined = undefined;
 
-// Create Prisma client with adapter
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  adapter,
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-});
+if (isDatabaseConfigured) {
+  try {
+    // Create connection pool
+    pool = globalForPrisma.pool ?? new Pool({
+      connectionString: process.env.DATABASE_URL,
+    });
 
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
-  globalForPrisma.pool = pool;
+    // Create Prisma adapter
+    const adapter = new PrismaPg(pool);
+
+    // Create Prisma client with adapter
+    prisma = globalForPrisma.prisma ?? new PrismaClient({
+      adapter,
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    });
+
+    if (process.env.NODE_ENV !== 'production') {
+      globalForPrisma.prisma = prisma;
+      globalForPrisma.pool = pool;
+    }
+  } catch (error) {
+    console.warn('Database connection failed, continuing without database:', error);
+    prisma = null;
+  }
+} else {
+  console.warn('DATABASE_URL not configured, database operations will be skipped');
 }
+
+export { prisma, isDatabaseConfigured };

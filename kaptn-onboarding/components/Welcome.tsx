@@ -259,7 +259,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
 
                     {/* QR Code */}
                     <QRCodeSVG
-                      value={`${typeof window !== 'undefined' ? window.location.origin : ''}/badge/${userId}`}
+                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}/badge/${userId}`}
                       size={120}
                       level="M"
                       fgColor="#ffffff"

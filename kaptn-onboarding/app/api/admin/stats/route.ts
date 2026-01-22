@@ -1,9 +1,17 @@
 // Admin API: Daily Statistics & Analytics
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
+    // Check if database is configured
+    if (!isDatabaseConfigured || !prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured. Admin features require database access.' },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
@@ -14,7 +22,7 @@ export async function GET(request: Request) {
     const start = startDate ? new Date(startDate) : new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
     // Get daily stats
-    const dailyStats = await prisma.dailyStats.findMany({
+    const dailyStats = await prisma!.dailyStats.findMany({
       where: {
         date: {
           gte: start,
@@ -70,7 +78,7 @@ export async function GET(request: Request) {
 
 // Helper function to calculate stats from events
 async function calculateStats(start: Date, end: Date) {
-  const events = await prisma.journeyEvent.findMany({
+  const events = await prisma!.journeyEvent.findMany({
     where: {
       timestamp: {
         gte: start,
@@ -136,7 +144,7 @@ export async function POST(request: Request) {
       profilesCreated,
       badgesIssued,
     ] = await Promise.all([
-      prisma.journeyEvent.count({
+      prisma!.journeyEvent.count({
         where: {
           phase: 'entrance',
           eventType: 'PHASE_START',
@@ -146,7 +154,7 @@ export async function POST(request: Request) {
           },
         },
       }),
-      prisma.waitlistEntry.count({
+      prisma!.waitlistEntry.count({
         where: {
           submittedAt: {
             gte: targetDate,
@@ -154,7 +162,7 @@ export async function POST(request: Request) {
           },
         },
       }),
-      prisma.userProfile.count({
+      prisma!.userProfile.count({
         where: {
           createdAt: {
             gte: targetDate,
@@ -162,7 +170,7 @@ export async function POST(request: Request) {
           },
         },
       }),
-      prisma.badge.count({
+      prisma!.badge.count({
         where: {
           issuedAt: {
             gte: targetDate,
@@ -181,7 +189,7 @@ export async function POST(request: Request) {
       : 0;
 
     // Upsert daily stats
-    const stats = await prisma.dailyStats.upsert({
+    const stats = await prisma!.dailyStats.upsert({
       where: { date: targetDate },
       update: {
         entranceCount: entranceEvents,

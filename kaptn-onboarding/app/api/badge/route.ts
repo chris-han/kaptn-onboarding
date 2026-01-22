@@ -1,6 +1,6 @@
 // API: Issue Badge
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -12,6 +12,23 @@ export async function POST(request: Request) {
         { error: 'Missing userId' },
         { status: 400 }
       );
+    }
+
+    // If database is not configured, generate temporary badge
+    if (!isDatabaseConfigured || !prisma) {
+      console.log('Database not configured, generating temporary badge');
+      const serialNumber = userId.slice(-8).toUpperCase();
+      return NextResponse.json({
+        success: true,
+        badge: {
+          userId,
+          serialNumber,
+          captainName: captainName || null,
+          issuedAt: new Date(),
+        },
+        temporary: true,
+        message: 'Temporary badge issued (not persisted)',
+      });
     }
 
     // Check if user exists
@@ -57,10 +74,20 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error issuing badge:', error);
-    return NextResponse.json(
-      { error: 'Failed to issue badge' },
-      { status: 500 }
-    );
+    // Generate temporary badge if database fails
+    const { userId, captainName } = await request.json();
+    const serialNumber = userId?.slice(-8).toUpperCase() || 'TEMP0000';
+    return NextResponse.json({
+      success: true,
+      badge: {
+        userId,
+        serialNumber,
+        captainName: captainName || null,
+        issuedAt: new Date(),
+      },
+      temporary: true,
+      error: 'Database error, temporary badge issued'
+    });
   }
 }
 
@@ -75,6 +102,21 @@ export async function GET(request: Request) {
         { error: 'Missing userId' },
         { status: 400 }
       );
+    }
+
+    // If database is not configured, return temporary badge
+    if (!isDatabaseConfigured || !prisma) {
+      console.log('Database not configured, returning temporary badge info');
+      const serialNumber = userId.slice(-8).toUpperCase();
+      return NextResponse.json({
+        success: true,
+        badge: {
+          userId,
+          serialNumber,
+          issuedAt: new Date(),
+        },
+        temporary: true,
+      });
     }
 
     const badge = await prisma.badge.findUnique({
@@ -102,9 +144,19 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error('Error fetching badge:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch badge' },
-      { status: 500 }
-    );
+    // Return temporary badge if database fails
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get('userId');
+    const serialNumber = userId?.slice(-8).toUpperCase() || 'TEMP0000';
+    return NextResponse.json({
+      success: true,
+      badge: {
+        userId,
+        serialNumber,
+        issuedAt: new Date(),
+      },
+      temporary: true,
+      error: 'Database error'
+    });
   }
 }

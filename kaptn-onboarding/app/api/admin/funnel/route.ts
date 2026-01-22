@@ -1,9 +1,17 @@
 // Admin API: Conversion Funnel Analytics
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
+    // Check if database is configured
+    if (!isDatabaseConfigured || !prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured. Admin features require database access.' },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
@@ -17,7 +25,7 @@ export async function GET(request: Request) {
     } : {};
 
     // Get funnel metrics by counting events at each phase
-    const funnelData = await prisma.journeyEvent.groupBy({
+    const funnelData = await prisma!.journeyEvent.groupBy({
       by: ['phase'],
       where: {
         eventType: 'PHASE_COMPLETE',
@@ -29,7 +37,7 @@ export async function GET(request: Request) {
     });
 
     // Get total unique users who started the journey
-    const totalUsers = await prisma.journeyEvent.findMany({
+    const totalUsers = await prisma!.journeyEvent.findMany({
       where: {
         phase: 'entrance',
         eventType: 'PHASE_START',
@@ -39,7 +47,7 @@ export async function GET(request: Request) {
     });
 
     // Get waitlist conversions
-    const waitlistCount = await prisma.waitlistEntry.count({
+    const waitlistCount = await prisma!.waitlistEntry.count({
       where: startDate && endDate ? {
         submittedAt: {
           gte: new Date(startDate),
@@ -49,7 +57,7 @@ export async function GET(request: Request) {
     });
 
     // Get profiles created
-    const profilesCount = await prisma.userProfile.count({
+    const profilesCount = await prisma!.userProfile.count({
       where: startDate && endDate ? {
         createdAt: {
           gte: new Date(startDate),
@@ -59,7 +67,7 @@ export async function GET(request: Request) {
     });
 
     // Get badges issued
-    const badgesCount = await prisma.badge.count({
+    const badgesCount = await prisma!.badge.count({
       where: startDate && endDate ? {
         issuedAt: {
           gte: new Date(startDate),

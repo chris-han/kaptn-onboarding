@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL || "your-email@example.com";
@@ -59,46 +59,55 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Save to database
-    // Find or create user
-    let user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    // Save to database (if configured)
+    if (isDatabaseConfigured && prisma) {
+      try {
+        // Find or create user
+        let user = await prisma.user.findUnique({
+          where: { email: email.toLowerCase() },
+        });
 
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          email: email.toLowerCase(),
-          name,
-        },
-      });
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email: email.toLowerCase(),
+              name,
+            },
+          });
+        }
+
+        // Check if waitlist entry already exists
+        const existingEntry = await prisma.waitlistEntry.findUnique({
+          where: { email: email.toLowerCase() },
+        });
+
+        if (existingEntry) {
+          return NextResponse.json(
+            {
+              success: false,
+              message: "You're already on the waitlist.",
+            },
+            { status: 409 }
+          );
+        }
+
+        // Create waitlist entry
+        await prisma.waitlistEntry.create({
+          data: {
+            userId: user.id,
+            name,
+            email: email.toLowerCase(),
+            company: company || null,
+            interests: interests || [],
+          },
+        });
+      } catch (dbError) {
+        console.warn('Database operation failed, continuing without persistence:', dbError);
+        // Continue to send email even if database fails
+      }
+    } else {
+      console.log('Database not configured, skipping waitlist persistence');
     }
-
-    // Check if waitlist entry already exists
-    const existingEntry = await prisma.waitlistEntry.findUnique({
-      where: { email: email.toLowerCase() },
-    });
-
-    if (existingEntry) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "You're already on the waitlist.",
-        },
-        { status: 409 }
-      );
-    }
-
-    // Create waitlist entry
-    await prisma.waitlistEntry.create({
-      data: {
-        userId: user.id,
-        name,
-        email: email.toLowerCase(),
-        company: company || null,
-        interests: interests || [],
-      },
-    });
 
     // Create email content
     const interestsList = interests?.length

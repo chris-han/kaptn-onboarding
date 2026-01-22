@@ -2,7 +2,7 @@
 import { getLogtoContext } from '@logto/next/server-actions';
 import { NextRequest, NextResponse } from 'next/server';
 import { logtoConfig } from '@/lib/logto';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,7 +20,17 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Get user from database
+    // Get user from database if configured
+    if (!isDatabaseConfigured || !prisma) {
+      console.log('Database not configured, returning authenticated user without data');
+      return NextResponse.json({
+        authenticated: true,
+        user: null,
+        claims,
+        temporary: true,
+      });
+    }
+
     const user = await prisma.user.findUnique({
       where: { logtoId: claims.sub },
       include: {

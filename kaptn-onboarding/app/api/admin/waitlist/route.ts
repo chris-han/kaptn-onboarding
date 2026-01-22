@@ -1,9 +1,17 @@
 // Admin API: Waitlist Management
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
+    // Check if database is configured
+    if (!isDatabaseConfigured || !prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured. Admin features require database access.' },
+        { status: 503 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -59,7 +67,7 @@ export async function GET(request: Request) {
     ]);
 
     // Calculate stats
-    const stats = await prisma.waitlistEntry.groupBy({
+    const stats = await prisma!.waitlistEntry.groupBy({
       by: ['status'],
       _count: { id: true },
     });
@@ -99,7 +107,7 @@ export async function PATCH(request: Request) {
       );
     }
 
-    const updated = await prisma.waitlistEntry.update({
+    const updated = await prisma!.waitlistEntry.update({
       where: { id },
       data: {
         status,
