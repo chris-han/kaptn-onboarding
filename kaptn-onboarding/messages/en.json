@@ -140,11 +140,25 @@
       "button": "CONTINUE"
     },
     "welcome": {
-      "title": "WELCOME TO THE BRIDGE",
-      "greeting": "Captain {name}, your systems are online.",
-      "greetingAnonymous": "Captain, your systems are online.",
-      "subtitle": "Your personalized command center awaits.",
-      "button": "ASSUME COMMAND"
+      "title": "Welcome Aboard, Captain",
+      "line1": "Your bridge is calibrated to your command style.",
+      "line2": "Your protocols are online.",
+      "line3": "Your trajectory awaits definition.",
+      "line4": "The unknown is your territory.",
+      "line5": "KAPTN is your bridge system.",
+      "systemsStatus": "Systems: GREEN",
+      "readyStatus": "Status: READY",
+      "button": "ASSUME COMMAND",
+      "ceremony": {
+        "captainOnBridge": "Captain on the Bridge",
+        "youHaveConn": "You Have the Conn.",
+        "ensigniaIssuedTo": "Bridge Ensignia Issued To",
+        "captain": "Captain",
+        "serialNumber": "SN:",
+        "scanToDownload": "SCAN TO DOWNLOAD ENSIGNIA",
+        "replayCeremony": "Replay Ceremony",
+        "restart": "Restart"
+      }
     },
     "scenarios": {
       "K": {

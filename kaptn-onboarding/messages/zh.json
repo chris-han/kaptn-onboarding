@@ -140,11 +140,25 @@
       "button": "继续"
     },
     "welcome": {
-      "title": "欢迎来到舰桥",
-      "greeting": "舰长{name}，您的系统已上线。",
-      "greetingAnonymous": "舰长，您的系统已上线。",
-      "subtitle": "您的个性化指挥中心等待着您。",
-      "button": "接掌指挥权"
+      "title": "欢迎登舰，舰长",
+      "line1": "您的舰桥已根据您的指挥风格校准。",
+      "line2": "您的协议已上线。",
+      "line3": "您的航向等待定义。",
+      "line4": "未知是您的领域。",
+      "line5": "KAPTN 是您的舰桥系统。",
+      "systemsStatus": "系统：绿色",
+      "readyStatus": "状态：就绪",
+      "button": "接掌指挥权",
+      "ceremony": {
+        "captainOnBridge": "舰长到舰桥",
+        "youHaveConn": "您拥有指挥权。",
+        "ensigniaIssuedTo": "舰桥徽章颁发给",
+        "captain": "舰长",
+        "serialNumber": "序列号：",
+        "scanToDownload": "扫描下载徽章",
+        "replayCeremony": "重播仪式",
+        "restart": "重新开始"
+      }
     },
     "scenarios": {
       "K": {

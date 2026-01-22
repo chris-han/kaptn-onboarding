@@ -152,7 +152,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
               className="text-center space-y-4"
             >
               <h2 className="text-6xl font-inter font-normal tracking-tight text-white">
-                Captain on the Bridge
+                {t("ceremony.captainOnBridge")}
               </h2>
             </motion.div>
           )}
@@ -167,7 +167,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
               className="text-center space-y-6"
             >
               <h2 className="text-6xl font-inter font-normal tracking-tight text-white">
-                You Have the Conn.
+                {t("ceremony.youHaveConn")}
               </h2>
             </motion.div>
           )}
@@ -227,16 +227,16 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                 className="space-y-2"
               >
                 <h3 className="text-xl sm:text-2xl font-mono uppercase tracking-widest text-bridge-gold">
-                  Bridge Ensignia Issued To
+                  {t("ceremony.ensigniaIssuedTo")}
                 </h3>
                 {captainName && (
                   <p className="text-base sm:text-lg font-inter text-white/90">
-                    Captain <span className="underline">{captainName}</span>
+                    {t("ceremony.captain")} <span className="underline">{captainName}</span>
                   </p>
                 )}
                 {userId && (
                   <p className="text-xs sm:text-sm font-mono text-white/40 tracking-widest mt-1">
-                    SN: {userId.slice(-8).toUpperCase()}
+                    {t("ceremony.serialNumber")} {userId.slice(-8).toUpperCase()}
                   </p>
                 )}
               </motion.div>
@@ -269,7 +269,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
 
                   {/* Scan Instructions */}
                   <p className="text-xs font-mono text-white/30 uppercase tracking-wider mt-2">
-                    SCAN TO DOWNLOAD ENSIGNIA
+                    {t("ceremony.scanToDownload")}
                   </p>
                 </motion.div>
               )}
@@ -284,13 +284,13 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                   onClick={handleReplay}
                   className="bridge-button"
                 >
-                  Replay Ceremony
+                  {t("ceremony.replayCeremony")}
                 </button>
                 <button
                   onClick={handleRestartFlow}
                   className="bridge-button"
                 >
-                  Restart
+                  {t("ceremony.restart")}
                 </button>
               </motion.div>
             </motion.div>
@@ -315,7 +315,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
           className="space-y-4"
         >
           <h1 className="text-2xl sm:text-3xl font-mono uppercase tracking-wider">
-            Welcome Aboard, Captain
+            {t("title")}
           </h1>
 
           <div className="space-y-3 bridge-text text-base sm:text-lg leading-relaxed">
@@ -324,21 +324,21 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
             >
-              Your bridge is calibrated to your command style.
+              {t("line1")}
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.3 }}
             >
-              Your protocols are online.
+              {t("line2")}
             </motion.p>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1.6 }}
             >
-              Your trajectory awaits definition.
+              {t("line3")}
             </motion.p>
           </div>
 
@@ -355,8 +355,8 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
             transition={{ delay: 2.2 }}
             className="space-y-2 text-bridge-white/70 text-sm sm:text-base"
           >
-            <p className="bridge-text">The unknown is your territory.</p>
-            <p className="bridge-text">KAPTN is your bridge system.</p>
+            <p className="bridge-text">{t("line4")}</p>
+            <p className="bridge-text">{t("line5")}</p>
           </motion.div>
         </motion.div>
 
@@ -369,11 +369,11 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
           <div className="flex justify-center space-x-8 bridge-text text-sm">
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-bridge-green rounded-full animate-pulse-glow" />
-              <span>Systems: GREEN</span>
+              <span>{t("systemsStatus")}</span>
             </div>
             <div className="flex items-center space-x-2">
               <div className="w-2 h-2 bg-bridge-green rounded-full animate-pulse-glow" />
-              <span>Status: READY</span>
+              <span>{t("readyStatus")}</span>
             </div>
           </div>
 
