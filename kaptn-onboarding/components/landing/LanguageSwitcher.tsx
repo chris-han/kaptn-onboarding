@@ -4,6 +4,7 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import { Locale } from '@/i18n/config';
+import { setLocaleCookie } from '@/lib/locale';
 
 const languages = [
   { code: 'en', label: 'EN', name: 'English' },
@@ -22,6 +23,10 @@ export default function LanguageSwitcher() {
   const currentLang = languages.find(lang => lang.code === currentLocale) || languages[0];
 
   const handleLanguageChange = (code: string) => {
+    // Set the locale cookie to persist the user's language preference
+    // This cookie is read by next-intl middleware for locale detection
+    setLocaleCookie(code);
+
     // Remove the current locale from the pathname and add the new one
     // pathname is like "/en/landing" or "/landing"
     const segments = pathname.split('/').filter(Boolean);
