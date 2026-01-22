@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { useTranslations } from "next-intl";
 
 interface WelcomeProps {
   onAssumeCommand: () => void;
@@ -10,6 +11,7 @@ interface WelcomeProps {
 }
 
 export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) {
+  const t = useTranslations("onboarding.welcome");
   const [assumingCommand, setAssumingCommand] = useState(false);
   const [commandPhase, setCommandPhase] = useState<"bell" | "bridge" | "conn" | "badge" | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -376,7 +378,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
           </div>
 
           <button onClick={handleAssumeCommand} className="bridge-button">
-            Assume Command
+            {t("button")}
           </button>
         </motion.div>
       </motion.div>

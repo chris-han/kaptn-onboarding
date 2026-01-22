@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from './LanguageSwitcher';
+import AuthButton from '@/components/AuthButton';
 
 export default function Navigation() {
   const t = useTranslations('landing.nav');
@@ -70,12 +71,14 @@ export default function Navigation() {
             ))}
           </div>
 
-          {/* Language Switcher */}
+          {/* Auth & Language Switcher */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
+            className="flex items-center gap-4"
           >
+            <AuthButton variant="ghost" redirectTo="/onboarding" />
             <LanguageSwitcher />
           </motion.div>
         </div>

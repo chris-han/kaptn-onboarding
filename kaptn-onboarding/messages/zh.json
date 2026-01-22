@@ -7,7 +7,7 @@
     },
     "hero": {
       "badge": "舰桥激活协议",
-      "title": "担任指挥",
+      "title": "接掌指挥权",
       "subtitle": "舰长，您的舰桥已就绪。",
       "description": "KAPTN是为创业者打造的企业运营系统。导航不确定性。校准决策。精准指挥。",
       "cta": "启动协议",
@@ -50,6 +50,204 @@
       "subtitle": "开始您的校准序列",
       "button": "进入舰桥",
       "note": "协议需要3-5分钟"
+    }
+  },
+  "onboarding": {
+    "entrance": {
+      "line1": "在您踏上舰桥之前，",
+      "line2": "您的心智必须经过校准。",
+      "button": "开始校准"
+    },
+    "brief": {
+      "line1": "这不是测试。",
+      "line2": "这是一面镜子。",
+      "line3": "您将面对五个场景。",
+      "line4": "每个场景揭示您如何应对不确定性。",
+      "line5": "没有错误答案。",
+      "line6": "只有模式。",
+      "button": "开始"
+    },
+    "oath": {
+      "title": "舰长誓言",
+      "lines": [
+        "我不寻求确定性。",
+        "我寻求清晰。",
+        "",
+        "我不寻求舒适。",
+        "我寻求方向。",
+        "",
+        "我不寻求答案。",
+        "我寻求更好的问题。",
+        "",
+        "我将让现实挑战我的思维，",
+        "让思维挑战我的模型，",
+        "让模型挑战我的行动。",
+        "",
+        "这就是舰长成长之道。"
+      ],
+      "button": "我确认"
+    },
+    "waitlist": {
+      "title": "舰长，请说明您的身份。",
+      "subtitle": "您的凭证将记录在飞船名册中。",
+      "form": {
+        "name": "舰长姓名",
+        "namePlaceholder": "您的姓名",
+        "email": "传输ID",
+        "emailPlaceholder": "your@email.com",
+        "company": "舰船名称",
+        "companyPlaceholder": "您的公司（选填）",
+        "interests": "系统兴趣",
+        "submit": "传输凭证",
+        "skip": "匿名继续"
+      },
+      "interests": {
+        "compass": "Compass - AI与决策支持",
+        "ledger": "Ledger - 财务运营",
+        "shield": "Shield - 税务合规",
+        "sonar": "Sonar - 分析与智能"
+      }
+    },
+    "processing": {
+      "analyzing": "分析决策模式",
+      "calibrating": "校准舰桥系统",
+      "complete": "校准完成"
+    },
+    "profile": {
+      "title": "您的指挥特征",
+      "subtitle": "这是您的舰桥签名——您如何导航不确定性。",
+      "button": "继续"
+    },
+    "welcome": {
+      "title": "欢迎来到舰桥",
+      "greeting": "舰长{name}，您的系统已上线。",
+      "greetingAnonymous": "舰长，您的系统已上线。",
+      "subtitle": "您的个性化指挥中心等待着您。",
+      "button": "接掌指挥权"
+    },
+    "scenarios": {
+      "K": {
+        "title": "未知信号",
+        "context": "您的企业稳定增长。每季度增长15%。\n然后：市场空间出现意外信号。\n\n竞争对手刚筹集了5000万美元。\n他们的产品与您的重叠60%。\n90天后公开发布。",
+        "question": "您的即时反应：",
+        "options": {
+          "SCAN": {
+            "label": "扫描",
+            "description": "启动深度分析。他们是谁？他们知道我不知道的什么？"
+          },
+          "IGNORE": {
+            "label": "忽略",
+            "description": "保持航线。我们有自己的轨迹。"
+          },
+          "REDIRECT": {
+            "label": "重定向",
+            "description": "这不会改变我们的使命。眼睛向前。"
+          }
+        }
+      },
+      "T": {
+        "title": "冲突数据",
+        "context": "您的销售数据显示强劲转化。\n您的客户访谈揭示深层摩擦。\n\n数据说：继续推进当前方法。\n客户说：有根本性问题。\n\n这两个信号不能同时正确。",
+        "question": "您如何解决这个问题？",
+        "options": {
+          "UPDATE_MODEL": {
+            "label": "更新模型",
+            "description": "模型不完整。我需要重建我的理解。"
+          },
+          "TRUST_DATA": {
+            "label": "信任数据",
+            "description": "定性反馈有噪音。数字不会说谎。"
+          },
+          "HOLD_PARADOX": {
+            "label": "保持悖论",
+            "description": "两者都可能是真的。我需要更多时间理解结构。"
+          }
+        }
+      },
+      "P": {
+        "title": "多重路径",
+        "context": "三个机会，潜力相同：\n\n路径A：新市场细分（高不确定性，高上行空间）\n路径B：深化当前客户群（可预测，稳定增长）\n路径C：战略合作伙伴关系（中等风险，加速时间表）\n\n资源只允许在接下来的6个月中选择一条路径。",
+        "question": "您选择：",
+        "options": {
+          "COMMIT_TO_ONE": {
+            "label": "专注一个",
+            "description": "选择关键路径。全力以赴。"
+          },
+          "PARALLEL_EXPLORATION": {
+            "label": "并行探索",
+            "description": "分配资源。以较小规模测试全部三个。"
+          },
+          "DEFER_DECISION": {
+            "label": "推迟决策",
+            "description": "信息不足。先进行实验。"
+          }
+        }
+      },
+      "A": {
+        "title": "任务就绪",
+        "context": "您的战略清晰。\n计划已验证。\n团队已对齐。\n\n但是：您注意到财务模型中的小不一致。\n它不会改变决策，但它...存在。\n\n发布定于明天。",
+        "question": "您：",
+        "options": {
+          "LAUNCH_NOW": {
+            "label": "立即发布",
+            "description": "执行。不一致低于显著性阈值。"
+          },
+          "PAUSE": {
+            "label": "暂停",
+            "description": "先修复不一致。即使很小。"
+          },
+          "LAUNCH_WITH_FLAG": {
+            "label": "带标记发布",
+            "description": "继续，但标记该项目以供发布后立即审查。"
+          }
+        }
+      },
+      "N": {
+        "title": "航线偏离",
+        "context": "发布六个月后，您回顾这段旅程。\n\n结果是积极的：增长40%。\n但是：您通过与最初计划完全不同的方法实现了它。\n\n您最初的论点是关于产品市场契合度。\n现实表明它实际上是关于分销渠道。",
+        "question": "您的反应：",
+        "options": {
+          "RECALIBRATE": {
+            "label": "重新校准",
+            "description": "更新模型。这是新知识。"
+          },
+          "QUESTION_SUCCESS": {
+            "label": "质疑成功",
+            "description": "通过错误原因获得成功令人担忧。深入挖掘。"
+          },
+          "CLAIM_ADAPTATION": {
+            "label": "声称适应",
+            "description": "这证明了我们的导航能力。目标重要，路径不重要。"
+          }
+        }
+      }
+    },
+    "patterns": {
+      "K": {
+        "ACTIVE_EXPLORER": "当未知信号出现时，您倾向于立即全面参与。您将不确定性视为扩展知识空间的邀请。",
+        "SELECTIVE_SCANNER": "当未知信号出现时，您倾向于通过使命透镜进行过滤。您通过区分信号和噪音来保持专注。",
+        "MISSION_FILTER": "当未知信号出现时，您倾向于根据核心目标进行评估。您的方向提供了过滤机制。"
+      },
+      "T": {
+        "RAPID_UPDATER": "当模型冲突时，您倾向于拥抱不适并重建。您将认知模型视为活工具，而非固定真理。",
+        "DATA_ANCHOR": "当模型冲突时，您倾向于信任定量证据。您相信结构来自数据，而非解释。",
+        "COMPLEXITY_HOLDER": "当模型冲突时，您倾向于抵制过早解决。您对保持张力直到更深层次的模式出现感到舒适。"
+      },
+      "P": {
+        "FOCUSED_NAVIGATOR": "当路径分歧时，您倾向于果断承诺。您相信在资源受限时深度胜过广度。",
+        "PARALLEL_PROCESSOR": "当路径分歧时，您倾向于保持可选性。您将投资组合方法视为战略层面的风险管理。",
+        "DELIBERATE_STRATEGIST": "当路径分歧时，您倾向于收集更多信息。您将过早承诺视为更大的风险。"
+      },
+      "A": {
+        "MOMENTUM_DRIVER": "当任务就绪时，您倾向于优先考虑速度。您相信执行创造自己的清晰度，运动揭示计划无法揭示的东西。",
+        "COMPLETENESS_SEEKER": "当任务就绪时，您倾向于首先确保完整性。您将小不一致视为潜在的系统性指标。",
+        "PROGRESSIVE_BUILDER": "当任务就绪时，您倾向于平衡动力与意识。您在保持可观察性的同时执行。"
+      },
+      "N": {
+        "QUICK_RECALIBRATOR": "当发生偏离时，您倾向于快速更新。您将偏离视为新信息，而非失败。",
+        "DEEP_QUESTIONER": "当发生偏离时，您倾向于调查因果关系。您区分幸运结果和可持续模型。",
+        "ADAPTIVE_CLAIMER": "当发生偏离时，您倾向于关注取得的结果。您将路径灵活性视为优势，而非劣势。"
+      }
     }
   }
 }

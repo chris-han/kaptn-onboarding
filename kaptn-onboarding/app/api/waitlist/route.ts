@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
+import { prisma } from '@/lib/prisma';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL || "your-email@example.com";
@@ -57,6 +58,47 @@ export async function POST(request: NextRequest) {
         { status: 429 }
       );
     }
+
+    // Save to database
+    // Find or create user
+    let user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email: email.toLowerCase(),
+          name,
+        },
+      });
+    }
+
+    // Check if waitlist entry already exists
+    const existingEntry = await prisma.waitlistEntry.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (existingEntry) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "You're already on the waitlist.",
+        },
+        { status: 409 }
+      );
+    }
+
+    // Create waitlist entry
+    await prisma.waitlistEntry.create({
+      data: {
+        userId: user.id,
+        name,
+        email: email.toLowerCase(),
+        company: company || null,
+        interests: interests || [],
+      },
+    });
 
     // Create email content
     const interestsList = interests?.length

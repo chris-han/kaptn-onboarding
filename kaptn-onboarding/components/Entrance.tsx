@@ -1,12 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface EntranceProps {
   onBegin: () => void;
 }
 
 export default function Entrance({ onBegin }: EntranceProps) {
+  const t = useTranslations("onboarding.entrance");
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 py-8 relative z-10">
       <motion.div
@@ -21,9 +24,9 @@ export default function Entrance({ onBegin }: EntranceProps) {
           transition={{ delay: 0.5, duration: 1 }}
           className="bridge-text text-lg sm:text-xl"
         >
-          Before you step onto the bridge,
+          {t("line1")}
           <br />
-          your mindset must be calibrated.
+          {t("line2")}
         </motion.p>
 
         <motion.button
@@ -35,7 +38,7 @@ export default function Entrance({ onBegin }: EntranceProps) {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
         >
-          Begin Calibration
+          {t("button")}
         </motion.button>
       </motion.div>
     </div>

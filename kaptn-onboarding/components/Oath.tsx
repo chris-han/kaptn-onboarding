@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { captainsOath } from "@/lib/gameData";
+import { useTranslations } from "next-intl";
 
 interface OathProps {
   onAffirm: () => void;
@@ -10,6 +10,8 @@ interface OathProps {
 
 export default function Oath({ onAffirm }: OathProps) {
   const [showButton, setShowButton] = useState(false);
+  const t = useTranslations("onboarding.oath");
+  const oathLines = t.raw("lines") as string[];
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
@@ -24,11 +26,11 @@ export default function Oath({ onAffirm }: OathProps) {
           transition={{ delay: 0.5 }}
           className="text-lg sm:text-xl bridge-text"
         >
-          The Captain's Oath
+          {t("title")}
         </motion.h2>
 
         <div className="space-y-3">
-          {captainsOath.map((line, index) => (
+          {oathLines.map((line: string, index: number) => (
             <motion.p
               key={index}
               initial={{ opacity: 0, y: 10 }}
@@ -39,7 +41,7 @@ export default function Oath({ onAffirm }: OathProps) {
                 ease: "easeOut"
               }}
               onAnimationComplete={() => {
-                if (index === captainsOath.length - 1) {
+                if (index === oathLines.length - 1) {
                   setTimeout(() => setShowButton(true), 300);
                 }
               }}
@@ -60,7 +62,7 @@ export default function Oath({ onAffirm }: OathProps) {
             onClick={onAffirm}
             className="bridge-button"
           >
-            Affirm
+            {t("button")}
           </motion.button>
         )}
       </motion.div>
