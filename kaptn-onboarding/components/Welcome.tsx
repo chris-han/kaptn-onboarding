@@ -162,14 +162,17 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         img.src = '/kaptn-badge.svg';
       });
 
-      // Serial number on badge (simulating letter-spacing with manual character placement)
+      // Serial number on badge (positioned at 65% from badge top)
       ctx.fillStyle = '#ffffff';
-      ctx.font = '300 14px monospace';
+      ctx.font = '300 11px monospace'; // Smaller font to fit badge
       const snChars = serialNumber.toLowerCase().split('');
-      let snX = 170 - (snChars.length * 5.5); // Center the text
+      const badgeCenterX = 110 + 60; // Badge x + half width
+      const badgeY = 100 + (120 * 0.65); // 65% from badge top
+      const charWidth = 7; // Character width including spacing
+      let snX = badgeCenterX - (snChars.length * charWidth) / 2; // Center on badge
       for (const char of snChars) {
-        ctx.fillText(char, snX, 205);
-        snX += 11; // 2px letter-spacing simulation
+        ctx.fillText(char, snX, badgeY);
+        snX += charWidth;
       }
 
       // "Bridge Ensignia"
