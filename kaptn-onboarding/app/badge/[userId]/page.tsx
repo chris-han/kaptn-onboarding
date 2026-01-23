@@ -76,32 +76,32 @@ export default function BadgeDownloadPage() {
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 py-12">
         {/* Badge Card */}
-        <div id="badge-card" className="w-full max-w-md" style={{ maxWidth: '448px' }}>
-          <div className="relative border-4 border-white bg-black/90 p-8" style={{ overflow: 'hidden' }}>
+        <div id="badge-card" className="w-full max-w-sm" style={{ maxWidth: '340px' }}>
+          <div className="relative border-2 border-white bg-black/90 p-5" style={{ overflow: 'hidden' }}>
             {/* Corner Accents */}
-            <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#ffd700]" />
-            <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#ffd700]" />
-            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-[#ffd700]" />
-            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#ffd700]" />
+            <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-[#ffd700]" />
+            <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-[#ffd700]" />
+            <div className="absolute bottom-0 left-0 w-6 h-6 border-b-2 border-l-2 border-[#ffd700]" />
+            <div className="absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 border-[#ffd700]" />
 
             {/* Header */}
-            <div className="text-center mb-6">
-              <h1 className="text-3xl font-mono font-bold text-white mb-2">KAPTN</h1>
-              <p className="text-sm font-mono text-white/60 uppercase tracking-wider">
+            <div className="text-center mb-4">
+              <h1 className="text-2xl font-mono font-bold text-white mb-1">KAPTN</h1>
+              <p className="text-xs font-mono text-white/60 uppercase tracking-wider">
                 Bridge System
               </p>
             </div>
 
             {/* Badge Image */}
-            <div className="flex justify-center mb-6">
-              <div className="relative" style={{ width: '160px', height: '160px' }}>
+            <div className="flex justify-center mb-4">
+              <div className="relative" style={{ width: '120px', height: '120px' }}>
                 <img
                   src="/kaptn-badge.svg"
                   alt="KAPTN Bridge Ensignia"
-                  width={160}
-                  height={160}
-                  className="w-[160px] h-[160px]"
-                  style={{ display: 'block', maxWidth: '160px', maxHeight: '160px' }}
+                  width={120}
+                  height={120}
+                  className="w-[120px] h-[120px]"
+                  style={{ display: 'block', maxWidth: '120px', maxHeight: '120px' }}
                 />
                 {/* Serial Number Overlay */}
                 <div
@@ -109,7 +109,7 @@ export default function BadgeDownloadPage() {
                   style={{ top: '65%', left: 0, right: 0 }}
                 >
                   <div className="flex justify-center">
-                    <div className="text-white font-mono font-light text-base tracking-wider">
+                    <div className="text-white font-mono font-light text-sm tracking-wider">
                       {userId.slice(-8)}
                     </div>
                   </div>
@@ -118,33 +118,33 @@ export default function BadgeDownloadPage() {
             </div>
 
             {/* Captain Info */}
-            <div className="text-center mb-6 space-y-2">
-              <h2 className="text-xl font-mono uppercase tracking-wider text-[#ffd700]">
+            <div className="text-center mb-4 space-y-1">
+              <h2 className="text-base font-mono uppercase tracking-wider text-[#ffd700]">
                 Bridge Ensignia
               </h2>
               {captainName && (
-                <p className="text-lg font-inter text-white/90">
+                <p className="text-sm font-inter text-white/90">
                   Captain <span className="underline">{captainName}</span>
                 </p>
               )}
-              <p className="text-sm font-mono text-white/40 tracking-widest">
+              <p className="text-xs font-mono text-white/40 tracking-widest">
                 SN: {userId.slice(-8).toUpperCase()}
               </p>
             </div>
 
             {/* QR Code */}
-            <div className="flex justify-center mb-6">
-              <div className="relative p-3 border-2 border-white/30 bg-black/40">
+            <div className="flex justify-center mb-4">
+              <div className="relative p-2 border border-white/30 bg-black/40">
                 {/* Corner Brackets */}
-                <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#ffd700]" />
-                <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#ffd700]" />
-                <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#ffd700]" />
-                <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#ffd700]" />
+                <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-[#ffd700]" />
+                <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-[#ffd700]" />
+                <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-[#ffd700]" />
+                <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-[#ffd700]" />
 
                 {/* QR Code */}
                 <QRCodeSVG
                   value={badgeUrl}
-                  size={120}
+                  size={90}
                   level="M"
                   fgColor="#ffffff"
                   bgColor="transparent"
