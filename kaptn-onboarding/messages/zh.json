@@ -144,8 +144,8 @@
         "line3": "您的模式会演变。",
         "line4": "舰桥会与您一起适应。",
         "line5": "重要的是：",
-        "line6": "您意识到自己的导航系统。",
-        "line7": "这种意识是您的第一个优势。"
+        "line6": "您意识到自己的决策系统。",
+        "line7": "这种认知是您的第一个优势。"
       }
     },
     "welcome": {
@@ -159,7 +159,7 @@
       "readyStatus": "状态：就绪",
       "button": "接掌指挥权",
       "ceremony": {
-        "captainOnBridge": "舰长到舰桥",
+        "captainOnBridge": "舰长进入舰桥",
         "youHaveConn": "您拥有指挥权。",
         "ensigniaIssuedTo": "舰桥徽章颁发给",
         "captain": "舰长",

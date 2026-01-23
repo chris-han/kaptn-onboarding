@@ -50,7 +50,6 @@ export default function Navigation() {
               src="/KAPTN-flag-dark.svg"
               alt="KAPTN.ai"
               className="h-6 sm:h-7 w-auto"
-              style={{ filter: 'brightness(0) invert(1)' }}
             />
           </motion.div>
 
