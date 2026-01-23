@@ -13,6 +13,7 @@ import Profile from "@/components/Profile";
 import Welcome from "@/components/Welcome";
 import BackgroundAudio from "@/components/BackgroundAudio";
 import StarField from "@/components/landing/StarField";
+import ProgressBar from "@/components/ProgressBar";
 
 // Utility function to shuffle an array
 function shuffleArray<T>(array: T[]): T[] {
@@ -146,6 +147,11 @@ export default function OnboardingPage() {
     <main className="min-h-screen relative">
       <StarField />
       <BackgroundAudio volume={0.25} />
+      <ProgressBar
+        phase={phase}
+        currentScenarioIndex={currentScenarioIndex}
+        totalScenarios={scenarios.length}
+      />
 
       {phase === "entrance" && <Entrance onBegin={handleBegin} />}
 
