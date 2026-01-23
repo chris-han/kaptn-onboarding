@@ -198,8 +198,9 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         labelX += 9; // 3px letter-spacing simulation
       }
 
-      // Generate and draw QR code
-      const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/signup?sn=${serialNumber.toUpperCase()}` : '';
+      // Generate and draw QR code - points to userinfo page with userId
+      const currentLocale = typeof window !== 'undefined' ? window.location.pathname.split('/')[1] : 'en';
+      const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/${currentLocale}/userinfo/${userId}` : '';
 
       // Create temp container for QR code
       const tempQRContainer = document.createElement('div');
@@ -522,9 +523,9 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                     <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-bridge-gold" />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-bridge-gold" />
 
-                    {/* QR Code - Encodes SN for signup */}
+                    {/* QR Code - Points to userinfo page */}
                     <QRCodeSVG
-                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}/signup?sn=${userId.slice(-8).toUpperCase()}`}
+                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}${typeof window !== 'undefined' ? '/' + window.location.pathname.split('/')[1] : '/en'}/userinfo/${userId}`}
                       size={120}
                       level="M"
                       fgColor="#ffffff"
