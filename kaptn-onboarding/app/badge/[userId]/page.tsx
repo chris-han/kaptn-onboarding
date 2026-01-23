@@ -26,44 +26,17 @@ export default function BadgeDownloadPage() {
     const badgeElement = document.getElementById('badge-card');
     if (badgeElement) {
       try {
-        // Find the SVG image and temporarily set explicit dimensions
-        const imgElement = badgeElement.querySelector('img[src="/kaptn-badge.svg"]') as HTMLImageElement;
-
-        // Store original style
-        const originalWidth = imgElement?.style.width;
-        const originalHeight = imgElement?.style.height;
-
-        // Force explicit pixel dimensions for html2canvas
-        if (imgElement) {
-          imgElement.style.width = '120px';
-          imgElement.style.height = '120px';
-          imgElement.width = 120;
-          imgElement.height = 120;
-        }
-
         // Wait a moment for fonts and images to fully load
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 100));
 
-        // Use html2canvas to convert the badge to PNG
+        // Use html2canvas to render the page as-is
         const canvas = await html2canvas(badgeElement, {
           backgroundColor: '#0a0e1a',
-          scale: 2, // Higher quality
+          scale: 2, // Higher quality (2x for retina displays)
           logging: false,
-          useCORS: true, // Enable CORS for images
+          useCORS: true,
           allowTaint: true,
-          imageTimeout: 0,
-          // Add some padding to ensure nothing is cut off
-          scrollX: 0,
-          scrollY: 0,
-          windowWidth: badgeElement.scrollWidth,
-          windowHeight: badgeElement.scrollHeight,
         });
-
-        // Restore original style
-        if (imgElement) {
-          imgElement.style.width = originalWidth || '';
-          imgElement.style.height = originalHeight || '';
-        }
 
         // Convert canvas to blob
         canvas.toBlob((blob) => {
