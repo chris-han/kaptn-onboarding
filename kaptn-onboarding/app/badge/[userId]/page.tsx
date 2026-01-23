@@ -2,12 +2,15 @@
 
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
+import html2canvas from 'html2canvas';
 import StarField from '@/components/landing/StarField';
 
 export default function BadgeDownloadPage() {
   const params = useParams();
   const userId = params.userId as string;
   const [captainName, setCaptainName] = useState<string>("");
+  const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
     // Try to get captain name from localStorage or session
@@ -17,21 +20,50 @@ export default function BadgeDownloadPage() {
     }
   }, []);
 
-  const handleDownload = () => {
-    // Trigger download of badge as image
+  const handleDownload = async () => {
+    setDownloading(true);
+
     const badgeElement = document.getElementById('badge-card');
     if (badgeElement) {
-      // Use html2canvas or similar library to convert to image
-      // For now, we'll use the browser's print functionality
-      window.print();
+      try {
+        // Use html2canvas to convert the badge to PNG
+        const canvas = await html2canvas(badgeElement, {
+          backgroundColor: '#0a0e1a',
+          scale: 2, // Higher quality
+          logging: false,
+        });
+
+        // Convert canvas to blob
+        canvas.toBlob((blob) => {
+          if (blob) {
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            const serialNumber = userId.slice(-8).toUpperCase();
+            link.download = `KAPTN-Badge-${serialNumber}.png`;
+            link.href = url;
+            link.click();
+            URL.revokeObjectURL(url);
+          }
+          setDownloading(false);
+        }, 'image/png');
+      } catch (error) {
+        console.error('Error generating badge image:', error);
+        setDownloading(false);
+        alert('Failed to download badge. Please try again.');
+      }
     }
   };
+
+  const badgeUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/badge/${userId}`
+    : '';
 
   return (
     <div className="min-h-screen bg-[#0a0e1a] relative">
       <StarField />
 
-      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 py-12">
         {/* Badge Card */}
         <div id="badge-card" className="w-full max-w-md">
           <div className="relative border-4 border-white bg-black/90 p-8">
@@ -42,19 +74,32 @@ export default function BadgeDownloadPage() {
             <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-[#ffd700]" />
 
             {/* Header */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-6">
               <h1 className="text-3xl font-mono font-bold text-white mb-2">KAPTN</h1>
               <p className="text-sm font-mono text-white/60 uppercase tracking-wider">
-                Enterprise Bridge Command
+                Bridge System
               </p>
             </div>
 
-            {/* Diamond Badge */}
+            {/* Badge Image */}
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <div className="w-32 h-32 border-4 border-[#ffd700] bg-black transform rotate-45 flex items-center justify-center">
-                  <div className="transform -rotate-45 text-center">
-                    <div className="text-4xl font-mono font-bold text-[#ffd700]">K</div>
+                <img
+                  src="/kaptn-badge.svg"
+                  alt="KAPTN Bridge Ensignia"
+                  width={160}
+                  height={160}
+                  className="w-[160px] h-[160px]"
+                />
+                {/* Serial Number Overlay */}
+                <div
+                  className="absolute w-full"
+                  style={{ top: '65%', left: 0, right: 0 }}
+                >
+                  <div className="flex justify-center">
+                    <div className="text-white font-mono font-light text-base tracking-wider">
+                      {userId.slice(-8)}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -71,24 +116,32 @@ export default function BadgeDownloadPage() {
                 </p>
               )}
               <p className="text-sm font-mono text-white/40 tracking-widest">
-                SN: {userId.toUpperCase()}
+                SN: {userId.slice(-8).toUpperCase()}
               </p>
             </div>
 
-            {/* User ID Display */}
-            <div className="border-t border-b border-white/20 py-4 mb-6">
-              <div className="text-center">
-                <p className="text-xs font-mono text-white/40 uppercase tracking-wider mb-2">
-                  User Identification
-                </p>
-                <div className="text-white font-mono font-light text-sm tracking-wider">
-                  {userId.slice(-8)}
-                </div>
+            {/* QR Code */}
+            <div className="flex justify-center mb-6">
+              <div className="relative p-3 border-2 border-white/30 bg-black/40">
+                {/* Corner Brackets */}
+                <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-[#ffd700]" />
+                <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-[#ffd700]" />
+                <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-[#ffd700]" />
+                <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-[#ffd700]" />
+
+                {/* QR Code */}
+                <QRCodeSVG
+                  value={badgeUrl}
+                  size={120}
+                  level="M"
+                  fgColor="#ffffff"
+                  bgColor="transparent"
+                />
               </div>
             </div>
 
             {/* Footer */}
-            <div className="text-center">
+            <div className="text-center border-t border-white/20 pt-4">
               <p className="text-xs font-mono text-white/30 uppercase tracking-wider">
                 Navigate the unknown with precision
               </p>
@@ -97,33 +150,29 @@ export default function BadgeDownloadPage() {
         </div>
 
         {/* Download Actions */}
-        <div className="mt-8 flex gap-4 print:hidden">
+        <div className="mt-8 flex flex-col sm:flex-row gap-4">
           <button
             onClick={handleDownload}
-            className="px-8 py-3 border-2 border-white bg-transparent text-white font-mono text-sm font-bold tracking-wider hover:bg-white hover:text-black transition-all"
+            disabled={downloading}
+            className="px-8 py-3 border-2 border-white bg-transparent text-white font-mono text-sm font-bold tracking-wider hover:bg-white hover:text-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            DOWNLOAD / PRINT
+            {downloading ? 'GENERATING...' : 'DOWNLOAD AS PNG'}
           </button>
           <a
             href="/landing"
-            className="px-8 py-3 border-2 border-white/30 bg-transparent text-white/70 font-mono text-sm font-bold tracking-wider hover:border-white hover:text-white transition-all"
+            className="px-8 py-3 border-2 border-white/30 bg-transparent text-white/70 font-mono text-sm font-bold tracking-wider hover:border-white hover:text-white transition-all text-center"
           >
             BACK TO LANDING
           </a>
         </div>
-      </div>
 
-      {/* Print Styles */}
-      <style jsx global>{`
-        @media print {
-          body {
-            background: white;
-          }
-          .print\\:hidden {
-            display: none !important;
-          }
-        }
-      `}</style>
+        {/* Instructions */}
+        <div className="mt-6 max-w-md text-center">
+          <p className="text-xs font-mono text-white/40 uppercase tracking-wider">
+            Your bridge ensignia • Scan QR code to access • Download to save
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
