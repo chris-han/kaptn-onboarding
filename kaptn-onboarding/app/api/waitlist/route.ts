@@ -61,24 +61,32 @@ export async function POST(request: NextRequest) {
     }
 
     try {
+      console.log('[Waitlist] Starting database operations...');
+
       // Find or create user
+      console.log('[Waitlist] Finding user with email:', email.toLowerCase());
       let user = await prisma.user.findUnique({
         where: { email: email.toLowerCase() },
       });
+      console.log('[Waitlist] User found:', !!user);
 
       if (!user) {
+        console.log('[Waitlist] Creating new user...');
         user = await prisma.user.create({
           data: {
             email: email.toLowerCase(),
             name,
           },
         });
+        console.log('[Waitlist] User created:', user.id);
       }
 
       // Check if waitlist entry already exists
+      console.log('[Waitlist] Checking for existing waitlist entry...');
       const existingEntry = await prisma.waitlistEntry.findUnique({
         where: { email: email.toLowerCase() },
       });
+      console.log('[Waitlist] Existing entry found:', !!existingEntry);
 
       if (existingEntry) {
         // User already on waitlist, return their userId for signup
@@ -90,6 +98,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create waitlist entry
+      console.log('[Waitlist] Creating waitlist entry...');
       await prisma.waitlistEntry.create({
         data: {
           userId: user.id,
@@ -99,6 +108,7 @@ export async function POST(request: NextRequest) {
           interests: interests || [],
         },
       });
+      console.log('[Waitlist] Waitlist entry created successfully');
 
       // Track this submission to prevent duplicates
       recentSubmissions.set(email.toLowerCase(), Date.now());
@@ -113,8 +123,13 @@ export async function POST(request: NextRequest) {
         error: dbError,
         errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
         errorStack: dbError instanceof Error ? dbError.stack : undefined,
+        errorName: dbError instanceof Error ? dbError.name : undefined,
         prismaAvailable: !!prisma,
         isDatabaseConfigured,
+        // @ts-ignore
+        errorCode: dbError?.code,
+        // @ts-ignore
+        errorMeta: dbError?.meta,
       });
       return NextResponse.json(
         {

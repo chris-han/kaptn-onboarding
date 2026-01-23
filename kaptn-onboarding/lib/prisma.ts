@@ -7,8 +7,8 @@ const globalForPrisma = globalThis as unknown as {
   prisma: any;
 };
 
-// Check if DATABASE_URL is configured (trim whitespace and remove escaped newlines)
-const databaseUrl = process.env.DATABASE_URL?.trim().replace(/\\n$/g, '');
+// Check if DATABASE_URL is configured (trim whitespace and remove all types of newlines)
+const databaseUrl = process.env.DATABASE_URL?.trim().replace(/\\n/g, '').replace(/\n/g, '');
 const isDatabaseConfigured = !!databaseUrl;
 const isAccelerateUrl = databaseUrl?.startsWith('prisma+postgres://');
 
