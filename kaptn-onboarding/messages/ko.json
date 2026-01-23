@@ -22,19 +22,19 @@
       "subtitle": "4개의 브리지 시스템. 하나의 사명.",
       "items": {
         "compass": {
-          "title": "COMPASS",
+          "title": "나침반",
           "description": "인텔리전스 및 의사결정 지원. 실시간 AI 어시스턴트, 연중무휴 비즈니스 인텔리전스, 의사결정 명확화 시스템."
         },
         "ledger": {
-          "title": "LEDGER",
+          "title": "원장",
           "description": "재무 운영. 전문 부기, 월간 조정, 재무 명확성 및 통찰력."
         },
         "shield": {
-          "title": "SHIELD",
+          "title": "방패",
           "description": "세무 규정 준수. 세무 준비 및 신고, 공제 최적화, 규정 준수 보호."
         },
         "sonar": {
-          "title": "SONAR",
+          "title": "소나",
           "description": "분석 및 인텔리전스. 비즈니스 데이터 분석, 현금 흐름 추적, 계약 검증."
         }
       }

@@ -22,19 +22,19 @@
       "subtitle": "四个舰桥系统。一个使命。",
       "items": {
         "compass": {
-          "title": "COMPASS",
+          "title": "罗盘",
           "description": "智能与决策支持。实时AI助手、全天候商业智能、决策清晰系统。"
         },
         "ledger": {
-          "title": "LEDGER",
+          "title": "账本",
           "description": "财务运营。专业记账、月度对账、财务清晰与洞察。"
         },
         "shield": {
-          "title": "SHIELD",
+          "title": "护盾",
           "description": "税务合规。税务准备与申报、扣除优化、合规保护。"
         },
         "sonar": {
-          "title": "SONAR",
+          "title": "声纳",
           "description": "分析与智能。商业数据分析、现金流跟踪、合同审查。"
         }
       }

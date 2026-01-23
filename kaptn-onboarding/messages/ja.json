@@ -22,19 +22,19 @@
       "subtitle": "4つのブリッジシステム。1つのミッション。",
       "items": {
         "compass": {
-          "title": "COMPASS",
+          "title": "コンパス",
           "description": "インテリジェンスと意思決定サポート。リアルタイムAIアシスタント、24時間365日のビジネスインテリジェンス、意思決定明確化システム。"
         },
         "ledger": {
-          "title": "LEDGER",
+          "title": "台帳",
           "description": "財務運営。専門的な簿記、月次調整、財務の明確性と洞察。"
         },
         "shield": {
-          "title": "SHIELD",
+          "title": "シールド",
           "description": "税務コンプライアンス。税務準備と申告、控除最適化、コンプライアンス保護。"
         },
         "sonar": {
-          "title": "SONAR",
+          "title": "ソナー",
           "description": "分析とインテリジェンス。ビジネスデータ分析、キャッシュフロー追跡、契約検証。"
         }
       }
