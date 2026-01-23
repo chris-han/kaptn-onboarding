@@ -26,8 +26,23 @@ export default function BadgeDownloadPage() {
     const badgeElement = document.getElementById('badge-card');
     if (badgeElement) {
       try {
+        // Find the SVG image and temporarily set explicit dimensions
+        const imgElement = badgeElement.querySelector('img[src="/kaptn-badge.svg"]') as HTMLImageElement;
+
+        // Store original style
+        const originalWidth = imgElement?.style.width;
+        const originalHeight = imgElement?.style.height;
+
+        // Force explicit pixel dimensions for html2canvas
+        if (imgElement) {
+          imgElement.style.width = '120px';
+          imgElement.style.height = '120px';
+          imgElement.width = 120;
+          imgElement.height = 120;
+        }
+
         // Wait a moment for fonts and images to fully load
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 200));
 
         // Use html2canvas to convert the badge to PNG
         const canvas = await html2canvas(badgeElement, {
@@ -43,6 +58,12 @@ export default function BadgeDownloadPage() {
           windowWidth: badgeElement.scrollWidth,
           windowHeight: badgeElement.scrollHeight,
         });
+
+        // Restore original style
+        if (imgElement) {
+          imgElement.style.width = originalWidth || '';
+          imgElement.style.height = originalHeight || '';
+        }
 
         // Convert canvas to blob
         canvas.toBlob((blob) => {
