@@ -189,6 +189,9 @@
         "ensigniaIssuedTo": "舰桥徽章颁发给",
         "captain": "舰长",
         "serialNumber": "序列号：",
+        "downloadBadge": "下载徽章",
+        "downloading": "下载中...",
+        "scanToSignup": "扫描创建账户",
         "scanToDownload": "扫描下载徽章",
         "replayCeremony": "重播仪式",
         "restart": "重新开始"

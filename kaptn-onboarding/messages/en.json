@@ -164,6 +164,9 @@
         "ensigniaIssuedTo": "Bridge Ensignia Issued To",
         "captain": "Captain",
         "serialNumber": "SN:",
+        "downloadBadge": "DOWNLOAD BADGE",
+        "downloading": "DOWNLOADING...",
+        "scanToSignup": "SCAN TO CREATE ACCOUNT",
         "scanToDownload": "SCAN TO DOWNLOAD ENSIGNIA",
         "replayCeremony": "Replay Ceremony",
         "restart": "Restart"

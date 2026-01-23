@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useTranslations } from "next-intl";
+import html2canvas from "html2canvas";
 
 interface WelcomeProps {
   onAssumeCommand: () => void;
@@ -15,6 +16,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
   const [assumingCommand, setAssumingCommand] = useState(false);
   const [commandPhase, setCommandPhase] = useState<"bell" | "bridge" | "conn" | "badge" | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
+  const [downloading, setDownloading] = useState(false);
 
   // Bell sound effect using Web Audio API
   const playBellSound = () => {
@@ -75,6 +77,79 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         .catch(error => console.error('Error fetching user ID:', error));
     }
   }, [commandPhase, userId, captainName]);
+
+  const handleDownloadBadge = async () => {
+    setDownloading(true);
+
+    // Create a temporary container for the badge
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.left = '-9999px';
+    container.style.top = '-9999px';
+    container.style.width = '340px';
+    container.style.backgroundColor = '#0a0e1a';
+    container.style.padding = '20px';
+    document.body.appendChild(container);
+
+    // Create badge HTML
+    const serialNumber = userId?.slice(-8) || 'TEMP0000';
+    container.innerHTML = `
+      <div style="position: relative; border: 2px solid white; background: rgba(0,0,0,0.9); padding: 20px;">
+        <div style="position: absolute; top: 0; left: 0; width: 24px; height: 24px; border-top: 2px solid #ffd700; border-left: 2px solid #ffd700;"></div>
+        <div style="position: absolute; top: 0; right: 0; width: 24px; height: 24px; border-top: 2px solid #ffd700; border-right: 2px solid #ffd700;"></div>
+        <div style="position: absolute; bottom: 0; left: 0; width: 24px; height: 24px; border-bottom: 2px solid #ffd700; border-left: 2px solid #ffd700;"></div>
+        <div style="position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-bottom: 2px solid #ffd700; border-right: 2px solid #ffd700;"></div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <h1 style="font-size: 32px; font-family: monospace; font-weight: bold; color: white; margin-bottom: 4px;">KAPTN</h1>
+          <p style="font-size: 12px; font-family: monospace; color: rgba(255,255,255,0.6); text-transform: uppercase;">Bridge System</p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <img src="/kaptn-badge.svg" width="120" height="120" style="display: inline-block;" />
+        </div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <h2 style="font-size: 16px; font-family: monospace; text-transform: uppercase; color: #ffd700; margin-bottom: 4px;">Bridge Ensignia</h2>
+          ${captainName ? `<p style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 4px;">Captain <span style="text-decoration: underline;">${captainName}</span></p>` : ''}
+          <p style="font-size: 12px; font-family: monospace; color: rgba(255,255,255,0.4);">SN: ${serialNumber.toUpperCase()}</p>
+        </div>
+
+        <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 16px; text-align: center;">
+          <p style="font-size: 10px; font-family: monospace; color: rgba(255,255,255,0.3); text-transform: uppercase;">Navigate the unknown with precision</p>
+        </div>
+      </div>
+    `;
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      const canvas = await html2canvas(container, {
+        backgroundColor: '#0a0e1a',
+        scale: 2,
+        logging: false,
+        useCORS: true,
+        allowTaint: true,
+      });
+
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `KAPTN-Badge-${serialNumber.toUpperCase()}.png`;
+          link.href = url;
+          link.click();
+          URL.revokeObjectURL(url);
+        }
+        document.body.removeChild(container);
+        setDownloading(false);
+      }, 'image/png');
+    } catch (error) {
+      console.error('Error generating badge:', error);
+      document.body.removeChild(container);
+      setDownloading(false);
+    }
+  };
 
   const handleAssumeCommand = () => {
     setAssumingCommand(true);
@@ -241,12 +316,30 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                 )}
               </motion.div>
 
-              {/* Mil-Spec Barcode */}
+              {/* Download Badge Button */}
               {userId && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.5, duration: 0.6 }}
+                  className="mt-6 flex flex-col items-center"
+                >
+                  <button
+                    onClick={handleDownloadBadge}
+                    disabled={downloading}
+                    className="bridge-button"
+                  >
+                    {downloading ? t("ceremony.downloading") || "DOWNLOADING..." : t("ceremony.downloadBadge") || "DOWNLOAD BADGE"}
+                  </button>
+                </motion.div>
+              )}
+
+              {/* Mil-Spec Barcode for Signup */}
+              {userId && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 1.7, duration: 0.6 }}
                   className="mt-6 flex flex-col items-center"
                 >
                   {/* Barcode Container with Mil-Spec Border */}
@@ -257,9 +350,9 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                     <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-bridge-gold" />
                     <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-bridge-gold" />
 
-                    {/* QR Code */}
+                    {/* QR Code - Encodes SN for signup */}
                     <QRCodeSVG
-                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}/badge/${userId}`}
+                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}/signup?sn=${userId.slice(-8).toUpperCase()}`}
                       size={120}
                       level="M"
                       fgColor="#ffffff"
@@ -269,7 +362,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
 
                   {/* Scan Instructions */}
                   <p className="text-xs font-mono text-white/30 uppercase tracking-wider mt-2">
-                    {t("ceremony.scanToDownload")}
+                    {t("ceremony.scanToSignup") || "Scan to create account"}
                   </p>
                 </motion.div>
               )}
@@ -277,7 +370,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.8, duration: 0.6 }}
+                transition={{ delay: 2.0, duration: 0.6 }}
                 className="flex gap-3 justify-center mt-4"
               >
                 <button
