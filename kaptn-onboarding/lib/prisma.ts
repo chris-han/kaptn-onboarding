@@ -20,7 +20,7 @@ if (isDatabaseConfigured) {
       // Use Prisma Accelerate for production (serverless)
       // Prisma v7 requires datasourceUrl for Accelerate
       const baseClient = new PrismaClient({
-        datasourceUrl: process.env.DATABASE_URL,
+        datasourceUrl: process.env.DATABASE_URL!, // Safe: checked by isDatabaseConfigured
         log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
       });
       prisma = baseClient.$extends(withAccelerate()) as any;
