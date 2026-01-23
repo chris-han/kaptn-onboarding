@@ -50,6 +50,12 @@
       "subtitle": "开始您的校准序列",
       "button": "进入舰桥",
       "note": "协议需要3-5分钟"
+    },
+    "quote": {
+      "line1": "是未知定义了我们的存在。",
+      "line2": "我们不断探索，不仅仅是为了问题的答案，",
+      "line3": "而是为了新的问题。",
+      "author": "— 舰长本杰明·西斯科"
     }
   },
   "onboarding": {
@@ -90,23 +96,42 @@
     "waitlist": {
       "title": "舰长，请说明您的身份。",
       "subtitle": "您的凭证将记录在飞船名册中。",
+      "header": {
+        "title": "KAPTN企业舰桥",
+        "subtitle": "预启动访问",
+        "description": "四个舰桥系统。一个使命。随时随地导航您的事业。"
+      },
+      "systems": {
+        "compass": {
+          "name": "罗盘",
+          "description": "实时决策支持。全天候任务情报。您的业务，转化为可执行的清晰度。"
+        },
+        "ledger": {
+          "name": "账本",
+          "description": "财务状态：可见。月度对账：自动化。增长向量：已识别。"
+        },
+        "shield": {
+          "name": "护盾",
+          "description": "税务风险：最小化。合规状态：受保护。扣除优化：激活。"
+        },
+        "sonar": {
+          "name": "声纳",
+          "description": "数据：统一。模式：已检测。现金流：已跟踪。决策信心：最大化。"
+        }
+      },
       "form": {
+        "title": "请求舰桥访问",
         "name": "舰长姓名",
         "namePlaceholder": "您的姓名",
         "email": "传输ID",
         "emailPlaceholder": "your@email.com",
         "company": "舰船名称",
         "companyPlaceholder": "您的公司（选填）",
-        "interests": "系统兴趣",
         "submit": "传输凭证",
-        "skip": "匿名继续"
+        "skip": "匿名继续",
+        "launchNote": "系统于2026年第二季度启动。预启动注册者享有早期访问优先权。"
       },
-      "interests": {
-        "compass": "Compass - AI与决策支持",
-        "ledger": "Ledger - 财务运营",
-        "shield": "Shield - 税务合规",
-        "sonar": "Sonar - 分析与智能"
-      }
+      "quote": "未知在等待。"
     },
     "processing": {
       "analyzing": "分析决策模式",

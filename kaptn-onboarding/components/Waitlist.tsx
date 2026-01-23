@@ -100,14 +100,14 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           className="text-center space-y-2"
         >
           <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
-            KAPTN Enterprise Bridge
+            {t("header.title")}
           </h2>
           <p className="text-base sm:text-lg bridge-text">
-            Pre-Launch Access
+            {t("header.subtitle")}
           </p>
           <div className="h-px w-32 bg-bridge-white/30 mx-auto" />
           <p className="bridge-text text-xs sm:text-sm text-bridge-white/70 max-w-2xl mx-auto">
-            Four bridge systems. One mission. Navigate your venture from anywhere.
+            {t("header.description")}
           </p>
         </motion.div>
 
@@ -136,10 +136,10 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <h3 className="text-base sm:text-lg font-mono font-bold">
-                      {service.name}
+                      {t(`systems.${service.id}.name`)}
                     </h3>
                     <div
-                      className={`w-5 h-5 border-2 flex items-center justify-center ${
+                      className={`w-5 h-5 border-2 flex items-center justify-between ${
                         isSelected
                           ? "border-bridge-blue bg-bridge-blue"
                           : "border-bridge-white/50"
@@ -154,7 +154,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                     {service.protocols.join(" • ")} Protocol
                   </p>
                   <p className="text-sm text-bridge-white/70 leading-relaxed">
-                    {service.description}
+                    {t(`systems.${service.id}.description`)}
                   </p>
                 </div>
               </motion.button>
@@ -171,7 +171,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6 space-y-4 max-w-2xl mx-auto"
         >
           <h3 className="font-mono text-base sm:text-lg uppercase text-center">
-            Request Bridge Access
+            {t("form.title")}
           </h3>
 
           <div className="space-y-3">
@@ -248,7 +248,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           </div>
 
           <p className="text-xs text-center text-bridge-white/50 bridge-text">
-            Systems launch Q2 2026. Early access priority given to pre-launch registrants.
+            {t("form.launchNote")}
           </p>
         </motion.form>
 
@@ -258,7 +258,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           transition={{ delay: 1 }}
           className="text-center text-xs text-bridge-white/40 bridge-text"
         >
-          "The unknown awaits."
+          "{t("quote")}"
         </motion.div>
       </motion.div>
     </div>

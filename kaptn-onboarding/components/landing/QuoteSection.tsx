@@ -1,8 +1,11 @@
 "use client";
 
 import { motion } from 'framer-motion';
+import { useTranslations } from 'next-intl';
 
 export default function QuoteSection() {
+  const t = useTranslations('landing.quote');
+
   return (
     <section className="relative py-16 sm:py-24 px-4 sm:px-6 lg:px-8">
       <div className="relative z-10 max-w-4xl mx-auto text-center">
@@ -20,7 +23,7 @@ export default function QuoteSection() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-2xl sm:text-3xl md:text-4xl text-white leading-relaxed font-mono"
           >
-            It is the unknown that defines our existence.
+            {t('line1')}
           </motion.p>
 
           <motion.p
@@ -30,9 +33,9 @@ export default function QuoteSection() {
             transition={{ delay: 0.4, duration: 0.8 }}
             className="text-2xl sm:text-3xl md:text-4xl text-white leading-relaxed font-mono"
           >
-            We are constantly searching, not just for answers to our questions,
+            {t('line2')}
             <br />
-            but for new questions.
+            {t('line3')}
           </motion.p>
 
           <motion.p
@@ -42,7 +45,7 @@ export default function QuoteSection() {
             transition={{ delay: 0.6, duration: 0.8 }}
             className="text-base sm:text-lg text-gray-400 italic font-mono pt-4"
           >
-            — Captain Benjamin Sisko
+            {t('author')}
           </motion.p>
         </motion.div>
       </div>

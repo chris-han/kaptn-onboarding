@@ -50,6 +50,52 @@
       "subtitle": "보정 시퀀스 시작",
       "button": "브리지 진입",
       "note": "프로토콜은 3-5분이 소요됩니다"
+    },
+    "quote": {
+      "line1": "미지의 것이 우리의 존재를 정의합니다.",
+      "line2": "우리는 끊임없이 탐구합니다. 단지 우리 질문에 대한 답을 찾기 위해서가 아니라,",
+      "line3": "새로운 질문을 찾기 위해서입니다.",
+      "author": "— 캡틴 벤자민 시스코"
+    }
+  },
+  "onboarding": {
+    "waitlist": {
+      "header": {
+        "title": "KAPTN 엔터프라이즈 브리지",
+        "subtitle": "사전 출시 액세스",
+        "description": "4개의 브리지 시스템. 하나의 사명. 어디서나 벤처를 탐색하세요."
+      },
+      "systems": {
+        "compass": {
+          "name": "나침반",
+          "description": "실시간 의사결정 지원. 연중무휴 미션 인텔리전스. 귀하의 비즈니스를 실행 가능한 명확성으로 변환합니다."
+        },
+        "ledger": {
+          "name": "원장",
+          "description": "재무 상태: 가시화. 월간 조정: 자동화. 성장 벡터: 식별됨."
+        },
+        "shield": {
+          "name": "방패",
+          "description": "세무 위험: 최소화. 규정 준수 상태: 보호됨. 공제 최적화: 활성화."
+        },
+        "sonar": {
+          "name": "소나",
+          "description": "데이터: 통합됨. 패턴: 감지됨. 현금 흐름: 추적됨. 의사결정 신뢰도: 최대화."
+        }
+      },
+      "form": {
+        "title": "브리지 액세스 요청",
+        "name": "함장 이름",
+        "namePlaceholder": "귀하의 이름",
+        "email": "전송 ID",
+        "emailPlaceholder": "your@email.com",
+        "company": "함선 이름",
+        "companyPlaceholder": "귀하의 회사 (선택사항)",
+        "submit": "자격 증명 전송",
+        "skip": "익명으로 계속",
+        "launchNote": "시스템은 2026년 2분기에 출시됩니다. 사전 출시 등록자에게 조기 액세스 우선권이 부여됩니다."
+      },
+      "quote": "미지의 것이 기다립니다."
     }
   }
 }
