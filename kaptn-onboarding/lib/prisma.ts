@@ -5,15 +5,15 @@ import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | null;
+  prisma: any;
 };
 
-// Check if DATABASE_URL is configured (trim whitespace)
-const databaseUrl = process.env.DATABASE_URL?.trim();
+// Check if DATABASE_URL is configured (trim whitespace and remove escaped newlines)
+const databaseUrl = process.env.DATABASE_URL?.trim().replace(/\\n$/g, '');
 const isDatabaseConfigured = !!databaseUrl;
 const isAccelerateUrl = databaseUrl?.startsWith('prisma+postgres://');
 
-let prisma: PrismaClient | null = null;
+let prisma: any = null;
 
 if (isDatabaseConfigured) {
   try {
@@ -26,10 +26,11 @@ if (isDatabaseConfigured) {
     if (isAccelerateUrl) {
       // Use Prisma Accelerate for production (serverless)
       // Prisma v7: Use accelerateUrl parameter WITH $extends(withAccelerate())
-      prisma = new PrismaClient({
+      const baseClient = new PrismaClient({
         accelerateUrl: databaseUrl,
         log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      }).$extends(withAccelerate()) as any;
+      });
+      prisma = baseClient.$extends(withAccelerate());
       console.log('[Prisma] Accelerate client initialized');
     } else {
       // Use binary engine for local development
