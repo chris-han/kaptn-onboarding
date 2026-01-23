@@ -1,7 +1,8 @@
 // Prisma Client Singleton
 // Prevents multiple instances in development hot-reload
-// Using binary engine for traditional PostgreSQL connections
+// Supports both Prisma Accelerate (production) and binary engine (local)
 import { PrismaClient } from '@prisma/client';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | null;
@@ -9,18 +10,27 @@ const globalForPrisma = globalThis as unknown as {
 
 // Check if DATABASE_URL is configured
 const isDatabaseConfigured = !!process.env.DATABASE_URL;
+const isAccelerateUrl = process.env.DATABASE_URL?.startsWith('prisma+postgres://');
 
 let prisma: PrismaClient | null = null;
 
 if (isDatabaseConfigured) {
   try {
-    // Create Prisma client with binary engine (Prisma 7+)
-    prisma = globalForPrisma.prisma ?? new PrismaClient({
-      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-    });
+    if (isAccelerateUrl) {
+      // Use Prisma Accelerate for production (serverless)
+      const baseClient = new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+      });
+      prisma = baseClient.$extends(withAccelerate()) as any;
+    } else {
+      // Use binary engine for local development
+      prisma = globalForPrisma.prisma ?? new PrismaClient({
+        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+      });
 
-    if (process.env.NODE_ENV !== 'production') {
-      globalForPrisma.prisma = prisma;
+      if (process.env.NODE_ENV !== 'production') {
+        globalForPrisma.prisma = prisma;
+      }
     }
   } catch (error) {
     console.warn('Database connection failed, continuing without database:', error);
