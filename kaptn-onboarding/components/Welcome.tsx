@@ -91,23 +91,23 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         throw new Error('Could not get canvas context');
       }
 
-      // Set canvas size (340px width + 40px padding = 380px, height calculated)
+      // Set canvas size (340px width, increased height for QR code)
       canvas.width = 680; // 2x for retina
-      canvas.height = 940; // 2x for retina
+      canvas.height = 1000; // 2x for retina (increased for QR code)
       ctx.scale(2, 2);
 
       // Background
       ctx.fillStyle = '#0a0e1a';
-      ctx.fillRect(0, 0, 340, 470);
+      ctx.fillRect(0, 0, 340, 500);
 
       // Badge card background
       ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
-      ctx.fillRect(20, 20, 300, 430);
+      ctx.fillRect(20, 20, 300, 460);
 
       // Border
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 2;
-      ctx.strokeRect(20, 20, 300, 430);
+      ctx.strokeRect(20, 20, 300, 460);
 
       // Corner accents
       ctx.strokeStyle = '#ffd700';
@@ -126,15 +126,15 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
       ctx.stroke();
       // Bottom-left
       ctx.beginPath();
-      ctx.moveTo(20, 426);
-      ctx.lineTo(20, 450);
-      ctx.lineTo(44, 450);
+      ctx.moveTo(20, 456);
+      ctx.lineTo(20, 480);
+      ctx.lineTo(44, 480);
       ctx.stroke();
       // Bottom-right
       ctx.beginPath();
-      ctx.moveTo(296, 450);
-      ctx.lineTo(320, 450);
-      ctx.lineTo(320, 426);
+      ctx.moveTo(296, 480);
+      ctx.lineTo(320, 480);
+      ctx.lineTo(320, 456);
       ctx.stroke();
 
       // Title "KAPTN"
@@ -162,10 +162,15 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         img.src = '/kaptn-badge.svg';
       });
 
-      // Serial number on badge
+      // Serial number on badge (simulating letter-spacing with manual character placement)
       ctx.fillStyle = '#ffffff';
-      ctx.font = '14px monospace';
-      ctx.fillText(serialNumber, 170, 205);
+      ctx.font = '300 14px monospace';
+      const snChars = serialNumber.toLowerCase().split('');
+      let snX = 170 - (snChars.length * 5.5); // Center the text
+      for (const char of snChars) {
+        ctx.fillText(char, snX, 205);
+        snX += 11; // 2px letter-spacing simulation
+      }
 
       // "Bridge Ensignia"
       ctx.fillStyle = '#ffd700';
@@ -179,23 +184,123 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
         ctx.fillText(`Captain ${captainName}`, 170, 275);
       }
 
-      // Serial number
+      // Serial number label (simulating letter-spacing)
       ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
       ctx.font = '12px monospace';
-      ctx.fillText(`SN: ${serialNumber.toUpperCase()}`, 170, captainName ? 295 : 275);
+      const snLabel = `SN: ${serialNumber.toUpperCase()}`;
+      const labelChars = snLabel.split('');
+      let labelX = 170 - (labelChars.length * 4.5);
+      for (const char of labelChars) {
+        ctx.fillText(char, labelX, captainName ? 295 : 275);
+        labelX += 9; // 3px letter-spacing simulation
+      }
 
-      // Footer separator
+      // Generate and draw QR code
+      const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/signup?sn=${serialNumber.toUpperCase()}` : '';
+
+      // Create temp container for QR code
+      const tempQRContainer = document.createElement('div');
+      tempQRContainer.style.position = 'absolute';
+      tempQRContainer.style.left = '-9999px';
+      document.body.appendChild(tempQRContainer);
+
+      // Render QR code using React
+      const { createRoot } = await import('react-dom/client');
+      const root = createRoot(tempQRContainer);
+
+      await new Promise<void>((resolve) => {
+        root.render(
+          <QRCodeSVG
+            value={qrUrl}
+            size={90}
+            level="M"
+            fgColor="#ffffff"
+            bgColor="transparent"
+          />
+        );
+        // Wait for render
+        setTimeout(() => resolve(), 100);
+      });
+
+      // Get the rendered SVG and convert to image
+      const qrSVG = tempQRContainer.querySelector('svg');
+      if (qrSVG) {
+        const serializer = new XMLSerializer();
+        const svgString = serializer.serializeToString(qrSVG);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+        const qrURL = URL.createObjectURL(svgBlob);
+
+        const qrImage = new Image();
+        await new Promise<void>((resolve, reject) => {
+          qrImage.onload = () => {
+            // QR code position and styling
+            const qrX = 125;
+            const qrY = captainName ? 310 : 290;
+            const qrSize = 90;
+
+            // Draw background and border for QR code
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.fillRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4);
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(qrX - 2, qrY - 2, qrSize + 4, qrSize + 4);
+
+            // Corner brackets (gold)
+            ctx.strokeStyle = '#ffd700';
+            ctx.lineWidth = 1;
+            // Top-left
+            ctx.beginPath();
+            ctx.moveTo(qrX - 2, qrY + 6);
+            ctx.lineTo(qrX - 2, qrY - 2);
+            ctx.lineTo(qrX + 6, qrY - 2);
+            ctx.stroke();
+            // Top-right
+            ctx.beginPath();
+            ctx.moveTo(qrX + qrSize - 4, qrY - 2);
+            ctx.lineTo(qrX + qrSize + 2, qrY - 2);
+            ctx.lineTo(qrX + qrSize + 2, qrY + 6);
+            ctx.stroke();
+            // Bottom-left
+            ctx.beginPath();
+            ctx.moveTo(qrX - 2, qrY + qrSize - 4);
+            ctx.lineTo(qrX - 2, qrY + qrSize + 2);
+            ctx.lineTo(qrX + 6, qrY + qrSize + 2);
+            ctx.stroke();
+            // Bottom-right
+            ctx.beginPath();
+            ctx.moveTo(qrX + qrSize - 4, qrY + qrSize + 2);
+            ctx.lineTo(qrX + qrSize + 2, qrY + qrSize + 2);
+            ctx.lineTo(qrX + qrSize + 2, qrY + qrSize - 4);
+            ctx.stroke();
+
+            // Draw QR code
+            ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+
+            URL.revokeObjectURL(qrURL);
+            resolve();
+          };
+          qrImage.onerror = reject;
+          qrImage.src = qrURL;
+        });
+      }
+
+      // Cleanup
+      root.unmount();
+      document.body.removeChild(tempQRContainer);
+
+      // Update footer position to accommodate QR code
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(40, captainName ? 315 : 295);
-      ctx.lineTo(300, captainName ? 315 : 295);
+      ctx.moveTo(40, captainName ? 420 : 400);
+      ctx.lineTo(300, captainName ? 420 : 400);
       ctx.stroke();
 
       // Footer text
       ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
       ctx.font = '10px monospace';
-      ctx.fillText('NAVIGATE THE UNKNOWN WITH PRECISION', 170, captainName ? 340 : 320);
+      ctx.fillText('NAVIGATE THE UNKNOWN WITH PRECISION', 170, captainName ? 445 : 425);
 
       // Convert to blob and download
       canvas.toBlob((blob) => {
