@@ -109,7 +109,13 @@ export async function POST(request: NextRequest) {
         message: "Registration received. Proceeding to account creation.",
       });
     } catch (dbError) {
-      console.error('Database operation failed:', dbError);
+      console.error('[Waitlist] Database operation failed:', {
+        error: dbError,
+        errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
+        errorStack: dbError instanceof Error ? dbError.stack : undefined,
+        prismaAvailable: !!prisma,
+        isDatabaseConfigured,
+      });
       return NextResponse.json(
         {
           success: false,
