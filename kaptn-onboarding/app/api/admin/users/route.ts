@@ -122,8 +122,8 @@ export async function POST(request: Request) {
     // Calculate journey metrics
     const journeyMetrics = {
       totalEvents: user.journeyEvents.length,
-      phasesCompleted: user.journeyEvents.filter(e => e.eventType === 'PHASE_COMPLETE').length,
-      totalDuration: user.journeyEvents.reduce((sum, e) => sum + (e.duration || 0), 0),
+      phasesCompleted: user.journeyEvents.filter((e: any) => e.eventType === 'PHASE_COMPLETE').length,
+      totalDuration: user.journeyEvents.reduce((sum: number, e: any) => sum + (e.duration || 0), 0),
       startedAt: user.journeyEvents[0]?.timestamp,
       completedAt: user.profile?.completedAt,
     };

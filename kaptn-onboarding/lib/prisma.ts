@@ -1,39 +1,29 @@
-// Prisma Client Singleton
+// Prisma Client Singleton with Prisma Accelerate
 // Prevents multiple instances in development hot-reload
 import { PrismaClient } from '@prisma/client';
-import { Pool } from 'pg';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { withAccelerate } from '@prisma/extension-accelerate';
 
 const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-  pool: Pool | undefined;
+  prisma: PrismaClient | null;
 };
 
-// Check if DATABASE_URL is configured
+// Check if DATABASE_URL is configured (should use Prisma Accelerate URL)
 const isDatabaseConfigured = !!process.env.DATABASE_URL;
 
-let prisma: PrismaClient | null = null;
-let pool: Pool | undefined = undefined;
+let prisma: any = null;
 
 if (isDatabaseConfigured) {
   try {
-    // Create connection pool
-    pool = globalForPrisma.pool ?? new Pool({
-      connectionString: process.env.DATABASE_URL,
-    });
-
-    // Create Prisma adapter
-    const adapter = new PrismaPg(pool);
-
-    // Create Prisma client with adapter
-    prisma = globalForPrisma.prisma ?? new PrismaClient({
-      adapter,
+    // Create Prisma client (Accelerate URL detected from DATABASE_URL env var)
+    const baseClient = globalForPrisma.prisma ?? new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     });
 
+    // Extend with Accelerate for connection pooling and caching
+    prisma = baseClient.$extends(withAccelerate());
+
     if (process.env.NODE_ENV !== 'production') {
-      globalForPrisma.prisma = prisma;
-      globalForPrisma.pool = pool;
+      globalForPrisma.prisma = baseClient;
     }
   } catch (error) {
     console.warn('Database connection failed, continuing without database:', error);

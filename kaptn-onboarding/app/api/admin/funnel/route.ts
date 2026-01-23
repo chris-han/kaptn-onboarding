@@ -96,7 +96,7 @@ export async function GET(request: Request) {
         { name: 'Profile Created', count: profilesCount, rate: waitlistToProfile },
         { name: 'Badge Issued', count: badgesCount, rate: overallConversion },
       ],
-      phaseBreakdown: funnelData.reduce((acc, item) => {
+      phaseBreakdown: funnelData.reduce((acc: Record<string, number>, item: any) => {
         acc[item.phase] = item._count.id;
         return acc;
       }, {} as Record<string, number>),

@@ -80,7 +80,7 @@ export async function GET(request: Request) {
         total,
         totalPages: Math.ceil(total / limit),
       },
-      stats: stats.reduce((acc, item) => {
+      stats: stats.reduce((acc: Record<string, number>, item: any) => {
         acc[item.status] = item._count.id;
         return acc;
       }, {} as Record<string, number>),

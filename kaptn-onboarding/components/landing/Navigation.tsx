@@ -47,7 +47,7 @@ export default function Navigation() {
             className="flex items-center gap-3"
           >
             <img
-              src="/KAPTN-gold.svg"
+              src="/KAPTN-flag-dark.svg"
               alt="KAPTN.ai"
               className="h-6 sm:h-7 w-auto"
               style={{ filter: 'brightness(0) invert(1)' }}

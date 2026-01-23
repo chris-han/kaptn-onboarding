@@ -42,9 +42,9 @@ export async function GET(request: Request) {
     }
 
     // Get aggregate metrics
-    const totalEntrance = dailyStats.reduce((sum, s) => sum + s.entranceCount, 0);
-    const totalWaitlist = dailyStats.reduce((sum, s) => sum + s.waitlistJoined, 0);
-    const totalBadges = dailyStats.reduce((sum, s) => sum + s.badgesIssued, 0);
+    const totalEntrance = dailyStats.reduce((sum: number, s: any) => sum + s.entranceCount, 0);
+    const totalWaitlist = dailyStats.reduce((sum: number, s: any) => sum + s.waitlistJoined, 0);
+    const totalBadges = dailyStats.reduce((sum: number, s: any) => sum + s.badgesIssued, 0);
 
     const avgEntranceToWaitlist = totalEntrance > 0
       ? ((totalWaitlist / totalEntrance) * 100).toFixed(2)
@@ -93,7 +93,7 @@ async function calculateStats(start: Date, end: Date) {
   });
 
   // Group by date
-  const statsByDate = events.reduce((acc, event) => {
+  const statsByDate = events.reduce((acc: any, event: any) => {
     const dateKey = event.timestamp.toISOString().split('T')[0];
     if (!acc[dateKey]) {
       acc[dateKey] = {
