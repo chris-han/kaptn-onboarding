@@ -8,6 +8,13 @@ export async function GET(
   try {
     const { userId } = params;
 
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      );
+    }
+
     // Fetch user with all relations
     const user = await prisma.user.findUnique({
       where: { id: userId },
