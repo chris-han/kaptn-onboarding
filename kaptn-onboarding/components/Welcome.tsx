@@ -81,57 +81,123 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
   const handleDownloadBadge = async () => {
     setDownloading(true);
 
-    // Create a temporary container for the badge
-    const container = document.createElement('div');
-    container.style.position = 'fixed';
-    container.style.left = '-9999px';
-    container.style.top = '-9999px';
-    container.style.width = '340px';
-    container.style.backgroundColor = '#0a0e1a';
-    container.style.padding = '20px';
-    document.body.appendChild(container);
-
-    // Create badge HTML
-    const serialNumber = userId?.slice(-8) || 'TEMP0000';
-    container.innerHTML = `
-      <div style="position: relative; border: 2px solid white; background: rgba(0,0,0,0.9); padding: 20px;">
-        <div style="position: absolute; top: 0; left: 0; width: 24px; height: 24px; border-top: 2px solid #ffd700; border-left: 2px solid #ffd700;"></div>
-        <div style="position: absolute; top: 0; right: 0; width: 24px; height: 24px; border-top: 2px solid #ffd700; border-right: 2px solid #ffd700;"></div>
-        <div style="position: absolute; bottom: 0; left: 0; width: 24px; height: 24px; border-bottom: 2px solid #ffd700; border-left: 2px solid #ffd700;"></div>
-        <div style="position: absolute; bottom: 0; right: 0; width: 24px; height: 24px; border-bottom: 2px solid #ffd700; border-right: 2px solid #ffd700;"></div>
-
-        <div style="text-align: center; margin-bottom: 16px;">
-          <h1 style="font-size: 32px; font-family: monospace; font-weight: bold; color: white; margin-bottom: 4px;">KAPTN</h1>
-          <p style="font-size: 12px; font-family: monospace; color: rgba(255,255,255,0.6); text-transform: uppercase;">Bridge System</p>
-        </div>
-
-        <div style="text-align: center; margin-bottom: 16px;">
-          <img src="/kaptn-badge.svg" width="120" height="120" style="display: inline-block;" />
-        </div>
-
-        <div style="text-align: center; margin-bottom: 16px;">
-          <h2 style="font-size: 16px; font-family: monospace; text-transform: uppercase; color: #ffd700; margin-bottom: 4px;">Bridge Ensignia</h2>
-          ${captainName ? `<p style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 4px;">Captain <span style="text-decoration: underline;">${captainName}</span></p>` : ''}
-          <p style="font-size: 12px; font-family: monospace; color: rgba(255,255,255,0.4);">SN: ${serialNumber.toUpperCase()}</p>
-        </div>
-
-        <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 16px; text-align: center;">
-          <p style="font-size: 10px; font-family: monospace; color: rgba(255,255,255,0.3); text-transform: uppercase;">Navigate the unknown with precision</p>
-        </div>
-      </div>
-    `;
-
     try {
-      await new Promise(resolve => setTimeout(resolve, 200));
+      const serialNumber = userId?.slice(-8) || 'TEMP0000';
 
-      const canvas = await html2canvas(container, {
-        backgroundColor: '#0a0e1a',
-        scale: 2,
-        logging: false,
-        useCORS: true,
-        allowTaint: true,
+      // Create canvas directly
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        throw new Error('Could not get canvas context');
+      }
+
+      // Set canvas size (340px width + 40px padding = 380px, height calculated)
+      canvas.width = 680; // 2x for retina
+      canvas.height = 940; // 2x for retina
+      ctx.scale(2, 2);
+
+      // Background
+      ctx.fillStyle = '#0a0e1a';
+      ctx.fillRect(0, 0, 340, 470);
+
+      // Badge card background
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+      ctx.fillRect(20, 20, 300, 430);
+
+      // Border
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(20, 20, 300, 430);
+
+      // Corner accents
+      ctx.strokeStyle = '#ffd700';
+      ctx.lineWidth = 2;
+      // Top-left
+      ctx.beginPath();
+      ctx.moveTo(20, 44);
+      ctx.lineTo(20, 20);
+      ctx.lineTo(44, 20);
+      ctx.stroke();
+      // Top-right
+      ctx.beginPath();
+      ctx.moveTo(296, 20);
+      ctx.lineTo(320, 20);
+      ctx.lineTo(320, 44);
+      ctx.stroke();
+      // Bottom-left
+      ctx.beginPath();
+      ctx.moveTo(20, 426);
+      ctx.lineTo(20, 450);
+      ctx.lineTo(44, 450);
+      ctx.stroke();
+      // Bottom-right
+      ctx.beginPath();
+      ctx.moveTo(296, 450);
+      ctx.lineTo(320, 450);
+      ctx.lineTo(320, 426);
+      ctx.stroke();
+
+      // Title "KAPTN"
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 32px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('KAPTN', 170, 60);
+
+      // Subtitle "Bridge System"
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+      ctx.font = '12px monospace';
+      ctx.fillText('BRIDGE SYSTEM', 170, 80);
+
+      // Load and draw badge SVG
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => {
+          // Draw SVG at 120x120 size
+          ctx.drawImage(img, 110, 100, 120, 120);
+          resolve();
+        };
+        img.onerror = reject;
+        img.src = '/kaptn-badge.svg';
       });
 
+      // Serial number on badge
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '14px monospace';
+      ctx.fillText(serialNumber, 170, 205);
+
+      // "Bridge Ensignia"
+      ctx.fillStyle = '#ffd700';
+      ctx.font = '16px monospace';
+      ctx.fillText('BRIDGE ENSIGNIA', 170, 250);
+
+      // Captain name if present
+      if (captainName) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.font = '14px sans-serif';
+        ctx.fillText(`Captain ${captainName}`, 170, 275);
+      }
+
+      // Serial number
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.font = '12px monospace';
+      ctx.fillText(`SN: ${serialNumber.toUpperCase()}`, 170, captainName ? 295 : 275);
+
+      // Footer separator
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(40, captainName ? 315 : 295);
+      ctx.lineTo(300, captainName ? 315 : 295);
+      ctx.stroke();
+
+      // Footer text
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+      ctx.font = '10px monospace';
+      ctx.fillText('NAVIGATE THE UNKNOWN WITH PRECISION', 170, captainName ? 340 : 320);
+
+      // Convert to blob and download
       canvas.toBlob((blob) => {
         if (blob) {
           const url = URL.createObjectURL(blob);
@@ -141,12 +207,10 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
           link.click();
           URL.revokeObjectURL(url);
         }
-        document.body.removeChild(container);
         setDownloading(false);
       }, 'image/png');
     } catch (error) {
       console.error('Error generating badge:', error);
-      document.body.removeChild(container);
       setDownloading(false);
     }
   };
