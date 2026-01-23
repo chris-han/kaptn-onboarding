@@ -45,8 +45,22 @@ export default async function LocaleLayout({
 
   const messages = await getMessages({ locale });
 
+  // Apply locale-specific font class
+  const getFontClass = () => {
+    switch (locale) {
+      case 'zh':
+        return 'font-zh-cn';
+      case 'ja':
+        return 'font-ja';
+      case 'ko':
+        return 'font-ko';
+      default:
+        return '';
+    }
+  };
+
   return (
-    <html lang={locale} className={`${ibmPlexMono.variable} ${rajdhani.variable}`}>
+    <html lang={locale} className={`${ibmPlexMono.variable} ${rajdhani.variable} ${getFontClass()}`}>
       <body className="antialiased">
         <NextIntlClientProvider locale={locale} messages={messages}>
           {children}
