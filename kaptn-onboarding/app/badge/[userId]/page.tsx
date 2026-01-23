@@ -26,11 +26,22 @@ export default function BadgeDownloadPage() {
     const badgeElement = document.getElementById('badge-card');
     if (badgeElement) {
       try {
+        // Wait a moment for fonts and images to fully load
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         // Use html2canvas to convert the badge to PNG
         const canvas = await html2canvas(badgeElement, {
           backgroundColor: '#0a0e1a',
           scale: 2, // Higher quality
           logging: false,
+          useCORS: true, // Enable CORS for images
+          allowTaint: true,
+          imageTimeout: 0,
+          // Add some padding to ensure nothing is cut off
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: badgeElement.scrollWidth,
+          windowHeight: badgeElement.scrollHeight,
         });
 
         // Convert canvas to blob
@@ -65,8 +76,8 @@ export default function BadgeDownloadPage() {
 
       <div className="relative z-10 min-h-screen flex flex-col items-center justify-center p-4 py-12">
         {/* Badge Card */}
-        <div id="badge-card" className="w-full max-w-md">
-          <div className="relative border-4 border-white bg-black/90 p-8">
+        <div id="badge-card" className="w-full max-w-md" style={{ maxWidth: '448px' }}>
+          <div className="relative border-4 border-white bg-black/90 p-8" style={{ overflow: 'hidden' }}>
             {/* Corner Accents */}
             <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-[#ffd700]" />
             <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-[#ffd700]" />
@@ -83,13 +94,14 @@ export default function BadgeDownloadPage() {
 
             {/* Badge Image */}
             <div className="flex justify-center mb-6">
-              <div className="relative">
+              <div className="relative" style={{ width: '160px', height: '160px' }}>
                 <img
                   src="/kaptn-badge.svg"
                   alt="KAPTN Bridge Ensignia"
                   width={160}
                   height={160}
                   className="w-[160px] h-[160px]"
+                  style={{ display: 'block', maxWidth: '160px', maxHeight: '160px' }}
                 />
                 {/* Serial Number Overlay */}
                 <div
