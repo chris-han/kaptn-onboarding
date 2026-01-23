@@ -64,7 +64,7 @@ export default function HeroSection({ onCTAClick }: HeroSectionProps) {
   ];
 
   return (
-    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8">
+    <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28">
       {/* Holographic Grid Overlay */}
       <div
         ref={gridRef}

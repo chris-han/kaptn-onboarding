@@ -99,7 +99,11 @@ export default function ProgressBar({
         <div className="relative h-1 bg-bridge-white/10 rounded-full overflow-hidden">
           {/* Animated Progress Fill */}
           <motion.div
-            className="absolute top-0 left-0 h-full bg-gradient-to-r from-bridge-green via-bridge-green to-bridge-blue rounded-full"
+            className={`absolute top-0 left-0 h-full rounded-full ${
+              currentProgress === 100
+                ? "bg-bridge-green"
+                : "bg-gradient-to-r from-bridge-green via-bridge-green to-bridge-blue"
+            }`}
             initial={{ width: 0 }}
             animate={{ width: `${currentProgress}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}
