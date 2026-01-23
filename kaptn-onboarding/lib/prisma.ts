@@ -1,6 +1,6 @@
 // Prisma Client Singleton
 // Prevents multiple instances in development hot-reload
-// With Prisma 7+, DATABASE_URL is read from prisma.config.ts
+// Using binary engine for traditional PostgreSQL connections
 import { PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
@@ -14,7 +14,7 @@ let prisma: PrismaClient | null = null;
 
 if (isDatabaseConfigured) {
   try {
-    // Create Prisma client - reads URL from prisma.config.ts
+    // Create Prisma client with binary engine (Prisma 7+)
     prisma = globalForPrisma.prisma ?? new PrismaClient({
       log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     });
