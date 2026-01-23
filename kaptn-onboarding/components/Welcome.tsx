@@ -166,8 +166,8 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
       ctx.fillStyle = '#ffffff';
       ctx.font = '300 11px monospace'; // Smaller font to fit badge
       const snChars = serialNumber.toLowerCase().split('');
-      const badgeCenterX = 110 + 60; // Badge x + half width
-      const badgeY = 100 + (120 * 0.65); // 65% from badge top
+      const badgeCenterX = 110 + 63; // Badge x + half width
+      const badgeY = 100 + (120 * 0.73); // 65% from badge top
       const charWidth = 7; // Character width including spacing
       let snX = badgeCenterX - (snChars.length * charWidth) / 2; // Center on badge
       for (const char of snChars) {
