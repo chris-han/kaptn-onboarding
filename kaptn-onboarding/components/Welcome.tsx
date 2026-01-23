@@ -507,38 +507,7 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
                 </motion.div>
               )}
 
-              {/* Mil-Spec Barcode for Signup */}
-              {userId && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.7, duration: 0.6 }}
-                  className="mt-6 flex flex-col items-center"
-                >
-                  {/* Barcode Container with Mil-Spec Border */}
-                  <div className="relative p-3 border-2 border-white/30 bg-black/40">
-                    {/* Corner Brackets */}
-                    <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-bridge-gold" />
-                    <div className="absolute top-0 right-0 w-3 h-3 border-t-2 border-r-2 border-bridge-gold" />
-                    <div className="absolute bottom-0 left-0 w-3 h-3 border-b-2 border-l-2 border-bridge-gold" />
-                    <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-bridge-gold" />
 
-                    {/* QR Code - Points to userinfo page */}
-                    <QRCodeSVG
-                      value={`${process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : '')}${typeof window !== 'undefined' ? '/' + window.location.pathname.split('/')[1] : '/en'}/userinfo/${userId}`}
-                      size={120}
-                      level="M"
-                      fgColor="#ffffff"
-                      bgColor="transparent"
-                    />
-                  </div>
-
-                  {/* Scan Instructions */}
-                  <p className="text-xs font-mono text-white/30 uppercase tracking-wider mt-2">
-                    {t("ceremony.scanToSignup") || "Scan to create account"}
-                  </p>
-                </motion.div>
-              )}
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

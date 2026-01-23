@@ -123,11 +123,11 @@
         "title": "请求舰桥访问",
         "name": "舰长姓名",
         "namePlaceholder": "您的姓名",
-        "email": "传输ID",
+        "email": "Mail ID",
         "emailPlaceholder": "your@email.com",
         "company": "舰船名称",
         "companyPlaceholder": "您的公司（选填）",
-        "submit": "传输凭证",
+        "submit": "提交申请",
         "skip": "匿名继续",
         "launchNote": "系统于2026年第二季度启动。预启动注册者享有早期访问优先权。"
       },

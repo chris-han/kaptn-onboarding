@@ -47,11 +47,12 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.userId) {
         setStatus("success");
+        // Redirect to Logto signup with userId as state
         setTimeout(() => {
-          onSkip(name); // Pass captain name to next phase
-        }, 3000);
+          window.location.href = `/api/logto/sign-in?state=${data.userId}`;
+        }, 2000);
       } else {
         setStatus("error");
         setErrorMessage(data.message || "Registration failed");
@@ -77,7 +78,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
             {t("title")}
           </h2>
           <p className="bridge-text text-bridge-white/80">
-            {t("subtitle")}
+            Redirecting to account creation...
           </p>
         </motion.div>
       </div>

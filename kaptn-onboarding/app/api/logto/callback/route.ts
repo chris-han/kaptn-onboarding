@@ -10,34 +10,74 @@ export async function GET(request: NextRequest) {
   try {
     // Get user info from Logto
     const { claims } = await getLogtoContext(logtoConfig);
+    const cookieStore = cookies();
 
     if (claims?.sub && isDatabaseConfigured && prisma) {
       try {
-        // Find or create user in database
-        let user = await prisma.user.findUnique({
-          where: { logtoId: claims.sub },
-        });
+        // Check if we're linking to an existing user from waitlist
+        const linkUserId = cookieStore.get('logto_link_user_id')?.value;
 
-        if (!user) {
-          // Create new user
-          user = await prisma.user.create({
-            data: {
-              logtoId: claims.sub,
-              email: claims.email || null,
-              emailVerified: claims.email_verified || false,
-              name: claims.name || claims.username || null,
-            },
+        if (linkUserId) {
+          // Link Logto account to existing user
+          const existingUser = await prisma.user.findUnique({
+            where: { id: linkUserId },
           });
+
+          if (existingUser && !existingUser.logtoId) {
+            // Link the logtoId to the existing user
+            await prisma.user.update({
+              where: { id: linkUserId },
+              data: {
+                logtoId: claims.sub,
+                email: claims.email || existingUser.email,
+                emailVerified: claims.email_verified || existingUser.emailVerified,
+                name: claims.name || claims.username || existingUser.name,
+              },
+            });
+            console.log(`Linked Logto account ${claims.sub} to existing user ${linkUserId}`);
+          } else if (existingUser?.logtoId === claims.sub) {
+            // Already linked, just update info
+            await prisma.user.update({
+              where: { id: linkUserId },
+              data: {
+                email: claims.email || existingUser.email,
+                emailVerified: claims.email_verified || existingUser.emailVerified,
+                name: claims.name || claims.username || existingUser.name,
+              },
+            });
+          } else {
+            console.warn(`Cannot link: user ${linkUserId} already has a different Logto account`);
+          }
+
+          // Clear the link cookie
+          cookieStore.delete('logto_link_user_id');
         } else {
-          // Update existing user info
-          user = await prisma.user.update({
+          // Standard flow: find or create user by logtoId
+          let user = await prisma.user.findUnique({
             where: { logtoId: claims.sub },
-            data: {
-              email: claims.email || user.email,
-              emailVerified: claims.email_verified || user.emailVerified,
-              name: claims.name || claims.username || user.name,
-            },
           });
+
+          if (!user) {
+            // Create new user
+            user = await prisma.user.create({
+              data: {
+                logtoId: claims.sub,
+                email: claims.email || null,
+                emailVerified: claims.email_verified || false,
+                name: claims.name || claims.username || null,
+              },
+            });
+          } else {
+            // Update existing user info
+            user = await prisma.user.update({
+              where: { logtoId: claims.sub },
+              data: {
+                email: claims.email || user.email,
+                emailVerified: claims.email_verified || user.emailVerified,
+                name: claims.name || claims.username || user.name,
+              },
+            });
+          }
         }
       } catch (dbError) {
         console.error('Error syncing user with database:', dbError);
@@ -47,11 +87,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Get post-redirect URI from cookie
-    const cookieStore = cookies();
     const postRedirectUri = cookieStore.get('logto_post_redirect_uri')?.value || '/onboarding';
 
-    // Clear the cookie and redirect
+    // Clear the cookies and redirect
     cookieStore.delete('logto_post_redirect_uri');
+    cookieStore.delete('logto_link_user_id');
 
     redirect(postRedirectUri);
   } catch (error) {

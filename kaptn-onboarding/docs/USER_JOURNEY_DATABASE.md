@@ -4,6 +4,22 @@
 
 This document explains the complete user journey from onboarding to authentication, and how data flows through the database.
 
+## Key Feature: Integrated Logto Signup
+
+**NEW**: Logto authentication is now integrated directly into the onboarding flow. When users submit the waitlist form, they are immediately redirected to create their account via Logto, with their User record automatically linked to their authentication.
+
+**Flow Summary**:
+1. User completes scenarios (anonymous)
+2. User submits waitlist form → **User + WaitlistEntry created**
+3. Immediate redirect to Logto signup → **logtoId linked to User**
+4. User returns authenticated → Complete profile & download badge
+
+**Benefits**:
+- Seamless transition from onboarding to authentication
+- No email verification required upfront
+- User records are created before authentication
+- Single continuous flow instead of multiple disconnected steps
+
 ## Database Schema
 
 ### Core Tables
@@ -91,23 +107,85 @@ model WaitlistEntry {
 ```
 User visits → /[locale]/onboarding
               ↓
-        Call GET /api/user-id
+        Complete interactive scenarios
               ↓
-        Create User record in DB
-              ↓
-        Return userId (CUID)
+        Determine decision patterns
 ```
 
-**API Endpoint**: `GET /api/user-id`
-- Creates anonymous User record with generated CUID
-- Returns: `{ userId: "clxxxxx...", authenticated: false }`
-- Fallback: Generates `temp-{uuid}` if DB unavailable
+**No User record created yet** - User is still anonymous during scenarios
 
-### Phase 2: Complete Scenarios
+### Phase 2: Waitlist Registration
 ```
-User answers 5 scenarios
+User completes scenarios
               ↓
-        Calculate patterns (K-A-P-T-N)
+        Reaches waitlist form
+              ↓
+        Enters: name, email, company, interests
+              ↓
+        Call POST /api/waitlist
+              ↓
+        Create User + WaitlistEntry records
+              ↓
+        Return userId
+              ↓
+        Redirect to Logto signup with userId
+```
+
+**API Endpoint**: `POST /api/waitlist`
+```json
+Request:
+{
+  "name": "KAI HAN",
+  "email": "kai@example.com",
+  "company": "ACME Corp",
+  "interests": ["compass", "ledger"]
+}
+
+Response:
+{
+  "success": true,
+  "userId": "clxxxxx47f47006",
+  "message": "Registration received. Proceeding to account creation."
+}
+```
+
+**Database Operations**:
+1. Create User record with email and name
+2. Create WaitlistEntry record with interests
+3. Return userId for Logto linking
+
+### Phase 3: Logto Signup (Integrated)
+```
+Frontend redirects to /api/logto/sign-in?state={userId}
+              ↓
+        Store userId in cookie (logto_link_user_id)
+              ↓
+        Redirect to Logto authentication
+              ↓
+        User creates account / signs in
+              ↓
+        Callback: /api/logto/callback
+              ↓
+        Read userId from cookie
+              ↓
+        Link logtoId to existing User record
+              ↓
+        Redirect to /onboarding (authenticated)
+```
+
+**Key Change**: Instead of creating a new User, we link the Logto account to the existing User record created during waitlist registration.
+
+**API Flow**:
+1. `GET /api/logto/sign-in?state={userId}` - Store userId in cookie, start OAuth
+2. User authenticates at Logto
+3. `GET /api/logto/callback` - Read userId from cookie, link logtoId to User
+4. Clear cookies, redirect to app
+
+### Phase 4: Profile Completion (After Authentication)
+```
+User returns to onboarding (now authenticated)
+              ↓
+        Complete remaining onboarding steps
               ↓
         Call POST /api/profile
               ↓
@@ -128,7 +206,7 @@ User answers 5 scenarios
 }
 ```
 
-### Phase 3: Badge Download
+### Phase 5: Badge Download
 ```
 User clicks "Download Badge"
               ↓
@@ -146,9 +224,9 @@ User clicks "Download Badge"
 - Serial number = last 8 chars of userId (uppercase)
 - QR code points to: `https://www.kaptn.ai/[locale]/userinfo/[userId]`
 
-### Phase 4: QR Code Scan
+### Phase 6: QR Code Scan (Optional - Marketing)
 ```
-User scans QR code
+User scans QR code from badge
               ↓
         Navigate to /[locale]/userinfo/[userId]
               ↓
@@ -174,28 +252,10 @@ const user = await prisma.user.findUnique({
 **Page**: `/[locale]/userinfo/[userId]/page.tsx`
 - Shows badge with ensignia
 - Shows command profile (5 patterns)
-- Shows "Create Account" button → Logto signup
+- Shows "Create Account" button → Logto signup (if not authenticated)
+- Can be used for marketing/sharing badges
 
-### Phase 5: Signup (Logto)
-```
-User clicks "Create Account"
-              ↓
-        Redirect to /api/logto/sign-in?state={userId}
-              ↓
-        User authenticates with Logto
-              ↓
-        Callback: /api/logto/callback
-              ↓
-        Link logtoId to existing User record
-```
-
-**API Flow**:
-1. `GET /api/logto/sign-in?state={userId}` - Start OAuth
-2. User authenticates at Logto
-3. `GET /api/logto/callback` - Handle OAuth callback
-4. Update User: `UPDATE User SET logtoId = {logto_sub} WHERE id = {userId}`
-
-### Phase 6: Login & Return User
+### Phase 7: Login & Return User
 ```
 User logs in (future visits)
               ↓
