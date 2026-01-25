@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontpkg/alibaba-puhuiti-3-0':
+        specifier: ^0.0.0
+        version: 0.0.0
       '@gsap/react':
         specifier: ^2.1.2
         version: 2.1.2(gsap@3.14.2)(react@18.3.1)
@@ -270,6 +273,9 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@fontpkg/alibaba-puhuiti-3-0@0.0.0':
+    resolution: {integrity: sha512-oHV3EXFfifI+yqwpcqnrfya72MiHqBgDyYp79+DCwYvnvJFwRiQ4MBn76r2hNLGJp8B4p28Ofrp8k02+NNhx9A==}
 
   '@formatjs/ecma402-abstract@2.3.6':
     resolution: {integrity: sha512-HJnTFeRM2kVFVr5gr5kH1XP6K0JcJtE7Lzvtr3FS/so5f1kpsqqqxy5JF+FRaO6H2qmcMfAUIox7AJteieRtVw==}
@@ -1579,6 +1585,8 @@ snapshots:
 
   '@esbuild/win32-x64@0.27.2':
     optional: true
+
+  '@fontpkg/alibaba-puhuiti-3-0@0.0.0': {}
 
   '@formatjs/ecma402-abstract@2.3.6':
     dependencies:

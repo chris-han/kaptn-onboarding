@@ -13,6 +13,7 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@fontpkg/alibaba-puhuiti-3-0": "^0.0.0",
     "@gsap/react": "^2.1.2",
     "@logto/next": "^4.2.8",
     "@prisma/adapter-pg": "^7.3.0",
