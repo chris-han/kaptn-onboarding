@@ -6,8 +6,30 @@
  */
 
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
-const prisma = new PrismaClient();
+if (!process.env.DATABASE_URL) {
+  console.error('❌ ERROR: DATABASE_URL environment variable is required');
+  process.exit(1);
+}
+
+const databaseUrl = process.env.DATABASE_URL;
+const isAccelerateUrl = databaseUrl.startsWith('prisma+postgres://');
+
+let prisma: PrismaClient;
+
+if (isAccelerateUrl) {
+  // Use Prisma Accelerate for production
+  prisma = new PrismaClient({
+    accelerateUrl: databaseUrl,
+  });
+} else {
+  // Use adapter for local PostgreSQL
+  const pool = new Pool({ connectionString: databaseUrl });
+  const adapter = new PrismaPg(pool);
+  prisma = new PrismaClient({ adapter });
+}
 
 async function analyzeDuplicates() {
   console.log('\n=== DUPLICATE USER ANALYSIS ===\n');

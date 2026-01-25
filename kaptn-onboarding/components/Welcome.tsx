@@ -9,13 +9,14 @@ import { useTranslations } from "next-intl";
 interface WelcomeProps {
   onAssumeCommand: () => void;
   captainName?: string;
+  userId?: string; // Add userId prop
 }
 
-export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) {
+export default function Welcome({ onAssumeCommand, captainName, userId: initialUserId }: WelcomeProps) {
   const t = useTranslations("onboarding.welcome");
   const [assumingCommand, setAssumingCommand] = useState(false);
   const [commandPhase, setCommandPhase] = useState<"bell" | "bridge" | "conn" | "badge" | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(initialUserId || null);
   const [downloading, setDownloading] = useState(false);
 
   // Bell sound effect using Web Audio API
@@ -60,9 +61,11 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
     }
   };
 
-  // Fetch user ID when badge phase is reached
+  // Fetch user ID when badge phase is reached (fallback only if not provided)
   useEffect(() => {
     if (commandPhase === "badge" && !userId) {
+      // Only fetch if userId wasn't provided via props (fallback)
+      console.warn('[Welcome] No userId provided, fetching as fallback...');
       fetch('/api/user-id')
         .then(res => res.json())
         .then(data => {

@@ -234,7 +234,7 @@ export default function OnboardingPage() {
         <Profile profile={profile} onContinue={handleProfileContinue} />
       )}
 
-      {phase === "welcome" && <Welcome onAssumeCommand={handleAssumeCommand} captainName={captainName} />}
+      {phase === "welcome" && <Welcome onAssumeCommand={handleAssumeCommand} captainName={captainName} userId={userId} />}
     </main>
   );
 }
