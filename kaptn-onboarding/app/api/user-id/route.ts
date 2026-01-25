@@ -4,6 +4,9 @@ import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 import { logtoConfig } from '@/lib/logto';
 import { randomBytes } from 'crypto';
 
+// Force dynamic rendering since this route uses cookies via Logto
+export const dynamic = 'force-dynamic';
+
 // Generate a temporary user ID for when database is not configured
 function generateTempUserId(): string {
   return `temp-${randomBytes(16).toString('hex')}`;

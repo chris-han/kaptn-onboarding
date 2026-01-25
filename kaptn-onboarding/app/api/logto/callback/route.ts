@@ -6,6 +6,9 @@ import { logtoConfig } from '@/lib/logto';
 import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 import { cookies } from 'next/headers';
 
+// Force dynamic rendering since this route uses cookies and authentication
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     // Get user info from Logto

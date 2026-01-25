@@ -4,6 +4,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { logtoConfig } from '@/lib/logto';
 import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
+// Force dynamic rendering since this route uses cookies via Logto
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const { isAuthenticated, claims } = await getLogtoContext(logtoConfig);
