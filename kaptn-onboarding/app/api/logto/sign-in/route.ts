@@ -32,5 +32,5 @@ export async function GET(request: NextRequest) {
   }
 
   // signIn() will handle the redirect internally
-  await signIn(logtoConfig, `${logtoConfig.baseUrl}/api/logto/callback`);
+  return await signIn(logtoConfig, `${logtoConfig.baseUrl}/api/logto/callback`);
 }
