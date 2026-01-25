@@ -32,6 +32,7 @@ export default function OnboardingPage() {
   const [profile, setProfile] = useState<DecisionProfile | null>(null);
   const [shuffleTrigger, setShuffleTrigger] = useState(0);
   const [captainName, setCaptainName] = useState<string>("");
+  const [userId, setUserId] = useState<string>("");
 
   // Randomize scenario options on every restart
   const scenarios = useMemo<Scenario[]>(() => {
@@ -76,9 +77,12 @@ export default function OnboardingPage() {
     setPhase("waitlist");
   };
 
-  const handleWaitlistComplete = (name?: string) => {
+  const handleWaitlistComplete = (name?: string, id?: string) => {
     if (name) {
       setCaptainName(name);
+    }
+    if (id) {
+      setUserId(id);
     }
     setPhase("processing");
   };
@@ -114,20 +118,40 @@ export default function OnboardingPage() {
     setPhase("welcome");
   };
 
-  const handleAssumeCommand = () => {
-    // Save profile data
-    const sessionData = {
-      profile,
-      responses,
-      timestamp: Date.now(),
-    };
+  const handleAssumeCommand = async () => {
+    // Save profile data to database
+    if (userId && profile) {
+      try {
+        const profileData = {
+          userId,
+          captainName: captainName || null,
+          knowledgePattern: profile.K,
+          thesisPattern: profile.T,
+          prioritizePattern: profile.P,
+          actionPattern: profile.A,
+          navigationPattern: profile.N,
+          scenarioResponses: responses,
+        };
 
-    console.log("Session completed:", sessionData);
+        const response = await fetch('/api/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(profileData),
+        });
 
-    // Here you would typically:
-    // 1. Send data to backend API
-    // 2. Store in database
-    // 3. Redirect to main application
+        const data = await response.json();
+
+        if (data.success) {
+          console.log('Profile saved successfully:', data);
+        } else {
+          console.error('Failed to save profile:', data);
+        }
+      } catch (error) {
+        console.error('Error saving profile:', error);
+      }
+    }
 
     // Onboarding complete - user stays on the badge screen
   };
@@ -139,6 +163,7 @@ export default function OnboardingPage() {
     setResponses([]);
     setProfile(null);
     setCaptainName("");
+    setUserId("");
     // Trigger reshuffling of quiz options
     setShuffleTrigger(prev => prev + 1);
   };

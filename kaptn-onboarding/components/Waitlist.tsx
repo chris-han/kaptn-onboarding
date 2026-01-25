@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { bridgeServices } from "@/types/waitlist";
 
 interface WaitlistProps {
-  onSkip: (captainName?: string) => void;
+  onSkip: (captainName?: string, userId?: string) => void;
 }
 
 export default function Waitlist({ onSkip }: WaitlistProps) {
@@ -49,9 +49,9 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
       if (data.success && data.userId) {
         setStatus("success");
-        // Continue with onboarding flow instead of redirecting to Logto
+        // Continue with onboarding flow and pass userId for profile saving
         setTimeout(() => {
-          onSkip(name);
+          onSkip(name, data.userId);
         }, 2000);
       } else {
         setStatus("error");

@@ -328,6 +328,9 @@ export default function Welcome({ onAssumeCommand, captainName }: WelcomeProps) 
     setAssumingCommand(true);
     setCommandPhase("bell");
 
+    // Call parent's onAssumeCommand to save profile data
+    onAssumeCommand();
+
     // Play bell sound
     playBellSound();
 
