@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
               where: { id: linkUserId },
               data: {
                 logtoId: claims.sub,
-                email: claims.email || existingUser.email,
+                email: claims.email ? claims.email.toLowerCase() : existingUser.email,
                 emailVerified: claims.email_verified || existingUser.emailVerified,
                 name: claims.name || claims.username || existingUser.name,
               },
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
             await prisma.user.update({
               where: { id: linkUserId },
               data: {
-                email: claims.email || existingUser.email,
+                email: claims.email ? claims.email.toLowerCase() : existingUser.email,
                 emailVerified: claims.email_verified || existingUser.emailVerified,
                 name: claims.name || claims.username || existingUser.name,
               },
@@ -60,22 +60,44 @@ export async function GET(request: NextRequest) {
             where: { logtoId: claims.sub },
           });
 
+          if (!user && claims.email) {
+            // If no user found by logtoId, try to find by email (for linking)
+            const emailUser = await prisma.user.findUnique({
+              where: { email: claims.email.toLowerCase() },
+            });
+
+            if (emailUser && !emailUser.logtoId) {
+              // Link existing email-based user to Logto account
+              user = await prisma.user.update({
+                where: { id: emailUser.id },
+                data: {
+                  logtoId: claims.sub,
+                  email: claims.email.toLowerCase(),
+                  emailVerified: claims.email_verified || emailUser.emailVerified,
+                  name: claims.name || claims.username || emailUser.name,
+                },
+              });
+              console.log(`Auto-linked Logto account ${claims.sub} to existing user ${emailUser.id} via email`);
+            }
+          }
+
           if (!user) {
-            // Create new user
+            // Create new user only if no existing user found
             user = await prisma.user.create({
               data: {
                 logtoId: claims.sub,
-                email: claims.email || null,
+                email: claims.email ? claims.email.toLowerCase() : null,
                 emailVerified: claims.email_verified || false,
                 name: claims.name || claims.username || null,
               },
             });
+            console.log(`Created new user ${user.id} for Logto account ${claims.sub}`);
           } else {
             // Update existing user info
             user = await prisma.user.update({
               where: { logtoId: claims.sub },
               data: {
-                email: claims.email || user.email,
+                email: claims.email ? claims.email.toLowerCase() : user.email,
                 emailVerified: claims.email_verified || user.emailVerified,
                 name: claims.name || claims.username || user.name,
               },
