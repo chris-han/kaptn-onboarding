@@ -183,6 +183,8 @@
       "systemsStatus": "系统：绿色",
       "readyStatus": "状态：就绪",
       "button": "接掌指挥权",
+      "loginButton": "登录",
+      "loginDescription": "登录您的 KAPTN 账户以更新您的舰桥配置并访问您的个性化系统",
       "ceremony": {
         "captainOnBridge": "舰长进入舰桥",
         "youHaveConn": "您现在拥有指挥权。",

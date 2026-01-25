@@ -182,6 +182,8 @@
       "systemsStatus": "Systems: GREEN",
       "readyStatus": "Status: READY",
       "button": "ASSUME COMMAND",
+      "loginButton": "Login",
+      "loginDescription": "Login to your KAPTN account to update your bridge profile and access your personalized system",
       "ceremony": {
         "captainOnBridge": "Captain on the Bridge",
         "youHaveConn": "You Have the Conn.",

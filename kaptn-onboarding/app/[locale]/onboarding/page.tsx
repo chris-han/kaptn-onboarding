@@ -148,6 +148,30 @@ export default function OnboardingPage() {
         } else {
           console.error('Failed to save profile:', data);
         }
+
+        // Issue badge with serial number
+        try {
+          const badgeResponse = await fetch('/api/badge', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId,
+              captainName: captainName || null,
+            }),
+          });
+
+          const badgeData = await badgeResponse.json();
+
+          if (badgeData.success) {
+            console.log('Badge issued successfully:', badgeData);
+          } else {
+            console.error('Failed to issue badge:', badgeData);
+          }
+        } catch (error) {
+          console.error('Error issuing badge:', error);
+        }
       } catch (error) {
         console.error('Error saving profile:', error);
       }

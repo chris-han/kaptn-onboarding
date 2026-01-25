@@ -215,17 +215,17 @@ export default function UserInfoPage() {
           </div>
         )}
 
-        {/* Signup Button */}
+        {/* Login Button */}
         <div className="flex flex-col items-center gap-4">
           <button
             onClick={handleSignup}
             className="px-12 py-4 border-2 border-[#ffd700] bg-transparent text-[#ffd700] font-mono text-lg font-bold tracking-wider hover:bg-[#ffd700] hover:text-black transition-all uppercase"
           >
-            Create Account
+            {t("loginButton")}
           </button>
 
           <p className="text-xs font-mono text-white/40 text-center max-w-md">
-            Create your KAPTN account to access your personalized bridge system
+            {t("loginDescription")}
           </p>
         </div>
       </div>
