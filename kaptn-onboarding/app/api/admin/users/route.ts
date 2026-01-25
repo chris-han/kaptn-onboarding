@@ -2,6 +2,9 @@
 import { NextResponse } from 'next/server';
 import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
+// Force dynamic rendering since this route uses request.url
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   try {
     // Check if database is configured
