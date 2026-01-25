@@ -10,6 +10,8 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
+  let postRedirectUri = '/onboarding';
+
   try {
     // Get user info from Logto
     const { claims } = await getLogtoContext(logtoConfig);
@@ -112,15 +114,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Get post-redirect URI from cookie
-    const postRedirectUri = cookieStore.get('logto_post_redirect_uri')?.value || '/onboarding';
+    postRedirectUri = cookieStore.get('logto_post_redirect_uri')?.value || '/onboarding';
 
-    // Clear the cookies and redirect
+    // Clear the cookies
     cookieStore.delete('logto_post_redirect_uri');
     cookieStore.delete('logto_link_user_id');
-
-    redirect(postRedirectUri);
   } catch (error) {
     console.error('Logto callback error:', error);
     redirect('/?error=auth_failed');
   }
+
+  // Redirect outside try-catch to avoid catching the NEXT_REDIRECT error
+  redirect(postRedirectUri);
 }
