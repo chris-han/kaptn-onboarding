@@ -56,6 +56,11 @@
     font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   }
 
+  /* Override all font classes for Chinese locale */
+  html.font-zh-cn * {
+    font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important;
+  }
+
   html.font-zh-cn h1,
   html.font-zh-cn h2,
   html.font-zh-cn h3,
