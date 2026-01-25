@@ -50,6 +50,12 @@
       "subtitle": "Begin your calibration sequence",
       "button": "ENTER THE BRIDGE",
       "note": "Protocol takes 3-5 minutes"
+    },
+    "quote": {
+      "line1": "It is the unknown that defines our existence.",
+      "line2": "We are constantly searching, not just for answers to our questions,",
+      "line3": "but for new questions.",
+      "author": "— Captain Benjamin Sisko"
     }
   },
   "onboarding": {
