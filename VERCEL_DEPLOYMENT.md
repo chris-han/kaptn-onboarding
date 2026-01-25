@@ -206,6 +206,58 @@ The build runs:
    - Generates static pages
    - Bundles for serverless functions
 
+### Dynamic API Routes
+
+**Important**: All API routes that use dynamic features must be explicitly marked for dynamic rendering.
+
+Next.js tries to statically generate pages/routes at build time when possible. API routes that use:
+- `cookies()` - Reading or setting cookies
+- `request.url` - Accessing the request URL
+- `searchParams` - Parsing query parameters
+- Authentication context (e.g., `getLogtoContext()`)
+
+...will cause `DYNAMIC_SERVER_USAGE` errors if not marked as dynamic.
+
+#### How to Fix
+
+Add this export at the top of any API route file that uses dynamic features:
+
+```typescript
+// Force dynamic rendering since this route uses [cookies/request.url/etc]
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  // Your route handler
+}
+```
+
+#### Routes Marked as Dynamic in This Project
+
+**Logto Authentication Routes:**
+- `/app/api/logto/callback/route.ts` - Uses `cookies()` and `getLogtoContext()`
+- `/app/api/logto/sign-in/route.ts` - Uses `cookies()` to store redirect URI
+- `/app/api/logto/sign-out/route.ts` - Uses Logto `signOut()` (accesses cookies)
+- `/app/api/logto/user/route.ts` - Uses `getLogtoContext()` (accesses cookies)
+- `/app/api/user-id/route.ts` - Uses `getLogtoContext()` (accesses cookies)
+
+**Admin API Routes:**
+- `/app/api/admin/funnel/route.ts` - Uses `request.url` for query params
+- `/app/api/admin/stats/route.ts` - Uses `searchParams` for filtering
+- `/app/api/admin/users/route.ts` - Uses `searchParams` for pagination
+- `/app/api/admin/waitlist/route.ts` - Uses `searchParams` for filtering
+
+#### Error Example
+
+If you see this error in Vercel build logs:
+
+```
+Error: Dynamic server usage: Page couldn't be rendered statically
+because it used `cookies`. See more info here:
+https://nextjs.org/docs/messages/dynamic-server-error
+```
+
+**Solution**: Add `export const dynamic = 'force-dynamic';` to the affected route file.
+
 ## Deployment Workflow
 
 ### Development Workflow
@@ -283,6 +335,35 @@ Via Vercel dashboard:
 ```bash
 bunx tsc --noEmit
 ```
+
+### Runtime Error: "Dynamic server usage" (DYNAMIC_SERVER_USAGE)
+
+**Cause**: API route uses dynamic features (cookies, request.url, searchParams) but isn't marked for dynamic rendering
+
+**Error Example**:
+```
+Error: Dynamic server usage: Page couldn't be rendered statically
+because it used `cookies`. See more info here:
+https://nextjs.org/docs/messages/dynamic-server-error
+```
+
+**Solution**: Add dynamic export to the affected API route file:
+```typescript
+// Force dynamic rendering since this route uses cookies
+export const dynamic = 'force-dynamic';
+
+export async function GET(request: Request) {
+  // Your route handler
+}
+```
+
+**Common triggers**:
+- Using `cookies()` from `next/headers`
+- Accessing `request.url` to parse query parameters
+- Using `getLogtoContext()` or other authentication helpers
+- Reading `searchParams` from request
+
+**Note**: This is a runtime configuration issue, not a build failure. The deployment may succeed but produce errors in logs when routes are accessed.
 
 ### Database Connection Fails
 
