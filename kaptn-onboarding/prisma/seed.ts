@@ -168,6 +168,73 @@ async function main() {
   });
   console.log('✅ Created profile for Carol');
 
+  // Create badges for completed users
+  await prisma.badge.upsert({
+    where: { userId: user1.id },
+    update: {},
+    create: {
+      userId: user1.id,
+      serialNumber: user1.id.slice(-8).toUpperCase(),
+      captainName: 'Alice Chen',
+      downloadCount: 0,
+    },
+  });
+  console.log('✅ Created badge for Alice');
+
+  await prisma.badge.upsert({
+    where: { userId: user2.id },
+    update: {},
+    create: {
+      userId: user2.id,
+      serialNumber: user2.id.slice(-8).toUpperCase(),
+      captainName: 'Bob Martinez',
+      downloadCount: 0,
+    },
+  });
+  console.log('✅ Created badge for Bob');
+
+  await prisma.badge.upsert({
+    where: { userId: user3.id },
+    update: {},
+    create: {
+      userId: user3.id,
+      serialNumber: user3.id.slice(-8).toUpperCase(),
+      captainName: 'Carol Wong',
+      downloadCount: 0,
+    },
+  });
+  console.log('✅ Created badge for Carol');
+
+  // Create journey events for analytics
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  await prisma.journeyEvent.create({
+    data: {
+      userId: user1.id,
+      sessionId: 'seed-session-1',
+      eventType: 'PHASE_COMPLETE',
+      phase: 'welcome',
+      timestamp: yesterday,
+      duration: 300,
+    },
+  });
+  console.log('✅ Created journey events');
+
+  // Create admin user
+  await prisma.admin.upsert({
+    where: { email: 'admin@kaptn.demo' },
+    update: {},
+    create: {
+      email: 'admin@kaptn.demo',
+      name: 'Admin User',
+      passwordHash: '$2a$10$K7L1OJ45/4Y2nIvhRVpCe.FSmhDdWoXehVzJptJ/op0lSsvqNu/1u', // "password123"
+      role: 'SUPER_ADMIN',
+    },
+  });
+  console.log('✅ Created admin user (email: admin@kaptn.demo, password: password123)');
+
   console.log('🎉 Database seeded successfully!');
 }
 
