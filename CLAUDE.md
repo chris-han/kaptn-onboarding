@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 KAPTN Onboarding is an interactive decision-making calibration experience that profiles users through the KAPTN framework (Knowledge, Action, Thesis, Prioritize, Navigation). It's a Next.js 14 app with internationalization support, Logto authentication, Prisma database integration, and a "bridge system" themed UI.
 
+**🔧 Reusable Setup:** This project serves as the reference implementation for Prisma 7 + Logto authentication across the KAPTN ecosystem. See `docs/PRISMA_LOGTO_SETUP_GUIDE.md` for detailed setup instructions that can be applied to other projects.
+
 ## Development Commands
 
 ### Package Management
@@ -279,11 +281,33 @@ Contains:
 3. Update `Admin` model in `schema.prisma` if needed
 4. Run `bunx prisma migrate dev`
 
+## Documentation
+
+### Core Documentation
+- **`docs/PRISMA_LOGTO_SETUP_GUIDE.md`** - Complete setup guide for Prisma 7 + Logto authentication (reusable across projects)
+- **`docs/PRISMA_LOGTO_QUICK_REFERENCE.md`** - Quick reference for common commands and code snippets
+- **`docs/USER_JOURNEY_DATABASE.md`** - User journey tracking and database architecture
+- **`LOGTO_SETUP.md`** - Logto-specific configuration instructions
+- **`VERCEL_DEPLOYMENT.md`** - Deployment guide for Vercel
+
+### Claude Skills
+A reusable Claude skill for setting up Prisma 7 + Logto in new projects is available at:
+- **`~/.claude/skills/prisma-logto-setup.md`**
+
+To use: Ask Claude to "set up Prisma and Logto" or "integrate with KAPTN user system"
+
+### Setup Scripts
+- **`scripts/cleanup-duplicates.ts`** - Find and remove duplicate User records
+- **`scripts/cleanup-orphan-users.ts`** - Clean up orphan users (null email/name/logtoId)
+- **`scripts/check-specific-users.ts`** - Inspect specific users and find duplicates
+
 ## Important Context
 
 - Package manager is `pnpm` but user prefers `bun`/`uv` for operations (per user config)
 - Database is optional - app gracefully handles missing `DATABASE_URL`
 - Prisma Accelerate is used in production for serverless performance
+- Prisma 7 requires `@prisma/adapter-pg` for local PostgreSQL connections
 - All user-facing text must be internationalized
 - Bridge language is critical - maintain ceremonial, system-level precision
 - Never break the immersive "bridge activation" metaphor
+- Always pass `userId` through component props to prevent duplicate user creation
