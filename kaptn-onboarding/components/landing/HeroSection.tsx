@@ -106,7 +106,6 @@ export default function HeroSection({ onCTAClick }: HeroSectionProps) {
           ref={titleRef}
           className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl font-bold mb-6 text-white tracking-tight whitespace-nowrap"
           style={{
-            fontFamily: 'Rajdhani, sans-serif',
             textShadow: '0 0 40px rgba(0, 255, 136, 0.3)',
           }}
         >

@@ -68,7 +68,6 @@ export default function MissionSection() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-8"
-            style={{ fontFamily: 'Rajdhani, sans-serif' }}
           >
             {t('title')}
           </motion.h2>

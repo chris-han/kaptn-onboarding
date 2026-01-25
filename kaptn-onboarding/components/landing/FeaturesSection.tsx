@@ -60,7 +60,7 @@ export default function FeaturesSection() {
 
     const cards = cardsRef.current;
 
-    cards.forEach((card, index) => {
+    cards.forEach((card) => {
       gsap.fromTo(
         card,
         {
@@ -146,7 +146,6 @@ export default function FeaturesSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4"
-            style={{ fontFamily: 'Rajdhani, sans-serif' }}
           >
             {t('title')}
           </motion.h2>

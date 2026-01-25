@@ -64,7 +64,6 @@ export default function CTASection({ onCTAClick }: CTASectionProps) {
             transition={{ delay: 0.2 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-4"
             style={{
-              fontFamily: 'Rajdhani, sans-serif',
               textShadow: '0 0 30px rgba(0, 255, 136, 0.3)',
             }}
           >

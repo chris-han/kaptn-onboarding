@@ -56,6 +56,15 @@
     font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
   }
 
+  html.font-zh-cn h1,
+  html.font-zh-cn h2,
+  html.font-zh-cn h3,
+  html.font-zh-cn h4,
+  html.font-zh-cn h5,
+  html.font-zh-cn h6 {
+    font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important;
+  }
+
   html.font-ja body {
     font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
   }
