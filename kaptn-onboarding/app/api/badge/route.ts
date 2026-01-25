@@ -74,20 +74,23 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error issuing badge:', error);
-    // Generate temporary badge if database fails
-    const { userId, captainName } = await request.json();
-    const serialNumber = userId?.slice(-8).toUpperCase() || 'TEMP0000';
-    return NextResponse.json({
-      success: true,
-      badge: {
-        userId,
-        serialNumber,
-        captainName: captainName || null,
-        issuedAt: new Date(),
-      },
-      temporary: true,
-      error: 'Database error, temporary badge issued'
+    console.error('Error details:', {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      // @ts-ignore - Prisma error codes
+      code: error?.code,
+      // @ts-ignore - Prisma error metadata
+      meta: error?.meta,
     });
+
+    // Return error response instead of fake success
+    return NextResponse.json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Database error',
+      temporary: true,
+      message: 'Failed to issue badge'
+    }, { status: 500 });
   }
 }
 

@@ -151,6 +151,8 @@ export default function OnboardingPage() {
 
         // Issue badge with serial number
         try {
+          console.log('[Badge] Issuing badge for userId:', userId, 'captainName:', captainName);
+
           const badgeResponse = await fetch('/api/badge', {
             method: 'POST',
             headers: {
@@ -163,14 +165,21 @@ export default function OnboardingPage() {
           });
 
           const badgeData = await badgeResponse.json();
+          console.log('[Badge] Response:', badgeData);
 
           if (badgeData.success) {
-            console.log('Badge issued successfully:', badgeData);
+            console.log('[Badge] Badge issued successfully:', badgeData.badge);
           } else {
-            console.error('Failed to issue badge:', badgeData);
+            console.error('[Badge] Failed to issue badge:', {
+              error: badgeData.error,
+              message: badgeData.message,
+              response: badgeData
+            });
+            alert(`Badge creation failed: ${badgeData.error || badgeData.message}`);
           }
         } catch (error) {
-          console.error('Error issuing badge:', error);
+          console.error('[Badge] Error issuing badge:', error);
+          alert(`Badge creation error: ${error}`);
         }
       } catch (error) {
         console.error('Error saving profile:', error);

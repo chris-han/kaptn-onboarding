@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { QRCodeSVG } from "qrcode.react";
 import { useTranslations } from "next-intl";
-import html2canvas from "html2canvas";
+
 
 interface WelcomeProps {
   onAssumeCommand: () => void;
