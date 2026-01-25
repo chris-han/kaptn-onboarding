@@ -60,6 +60,7 @@
   },
   "onboarding": {
     "waitlist": {
+      "title": "登録確認済み",
       "header": {
         "title": "KAPTNエンタープライズブリッジ",
         "subtitle": "プレローンチアクセス",

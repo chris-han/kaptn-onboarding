@@ -60,6 +60,7 @@
   },
   "onboarding": {
     "waitlist": {
+      "title": "등록 확인됨",
       "header": {
         "title": "KAPTN 엔터프라이즈 브리지",
         "subtitle": "사전 출시 액세스",

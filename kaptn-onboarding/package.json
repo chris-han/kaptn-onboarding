@@ -12,6 +12,7 @@
   "dependencies": {
     "@gsap/react": "^2.1.2",
     "@logto/next": "^4.2.8",
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.2.0",
     "@prisma/extension-accelerate": "^3.0.1",
     "framer-motion": "^11.0.0",
@@ -19,6 +20,7 @@
     "html2canvas": "^1.4.1",
     "next": "14.1.0",
     "next-intl": "^4.7.0",
+    "pg": "^8.17.2",
     "prisma": "^7.2.0",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",

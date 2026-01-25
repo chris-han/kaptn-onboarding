@@ -2,6 +2,8 @@
 // Prevents multiple instances in development hot-reload
 // Supports both Prisma Accelerate (production) and binary engine (local)
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: any;
@@ -24,22 +26,32 @@ if (isDatabaseConfigured) {
 
     if (isAccelerateUrl) {
       // Use Prisma Accelerate for production (serverless)
-      // Prisma v7: Use accelerateUrl parameter only (testing without extension)
+      // Prisma v7: Use accelerateUrl parameter
       prisma = new PrismaClient({
         accelerateUrl: databaseUrl,
         log: ['query', 'error', 'warn', 'info'],
       });
-      console.log('[Prisma] Accelerate client initialized (without extension)');
+      console.log('[Prisma] Accelerate client initialized');
     } else {
-      // Use binary engine for local development
-      prisma = globalForPrisma.prisma ?? new PrismaClient({
-        log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-      });
+      // Use adapter for local PostgreSQL development
+      // Prisma v7: Requires @prisma/adapter-pg for PostgreSQL connections
+      if (!globalForPrisma.prisma) {
+        const pool = new Pool({ connectionString: databaseUrl });
+        const adapter = new PrismaPg(pool);
 
-      if (process.env.NODE_ENV !== 'production') {
-        globalForPrisma.prisma = prisma;
+        prisma = new PrismaClient({
+          adapter,
+          log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+        });
+
+        if (process.env.NODE_ENV !== 'production') {
+          globalForPrisma.prisma = prisma;
+        }
+        console.log('[Prisma] PostgreSQL adapter client initialized');
+      } else {
+        prisma = globalForPrisma.prisma;
+        console.log('[Prisma] Reusing existing client');
       }
-      console.log('[Prisma] Binary engine client initialized');
     }
   } catch (error) {
     console.error('[Prisma] Initialization failed:', error);

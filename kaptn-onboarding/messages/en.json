@@ -94,25 +94,43 @@
       "button": "I AFFIRM"
     },
     "waitlist": {
-      "title": "Captain, state your identity.",
-      "subtitle": "Your credentials will be recorded in the ship's manifest.",
+      "title": "REGISTRATION CONFIRMED",
+      "header": {
+        "title": "REQUEST BRIDGE ACCESS",
+        "subtitle": "Select systems of interest",
+        "description": "KAPTN Bridge Systems are currently in development. Register your interest for early access."
+      },
+      "systems": {
+        "compass": {
+          "name": "COMPASS",
+          "description": "Intelligence & Decision Support. Real-time AI assistant for strategic clarity."
+        },
+        "ledger": {
+          "name": "LEDGER",
+          "description": "Financial Operations. Professional bookkeeping and financial insights."
+        },
+        "shield": {
+          "name": "SHIELD",
+          "description": "Tax Compliance. Tax preparation, filing, and compliance protection."
+        },
+        "sonar": {
+          "name": "SONAR",
+          "description": "Analytics & Intelligence. Business analytics and cash flow tracking."
+        }
+      },
       "form": {
+        "title": "CAPTAIN CREDENTIALS",
         "name": "CAPTAIN NAME",
         "namePlaceholder": "Your name",
         "email": "TRANSMISSION ID",
         "emailPlaceholder": "your@email.com",
         "company": "VESSEL DESIGNATION",
         "companyPlaceholder": "Your company (optional)",
-        "interests": "SYSTEM INTERESTS",
         "submit": "TRANSMIT CREDENTIALS",
-        "skip": "PROCEED ANONYMOUSLY"
+        "skip": "PROCEED ANONYMOUSLY",
+        "launchNote": "Early access invitations will be transmitted when systems are operational."
       },
-      "interests": {
-        "compass": "Compass - AI & Decision Support",
-        "ledger": "Ledger - Financial Operations",
-        "shield": "Shield - Tax Compliance",
-        "sonar": "Sonar - Analytics & Intelligence"
-      }
+      "quote": "The bridge calibrates to the captain, not the other way around."
     },
     "processing": {
       "analyzing": "ANALYZING DECISION PATTERNS",

@@ -49,9 +49,9 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
       if (data.success && data.userId) {
         setStatus("success");
-        // Redirect to Logto signup with userId as state
+        // Continue with onboarding flow instead of redirecting to Logto
         setTimeout(() => {
-          window.location.href = `/api/logto/sign-in?state=${data.userId}`;
+          onSkip(name);
         }, 2000);
       } else {
         setStatus("error");
@@ -78,7 +78,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
             {t("title")}
           </h2>
           <p className="bridge-text text-bridge-white/80">
-            Redirecting to account creation...
+            Processing registration...
           </p>
         </motion.div>
       </div>
