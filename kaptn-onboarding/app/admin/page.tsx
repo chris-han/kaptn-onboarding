@@ -49,6 +49,8 @@ export default function AdminDashboard() {
   const [invitingEmails, setInvitingEmails] = useState<Set<string>>(new Set());
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [showMetrics, setShowMetrics] = useState(true);
+  const [selectedEmails, setSelectedEmails] = useState<Set<string>>(new Set());
+  const [showWaitlist, setShowWaitlist] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -83,36 +85,72 @@ export default function AdminDashboard() {
     }, 5000);
   };
 
-  const handleInvite = async (email: string) => {
-    setInvitingEmails((prev) => new Set(prev).add(email));
-
-    try {
-      const response = await fetch('/api/waitlist/invite', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to send invitation');
-      }
-
-      showToast(`Invitation sent to ${email}`, 'success');
-
-      // Refresh waitlist data
-      await fetchDashboardData();
-    } catch (error: any) {
-      console.error('Error sending invitation:', error);
-      showToast(error.message || 'Failed to send invitation', 'error');
-    } finally {
-      setInvitingEmails((prev) => {
-        const next = new Set(prev);
+  const toggleEmailSelection = (email: string) => {
+    setSelectedEmails((prev) => {
+      const next = new Set(prev);
+      if (next.has(email)) {
         next.delete(email);
-        return next;
-      });
+      } else {
+        next.add(email);
+      }
+      return next;
+    });
+  };
+
+  const toggleSelectAll = (emails: string[]) => {
+    setSelectedEmails((prev) => {
+      // If all are selected, deselect all. Otherwise, select all.
+      const allSelected = emails.every(email => prev.has(email));
+      if (allSelected) {
+        return new Set();
+      } else {
+        return new Set(emails);
+      }
+    });
+  };
+
+  const handleBulkInvite = async () => {
+    if (selectedEmails.size === 0) return;
+
+    const emailsToInvite = Array.from(selectedEmails);
+    setInvitingEmails(new Set(emailsToInvite));
+
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const email of emailsToInvite) {
+      try {
+        const response = await fetch('/api/waitlist/invite', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to send invitation');
+        }
+
+        successCount++;
+      } catch (error: any) {
+        console.error(`Error sending invitation to ${email}:`, error);
+        errorCount++;
+      }
     }
+
+    // Show summary toast
+    if (successCount > 0) {
+      showToast(`Successfully sent ${successCount} invitation${successCount > 1 ? 's' : ''}`, 'success');
+    }
+    if (errorCount > 0) {
+      showToast(`Failed to send ${errorCount} invitation${errorCount > 1 ? 's' : ''}`, 'error');
+    }
+
+    // Clear selections and refresh data
+    setSelectedEmails(new Set());
+    setInvitingEmails(new Set());
+    await fetchDashboardData();
   };
 
   if (loading) {
@@ -233,50 +271,91 @@ export default function AdminDashboard() {
         </>
       )}
 
-      {/* Pending Invitations */}
-      {pendingEntries.length > 0 && (
-        <div className="max-w-7xl mx-auto mb-12">
-          <h2 className="text-xl font-mono text-white/80 mb-6">
-            PENDING INVITATIONS ({pendingEntries.length})
+      {/* Waitlist Management */}
+      <div className="max-w-7xl mx-auto">
+        <div className="border-b-2 border-bridge-gold pb-4 flex justify-between items-center mb-6">
+          <h2 className="text-xl font-mono text-white/80">
+            WAITLIST MANAGEMENT
           </h2>
-          <WaitlistTable
-            entries={pendingEntries}
-            showInviteButton={true}
-            onInvite={handleInvite}
-            invitingEmails={invitingEmails}
-          />
+          <button
+            onClick={() => setShowWaitlist(!showWaitlist)}
+            className="px-4 py-2 border border-white/20 bg-black/40 text-white/60 font-mono text-sm hover:bg-white/5"
+          >
+            {showWaitlist ? 'HIDE WAITLIST' : 'SHOW WAITLIST'}
+          </button>
         </div>
-      )}
 
-      {/* Invited (Pending Conversion) */}
-      {invitedEntries.length > 0 && (
-        <div className="max-w-7xl mx-auto mb-12">
-          <h2 className="text-xl font-mono text-white/80 mb-6">
-            INVITED ({invitedEntries.length})
-          </h2>
-          <WaitlistTable
-            entries={invitedEntries}
-            showInviteButton={false}
-            onInvite={handleInvite}
-            invitingEmails={invitingEmails}
-          />
-        </div>
-      )}
+        {showWaitlist && (
+          <>
+            {/* Pending Invitations */}
+            {pendingEntries.length > 0 ? (
+              <div className="mb-8">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-mono text-white/60">
+                    PENDING INVITATIONS ({pendingEntries.length})
+                  </h3>
+                  {selectedEmails.size > 0 && (
+                    <button
+                      onClick={handleBulkInvite}
+                      disabled={invitingEmails.size > 0}
+                      className="px-6 py-2 bg-bridge-gold text-black font-bold font-mono text-sm hover:bg-bridge-gold/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {invitingEmails.size > 0
+                        ? `SENDING... (${invitingEmails.size}/${selectedEmails.size})`
+                        : `SEND INVITATIONS (${selectedEmails.size})`}
+                    </button>
+                  )}
+                </div>
+                <WaitlistTable
+                  entries={pendingEntries}
+                  selectedEmails={selectedEmails}
+                  onToggleSelection={toggleEmailSelection}
+                  onToggleSelectAll={toggleSelectAll}
+                  invitingEmails={invitingEmails}
+                />
+              </div>
+            ) : (
+              <div className="border border-white/20 bg-black/20 p-8 text-center mb-8">
+                <p className="text-white/40 font-mono">No pending invitations</p>
+              </div>
+            )}
 
-      {/* Converted Users */}
-      {convertedEntries.length > 0 && (
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-xl font-mono text-white/80 mb-6">
-            CONVERTED ({convertedEntries.length})
-          </h2>
-          <WaitlistTable
-            entries={convertedEntries}
-            showInviteButton={false}
-            onInvite={handleInvite}
-            invitingEmails={invitingEmails}
-          />
-        </div>
-      )}
+            {/* Invited (Pending Conversion) */}
+            {invitedEntries.length > 0 && (
+              <div className="mb-8">
+                <h3 className="text-lg font-mono text-white/60 mb-4">
+                  INVITED - AWAITING ONBOARDING ({invitedEntries.length})
+                </h3>
+                <WaitlistTable
+                  entries={invitedEntries}
+                  selectedEmails={new Set()}
+                  onToggleSelection={() => {}}
+                  onToggleSelectAll={() => {}}
+                  invitingEmails={new Set()}
+                  showCheckboxes={false}
+                />
+              </div>
+            )}
+
+            {/* Converted Users */}
+            {convertedEntries.length > 0 && (
+              <div>
+                <h3 className="text-lg font-mono text-white/60 mb-4">
+                  CONVERTED - ONBOARDING COMPLETE ({convertedEntries.length})
+                </h3>
+                <WaitlistTable
+                  entries={convertedEntries}
+                  selectedEmails={new Set()}
+                  onToggleSelection={() => {}}
+                  onToggleSelectAll={() => {}}
+                  invitingEmails={new Set()}
+                  showCheckboxes={false}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -284,63 +363,87 @@ export default function AdminDashboard() {
 // Waitlist Table Component
 function WaitlistTable({
   entries,
-  showInviteButton,
-  onInvite,
+  selectedEmails,
+  onToggleSelection,
+  onToggleSelectAll,
   invitingEmails,
+  showCheckboxes = true,
 }: {
   entries: WaitlistEntry[];
-  showInviteButton: boolean;
-  onInvite: (email: string) => void;
+  selectedEmails: Set<string>;
+  onToggleSelection: (email: string) => void;
+  onToggleSelectAll: (emails: string[]) => void;
   invitingEmails: Set<string>;
+  showCheckboxes?: boolean;
 }) {
+  const allEmails = entries.map(e => e.email);
+  const allSelected = showCheckboxes && allEmails.length > 0 && allEmails.every(email => selectedEmails.has(email));
+
   return (
     <div className="border border-white/20 bg-black/20 overflow-hidden">
       <table className="w-full font-mono text-sm">
         <thead>
           <tr className="bg-black/60 border-b border-white/20">
+            {showCheckboxes && (
+              <th className="text-left p-4 text-white/60 font-normal w-12">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={() => onToggleSelectAll(allEmails)}
+                  className="w-4 h-4 cursor-pointer accent-bridge-gold"
+                />
+              </th>
+            )}
             <th className="text-left p-4 text-white/60 font-normal">NAME</th>
             <th className="text-left p-4 text-white/60 font-normal">EMAIL</th>
             <th className="text-left p-4 text-white/60 font-normal">COMPANY</th>
             <th className="text-left p-4 text-white/60 font-normal">INTERESTS</th>
             <th className="text-left p-4 text-white/60 font-normal">STATUS</th>
-            {showInviteButton && (
-              <th className="text-left p-4 text-white/60 font-normal">ACTIONS</th>
-            )}
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
-            <tr key={entry.id} className="border-b border-white/10 hover:bg-white/5">
-              <td className="p-4">{entry.name}</td>
-              <td className="p-4 text-white/60">{entry.email}</td>
-              <td className="p-4 text-white/60">{entry.company || '—'}</td>
-              <td className="p-4 text-white/60">{entry.interests.join(', ')}</td>
-              <td className="p-4">
-                <span
-                  className={`px-2 py-1 text-xs rounded ${
-                    entry.status === 'ACTIVE'
-                      ? 'bg-bridge-green/20 text-bridge-green'
-                      : entry.status === 'CONVERTED'
-                      ? 'bg-bridge-gold/20 text-bridge-gold'
-                      : 'bg-white/10 text-white/40'
-                  }`}
-                >
-                  {entry.status}
-                </span>
-              </td>
-              {showInviteButton && (
+          {entries.map((entry) => {
+            const isSelected = selectedEmails.has(entry.email);
+            const isInviting = invitingEmails.has(entry.email);
+
+            return (
+              <tr
+                key={entry.id}
+                className={`border-b border-white/10 hover:bg-white/5 ${
+                  isInviting ? 'opacity-50' : ''
+                }`}
+              >
+                {showCheckboxes && (
+                  <td className="p-4">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => onToggleSelection(entry.email)}
+                      disabled={isInviting}
+                      className="w-4 h-4 cursor-pointer accent-bridge-gold disabled:cursor-not-allowed"
+                    />
+                  </td>
+                )}
+                <td className="p-4">{entry.name}</td>
+                <td className="p-4 text-white/60">{entry.email}</td>
+                <td className="p-4 text-white/60">{entry.company || '—'}</td>
+                <td className="p-4 text-white/60">{entry.interests.join(', ')}</td>
                 <td className="p-4">
-                  <button
-                    onClick={() => onInvite(entry.email)}
-                    disabled={invitingEmails.has(entry.email)}
-                    className="px-4 py-2 bg-bridge-gold text-black font-bold text-xs hover:bg-bridge-gold/80 disabled:opacity-50 disabled:cursor-not-allowed"
+                  <span
+                    className={`px-2 py-1 text-xs rounded ${
+                      entry.status === 'ACTIVE'
+                        ? 'bg-bridge-green/20 text-bridge-green'
+                        : entry.status === 'CONVERTED'
+                        ? 'bg-bridge-gold/20 text-bridge-gold'
+                        : 'bg-white/10 text-white/40'
+                    }`}
                   >
-                    {invitingEmails.has(entry.email) ? 'SENDING...' : 'INVITE'}
-                  </button>
+                    {entry.status}
+                  </span>
                 </td>
-              )}
-            </tr>
-          ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
