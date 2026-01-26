@@ -222,7 +222,7 @@ async function main() {
   });
   console.log('✅ Created journey events');
 
-  // Create admin user
+  // Create admin users
   await prisma.admin.upsert({
     where: { email: 'admin@kaptn.demo' },
     update: {},
@@ -233,7 +233,20 @@ async function main() {
       role: 'SUPER_ADMIN',
     },
   });
-  console.log('✅ Created admin user (email: admin@kaptn.demo, password: password123)');
+  console.log('✅ Created demo admin user (email: admin@kaptn.demo, password: password123)');
+
+  // Create production admin user (authenticated via Logto)
+  await prisma.admin.upsert({
+    where: { email: 'chris@kaptn.ai' },
+    update: {},
+    create: {
+      email: 'chris@kaptn.ai',
+      name: 'Chris Han',
+      passwordHash: '', // Not needed - uses Logto authentication
+      role: 'SUPER_ADMIN',
+    },
+  });
+  console.log('✅ Created production admin user: chris@kaptn.ai');
 
   console.log('🎉 Database seeded successfully!');
 }
