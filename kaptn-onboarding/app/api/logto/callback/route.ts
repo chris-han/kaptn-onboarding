@@ -149,8 +149,36 @@ export async function GET(request: NextRequest) {
       console.log('Database not configured, skipping user sync');
     }
 
-    // Get post-redirect URI from cookie
-    postRedirectUri = cookieStore.get('logto_post_redirect_uri')?.value || '/onboarding';
+    // Get post-redirect URI from cookie or determine based on user role
+    const customRedirect = cookieStore.get('logto_post_redirect_uri')?.value;
+
+    if (customRedirect) {
+      postRedirectUri = customRedirect;
+    } else if (claims?.email && isDatabaseConfigured && prisma) {
+      // Check if user is an admin
+      const adminUser = await prisma.admin.findUnique({
+        where: { email: claims.email.toLowerCase() },
+      });
+
+      if (adminUser) {
+        // Admin user → redirect to admin dashboard
+        postRedirectUri = '/admin';
+      } else {
+        // Regular user → check if they have completed onboarding
+        const user = await prisma.user.findUnique({
+          where: { logtoId: claims.sub },
+          include: { badge: true },
+        });
+
+        if (user?.badge) {
+          // User has a badge → redirect to badge viewer
+          postRedirectUri = `/badge/${user.id}`;
+        } else {
+          // User hasn't completed onboarding → redirect to onboarding
+          postRedirectUri = '/onboarding';
+        }
+      }
+    }
 
     // Clear the cookies
     cookieStore.delete('logto_post_redirect_uri');
