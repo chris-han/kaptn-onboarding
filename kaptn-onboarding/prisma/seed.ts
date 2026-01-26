@@ -235,18 +235,18 @@ async function main() {
   });
   console.log('✅ Created demo admin user (email: admin@kaptn.demo, password: password123)');
 
-  // Create production admin user (authenticated via Logto)
+  // Create production admin user (authenticated via Logto/GitHub)
   await prisma.admin.upsert({
-    where: { email: 'chris@kaptn.ai' },
+    where: { email: 'chrishan2000@hotmail.com' },
     update: {},
     create: {
-      email: 'chris@kaptn.ai',
+      email: 'chrishan2000@hotmail.com',
       name: 'Chris Han',
       passwordHash: '', // Not needed - uses Logto authentication
       role: 'SUPER_ADMIN',
     },
   });
-  console.log('✅ Created production admin user: chris@kaptn.ai');
+  console.log('✅ Created production admin user: chrishan2000@hotmail.com');
 
   console.log('🎉 Database seeded successfully!');
 }
