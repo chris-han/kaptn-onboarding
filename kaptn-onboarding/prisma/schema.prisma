@@ -63,6 +63,11 @@ model WaitlistEntry {
   submittedAt DateTime @default(now())
   convertedAt DateTime? // When became authenticated user
 
+  // Invitation system
+  invitationToken     String?   @unique // Unique token for invitation link
+  invitedAt           DateTime? // When invitation email was sent
+  invitationExpiresAt DateTime? // When invitation expires (7 days from invitedAt)
+
   // UTM tracking (future)
   utmSource   String?
   utmMedium   String?
@@ -72,6 +77,7 @@ model WaitlistEntry {
   @@index([status])
   @@index([submittedAt])
   @@index([source])
+  @@index([invitationToken])
 }
 
 enum WaitlistStatus {

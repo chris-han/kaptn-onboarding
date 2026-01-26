@@ -19,6 +19,9 @@ export async function GET(request: NextRequest) {
 
     if (claims?.sub && isDatabaseConfigured && prisma) {
       try {
+        // Check if we're linking via invitation token
+        const invitationToken = cookieStore.get('kaptn_invitation_token')?.value;
+
         // Check if we're linking to an existing user from waitlist
         const linkUserId = cookieStore.get('logto_link_user_id')?.value;
 
@@ -56,6 +59,39 @@ export async function GET(request: NextRequest) {
 
           // Clear the link cookie
           cookieStore.delete('logto_link_user_id');
+        } else if (invitationToken) {
+          // Link via invitation token from waitlist
+          const waitlistEntry = await prisma.waitlistEntry.findUnique({
+            where: { invitationToken },
+            include: { user: true },
+          });
+
+          if (waitlistEntry && waitlistEntry.status !== 'CONVERTED') {
+            // Update the user with Logto info
+            await prisma.user.update({
+              where: { id: waitlistEntry.userId },
+              data: {
+                logtoId: claims.sub,
+                email: claims.email ? claims.email.toLowerCase() : waitlistEntry.email,
+                emailVerified: claims.email_verified || false,
+                name: claims.name || claims.username || waitlistEntry.name,
+              },
+            });
+
+            // Mark waitlist entry as converted
+            await prisma.waitlistEntry.update({
+              where: { id: waitlistEntry.id },
+              data: {
+                status: 'CONVERTED',
+                convertedAt: new Date(),
+              },
+            });
+
+            console.log(`Converted waitlist user ${waitlistEntry.userId} via invitation token`);
+          }
+
+          // Clear the invitation cookie
+          cookieStore.delete('kaptn_invitation_token');
         } else {
           // Standard flow: find or create user by logtoId
           let user = await prisma.user.findUnique({

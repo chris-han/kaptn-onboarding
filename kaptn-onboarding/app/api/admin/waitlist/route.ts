@@ -1,12 +1,23 @@
 // Admin API: Waitlist Management
 import { NextResponse } from 'next/server';
 import { prisma, isDatabaseConfigured } from '@/lib/prisma';
+import { checkAdminAccess } from '@/lib/admin';
 
 // Force dynamic rendering since this route uses request.url
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
   try {
+    // Check admin access
+    const adminCheck = await checkAdminAccess();
+
+    if (!adminCheck.isAdmin) {
+      return NextResponse.json(
+        { error: adminCheck.error || 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     // Check if database is configured
     if (!isDatabaseConfigured || !prisma) {
       return NextResponse.json(
@@ -100,6 +111,16 @@ export async function GET(request: Request) {
 // Update waitlist entry status
 export async function PATCH(request: Request) {
   try {
+    // Check admin access
+    const adminCheck = await checkAdminAccess();
+
+    if (!adminCheck.isAdmin) {
+      return NextResponse.json(
+        { error: adminCheck.error || 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { id, status } = body;
 
