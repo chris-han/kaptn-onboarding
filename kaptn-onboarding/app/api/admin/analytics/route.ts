@@ -148,14 +148,14 @@ export async function GET(request: Request) {
         SELECT AVG(EXTRACT(EPOCH FROM ("invitedAt" - "submittedAt")) / 86400) as avg
         FROM "WaitlistEntry"
         WHERE "invitedAt" IS NOT NULL
-      `.then(result => result[0]?.avg || 0),
+      `.then((result: Array<{ avg: number }>) => result[0]?.avg || 0),
 
       // Average time from invitation to conversion (in days)
       prisma.$queryRaw<Array<{ avg: number }>>`
         SELECT AVG(EXTRACT(EPOCH FROM ("convertedAt" - "invitedAt")) / 86400) as avg
         FROM "WaitlistEntry"
         WHERE "invitedAt" IS NOT NULL AND "convertedAt" IS NOT NULL
-      `.then(result => result[0]?.avg || 0),
+      `.then((result: Array<{ avg: number }>) => result[0]?.avg || 0),
     ]);
 
     // Calculate conversion rates
