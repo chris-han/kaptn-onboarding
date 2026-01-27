@@ -2,13 +2,15 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { bridgeServices } from "@/types/waitlist";
 
 interface WaitlistProps {
-  onSkip: (captainName?: string) => void;
+  onSkip: (captainName?: string, userId?: string) => void;
 }
 
 export default function Waitlist({ onSkip }: WaitlistProps) {
+  const t = useTranslations("onboarding.waitlist");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
@@ -45,11 +47,12 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (data.success && data.userId) {
         setStatus("success");
+        // Continue with onboarding flow and pass userId for profile saving
         setTimeout(() => {
-          onSkip(name); // Pass captain name to next phase
-        }, 3000);
+          onSkip(name, data.userId);
+        }, 2000);
       } else {
         setStatus("error");
         setErrorMessage(data.message || "Registration failed");
@@ -62,22 +65,20 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
 
   if (status === "success") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-8">
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="text-center space-y-6 max-w-2xl"
+          className="text-center space-y-4 max-w-2xl"
         >
           <div className="w-16 h-16 mx-auto border-2 border-bridge-green rounded-full flex items-center justify-center">
             <div className="w-8 h-8 bg-bridge-green rounded-full animate-pulse-glow" />
           </div>
           <h2 className="text-2xl font-mono uppercase">
-            Registration Complete, Permission Granted, Captain!
+            {t("title")}
           </h2>
           <p className="bridge-text text-bridge-white/80">
-            Welcome to the bridge, Captain.
-            <br />
-            We'll contact you when systems are operational.
+            Processing registration...
           </p>
         </motion.div>
       </div>
@@ -85,31 +86,29 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8 py-16">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="max-w-5xl w-full space-y-8"
+        className="max-w-5xl w-full space-y-4"
       >
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-center space-y-4"
+          className="text-center space-y-2"
         >
-          <h2 className="text-3xl font-mono uppercase tracking-wider">
-            KAPTN Enterprise Bridge
+          <h2 className="text-xl sm:text-2xl font-mono uppercase tracking-wider">
+            {t("header.title")}
           </h2>
-          <p className="text-xl bridge-text">
-            Pre-Launch Access
+          <p className="text-base sm:text-lg bridge-text">
+            {t("header.subtitle")}
           </p>
-          <div className="h-px w-48 bg-bridge-white/30 mx-auto" />
-          <p className="bridge-text text-sm text-bridge-white/70 max-w-2xl mx-auto">
-            Five bridge systems. One mission.
-            <br />
-            Navigate your venture from anywhere.
+          <div className="h-px w-32 bg-bridge-white/30 mx-auto" />
+          <p className="bridge-text text-xs sm:text-sm text-bridge-white/70 max-w-2xl mx-auto">
+            {t("header.description")}
           </p>
         </motion.div>
 
@@ -118,7 +117,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="grid md:grid-cols-2 lg:grid-cols-3 gap-4"
+          className="grid md:grid-cols-2 gap-3"
         >
           {bridgeServices.map((service, index) => {
             const isSelected = interests.includes(service.id);
@@ -129,19 +128,19 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
                 onClick={() => toggleInterest(service.id)}
-                className={`p-6 border text-left transition-all ${
+                className={`p-3 sm:p-4 border text-left transition-all ${
                   isSelected
                     ? "border-bridge-blue bg-bridge-blue/10"
                     : "border-bridge-white/30 hover:border-bridge-white/50"
                 }`}
               >
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-mono font-bold">
-                      {service.name}
+                    <h3 className="text-base sm:text-lg font-mono font-bold">
+                      {t(`systems.${service.id}.name`)}
                     </h3>
                     <div
-                      className={`w-5 h-5 border-2 flex items-center justify-center ${
+                      className={`w-5 h-5 border-2 flex items-center justify-between ${
                         isSelected
                           ? "border-bridge-blue bg-bridge-blue"
                           : "border-bridge-white/50"
@@ -156,7 +155,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
                     {service.protocols.join(" • ")} Protocol
                   </p>
                   <p className="text-sm text-bridge-white/70 leading-relaxed">
-                    {service.description}
+                    {t(`systems.${service.id}.description`)}
                   </p>
                 </div>
               </motion.button>
@@ -170,51 +169,51 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           onSubmit={handleSubmit}
-          className="bg-bridge-white/5 border border-bridge-white/20 p-8 space-y-6 max-w-2xl mx-auto"
+          className="bg-bridge-white/5 border border-bridge-white/20 p-4 sm:p-6 space-y-4 max-w-2xl mx-auto"
         >
-          <h3 className="font-mono text-lg uppercase text-center">
-            Request Bridge Access
+          <h3 className="font-mono text-base sm:text-lg uppercase text-center">
+            {t("form.title")}
           </h3>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <label className="block text-sm bridge-text mb-2">
-                Name *
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
+                {t("form.name")}
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="Your name"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
+                placeholder={t("form.namePlaceholder")}
               />
             </div>
 
             <div>
-              <label className="block text-sm bridge-text mb-2">
-                Email *
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
+                {t("form.email")}
               </label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="captain@venture.com"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
+                placeholder={t("form.emailPlaceholder")}
               />
             </div>
 
             <div>
-              <label className="block text-sm bridge-text mb-2">
-                Company (Optional)
+              <label className="block text-xs sm:text-sm bridge-text mb-1">
+                {t("form.company")}
               </label>
               <input
                 type="text"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
-                className="w-full bg-black border border-bridge-white/30 p-3 text-white font-mono focus:border-bridge-blue focus:outline-none"
-                placeholder="Your venture"
+                className="w-full bg-black border border-bridge-white/30 p-2 text-sm text-white font-mono focus:border-bridge-blue focus:outline-none"
+                placeholder={t("form.companyPlaceholder")}
               />
             </div>
           </div>
@@ -238,19 +237,19 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
               disabled={status === "submitting"}
               className="flex-1 bridge-button disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {status === "submitting" ? "Processing..." : "Permission to come aboard"}
+              {t("form.submit")}
             </button>
             <button
               type="button"
               onClick={() => onSkip()}
               className="px-6 py-4 border border-bridge-white/30 hover:border-bridge-white/50 transition-all font-mono uppercase tracking-wider text-sm"
             >
-              Skip
+              {t("form.skip")}
             </button>
           </div>
 
           <p className="text-xs text-center text-bridge-white/50 bridge-text">
-            Systems launch Q2 2026. Early access priority given to pre-launch registrants.
+            {t("form.launchNote")}
           </p>
         </motion.form>
 
@@ -260,7 +259,7 @@ export default function Waitlist({ onSkip }: WaitlistProps) {
           transition={{ delay: 1 }}
           className="text-center text-xs text-bridge-white/40 bridge-text"
         >
-          "The unknown awaits."
+          "{t("quote")}"
         </motion.div>
       </motion.div>
     </div>

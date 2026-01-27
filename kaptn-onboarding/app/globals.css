@@ -2,17 +2,86 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Alibaba PuHuiTi Font for Chinese - Self-hosted */
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('/fonts/AlibabaPuHuiTi-3-55-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('/fonts/AlibabaPuHuiTi-3-65-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('/fonts/AlibabaPuHuiTi-3-75-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('/fonts/AlibabaPuHuiTi-3-85-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
-    --font-mono: ui-monospace, Menlo, Monaco, "Cascadia Mono", "Segoe UI Mono",
-      "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace", "Source Code Pro",
-      "Fira Mono", "Droid Sans Mono", "Courier New", monospace;
     --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
       "Helvetica Neue", Arial, sans-serif;
+    --font-zh: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-bridge-black text-bridge-white font-sans;
+    font-family: var(--font-sans);
+  }
+
+  /* Locale-specific font families */
+  html.font-zh-cn body {
+    font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  }
+
+  /* Override all font classes for Chinese locale */
+  html.font-zh-cn * {
+    font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important;
+  }
+
+  html.font-zh-cn h1,
+  html.font-zh-cn h2,
+  html.font-zh-cn h3,
+  html.font-zh-cn h4,
+  html.font-zh-cn h5,
+  html.font-zh-cn h6 {
+    font-family: 'Alibaba PuHuiTi', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif !important;
+  }
+
+  html.font-ja body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Noto Sans JP', 'Yu Gothic', sans-serif;
+  }
+
+  html.font-ko body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+
+  * {
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 

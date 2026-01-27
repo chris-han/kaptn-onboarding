@@ -20,14 +20,6 @@ export const bridgeServices = [
     protocols: ["K", "T"],
   },
   {
-    id: "genesis",
-    name: "GENESIS",
-    fullName: "Global Entity Network & Establishment System for International Startups",
-    description:
-      "Launch trajectory: China market. Complete entity formation protocol. From filing to operation clearance.",
-    protocols: ["P", "A"],
-  },
-  {
     id: "ledger",
     name: "LEDGER",
     fullName: "Live Enterprise Data Gateway & Reconciliation",
@@ -44,11 +36,11 @@ export const bridgeServices = [
     protocols: ["P", "N"],
   },
   {
-    id: "oracle",
-    name: "ORACLE",
-    fullName: "Operations Research & Analytics for Critical Leadership Excellence",
+    id: "sonar",
+    name: "SONAR",
+    fullName: "Strategic Operations & Network Analytics Reconnaissance",
     description:
-      "Data: unified. Trends: detected. Ad performance: measured. Decision confidence: high.",
+      "Data: unified. Patterns: detected. Cash flow: tracked. Decision confidence: maximized.",
     protocols: ["T", "P"],
   },
 ] as const;

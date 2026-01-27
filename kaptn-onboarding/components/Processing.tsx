@@ -2,20 +2,27 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface ProcessingProps {
   onComplete: () => void;
 }
 
-const protocols = [
-  { id: "K", label: "Knowledge protocol: Calibrated", color: "text-bridge-blue" },
-  { id: "T", label: "Thesis protocol: Calibrated", color: "text-bridge-purple" },
-  { id: "P", label: "Prioritize protocol: Calibrated", color: "text-bridge-gold" },
-  { id: "A", label: "Action protocol: Calibrated", color: "text-bridge-red" },
-  { id: "N", label: "Navigation protocol: Calibrated", color: "text-bridge-green" },
+const protocolColors = [
+  { id: "K", color: "text-bridge-blue" },
+  { id: "T", color: "text-bridge-purple" },
+  { id: "P", color: "text-bridge-gold" },
+  { id: "A", color: "text-bridge-red" },
+  { id: "N", color: "text-bridge-green" },
 ];
 
 export default function Processing({ onComplete }: ProcessingProps) {
+  const t = useTranslations("onboarding.processing");
+
+  const protocols = protocolColors.map(p => ({
+    ...p,
+    label: t(`protocols.${p.id}`)
+  }));
   const [currentProtocol, setCurrentProtocol] = useState(0);
 
   useEffect(() => {
@@ -31,14 +38,14 @@ export default function Processing({ onComplete }: ProcessingProps) {
   }, [currentProtocol, onComplete]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
-      <div className="space-y-8 max-w-2xl w-full">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 py-8 relative z-10">
+      <div className="space-y-6 max-w-2xl w-full">
         {/* KAPTN Logo Animation */}
-        <div className="flex items-center justify-center space-x-4 mb-16">
+        <div className="flex items-center justify-center space-x-3 sm:space-x-4 mb-8 sm:mb-12">
           {["K", "A", "T", "P", "N"].map((letter, index) => {
             const protocolIndex = protocols.findIndex(p => p.id === letter);
             const isActive = currentProtocol > protocolIndex;
-            
+
             return (
               <motion.div
                 key={letter}
@@ -48,7 +55,7 @@ export default function Processing({ onComplete }: ProcessingProps) {
                   scale: isActive ? 1.1 : 1,
                 }}
                 transition={{ duration: 0.3 }}
-                className={`text-6xl font-mono font-bold ${
+                className={`text-4xl sm:text-5xl font-mono font-bold ${
                   isActive ? protocols[protocolIndex].color : "text-bridge-white/30"
                 } ${isActive ? "text-glow" : ""}`}
               >
@@ -59,7 +66,7 @@ export default function Processing({ onComplete }: ProcessingProps) {
         </div>
 
         {/* Protocol Status Messages */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {protocols.map((protocol, index) => (
             <motion.div
               key={protocol.id}

@@ -1,42 +1,45 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface BriefProps {
   onContinue: () => void;
 }
 
 export default function Brief({ onContinue }: BriefProps) {
+  const t = useTranslations("onboarding.brief");
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 sm:p-8 py-8 relative z-10">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}
-        className="text-center space-y-12 max-w-3xl"
+        className="text-center space-y-8 max-w-2xl"
       >
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
-          className="space-y-6"
+          className="space-y-4"
         >
-          <p className="bridge-text text-xl leading-loose">
-            This is not a test.
+          <p className="bridge-text text-lg sm:text-xl leading-relaxed">
+            {t("line1")}
             <br />
-            This is a mirror.
+            {t("line2")}
           </p>
 
           <div className="h-px w-32 bg-bridge-white/30 mx-auto" />
 
-          <p className="bridge-text text-base leading-loose text-bridge-white/80">
-            You will face five scenarios.
+          <p className="bridge-text text-sm sm:text-base leading-relaxed text-bridge-white/80">
+            {t("line3")}
             <br />
-            Each scenario reveals how you navigate uncertainty.
+            {t("line4")}
             <br />
-            There are no wrong answers.
+            {t("line5")}
             <br />
-            Only patterns.
+            {t("line6")}
           </p>
         </motion.div>
 
@@ -46,8 +49,10 @@ export default function Brief({ onContinue }: BriefProps) {
           transition={{ delay: 1.2 }}
           onClick={onContinue}
           className="bridge-button"
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
-          Initiate Protocol
+          {t("button")}
         </motion.button>
       </motion.div>
     </div>

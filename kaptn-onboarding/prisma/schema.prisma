@@ -1,0 +1,241 @@
+// KAPTN Onboarding Database Schema
+// Tracks user journey, waitlist, and conversion funnel
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// USER IDENTITY & AUTHENTICATION
+// ============================================
+
+model User {
+  id            String    @id @default(cuid())
+  logtoId       String?   @unique // Future: Links to Logto auth
+  email         String?   @unique
+  emailVerified Boolean   @default(false)
+
+  // Social login identifiers (future)
+  googleId      String?   @unique
+  wechatOpenId  String?   @unique
+  wechatUnionId String?   @unique
+
+  // Profile info
+  name          String?
+  avatar        String?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  waitlistEntry WaitlistEntry?
+  profile       UserProfile?
+  badge         Badge?
+  journeyEvents JourneyEvent[]
+
+  @@index([email])
+  @@index([logtoId])
+  @@index([createdAt])
+}
+
+// ============================================
+// WAITLIST MANAGEMENT
+// ============================================
+
+model WaitlistEntry {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Waitlist data
+  name        String
+  email       String   @unique
+  company     String?
+  interests   String[] // ["compass", "ledger", "shield", "sonar"]
+
+  // Tracking
+  source      String   @default("onboarding") // Track acquisition source
+  status      WaitlistStatus @default(ACTIVE)
+  submittedAt DateTime @default(now())
+  convertedAt DateTime? // When became authenticated user
+
+  // Invitation system
+  invitationToken     String?   @unique // Unique token for invitation link
+  invitedAt           DateTime? // When invitation email was sent
+  invitationExpiresAt DateTime? // When invitation expires (7 days from invitedAt)
+
+  // UTM tracking (future)
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  @@index([email])
+  @@index([status])
+  @@index([submittedAt])
+  @@index([source])
+  @@index([invitationToken])
+}
+
+enum WaitlistStatus {
+  ACTIVE      // On waitlist
+  CONVERTED   // Upgraded to full account
+  INACTIVE    // Opted out or expired
+}
+
+// ============================================
+// DECISION PROFILE & ONBOARDING
+// ============================================
+
+model UserProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // KAPTN Decision Patterns (5 protocols)
+  knowledgePattern     String // K: "ACTIVE_EXPLORER" | "SELECTIVE_SCANNER" | "MISSION_FILTER"
+  thesisPattern        String // T: "RAPID_UPDATER" | "DATA_ANCHOR" | "COMPLEXITY_HOLDER"
+  prioritizePattern    String // P: "FOCUSED_NAVIGATOR" | "PARALLEL_PROCESSOR" | "DELIBERATE_STRATEGIST"
+  actionPattern        String // A: "MOMENTUM_DRIVER" | "COMPLETENESS_SEEKER" | "PROGRESSIVE_BUILDER"
+  navigationPattern    String // N: "QUICK_RECALIBRATOR" | "DEEP_QUESTIONER" | "ADAPTIVE_CLAIMER"
+
+  // Metadata
+  captainName          String?
+  onboardingCompleted  Boolean  @default(false)
+  completedAt          DateTime?
+
+  // Scenario responses (JSON for flexibility)
+  scenarioResponses    Json     // Full response array
+
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId])
+  @@index([onboardingCompleted])
+  @@index([completedAt])
+}
+
+// ============================================
+// BADGE/ENSIGNIA SYSTEM
+// ============================================
+
+model Badge {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  serialNumber   String   @unique // Last 8 chars of userId (uppercase)
+  captainName    String?
+  issuedAt       DateTime @default(now())
+
+  // Download tracking
+  downloadCount  Int      @default(0)
+  lastDownloadAt DateTime?
+
+  @@index([serialNumber])
+  @@index([issuedAt])
+}
+
+// ============================================
+// USER JOURNEY TRACKING (For Funnel Analysis)
+// ============================================
+
+model JourneyEvent {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Session tracking
+  sessionId String   // Tracks anonymous sessions before user creation
+
+  // Event data
+  eventType EventType
+  phase     String   // "entrance", "brief", "scenario", "oath", "waitlist", etc.
+  metadata  Json?    // Additional event-specific data
+
+  // Timing
+  timestamp DateTime @default(now())
+  duration  Int?     // Time spent on this phase (seconds)
+
+  // Context
+  userAgent String?
+  ipAddress String?
+  locale    String?  // "en", "zh", "ja", "ko"
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([phase])
+  @@index([timestamp])
+}
+
+enum EventType {
+  PAGE_VIEW      // User viewed a phase
+  PHASE_START    // User started a phase
+  PHASE_COMPLETE // User completed a phase
+  BUTTON_CLICK   // User clicked a button
+  FORM_SUBMIT    // User submitted a form
+  ERROR          // An error occurred
+  EXIT           // User left the funnel
+}
+
+// ============================================
+// ANALYTICS AGGREGATIONS (For Performance)
+// ============================================
+
+model DailyStats {
+  id               String   @id @default(cuid())
+  date             DateTime @unique @db.Date
+
+  // Funnel metrics
+  entranceCount    Int      @default(0)
+  briefCount       Int      @default(0)
+  scenariosStarted Int      @default(0)
+  scenariosCompleted Int    @default(0)
+  oathTaken        Int      @default(0)
+  waitlistJoined   Int      @default(0)
+  profilesCreated  Int      @default(0)
+  badgesIssued     Int      @default(0)
+
+  // Conversion rates (calculated)
+  entranceToWaitlist Float?
+  waitlistToComplete Float?
+  overallConversion  Float?
+
+  // Traffic sources
+  organicCount     Int      @default(0)
+  referralCount    Int      @default(0)
+  socialCount      Int      @default(0)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([date])
+}
+
+// ============================================
+// ADMIN USERS (For Dashboard Access)
+// ============================================
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String   // Hashed password
+  name         String
+  role         AdminRole @default(VIEWER)
+
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([email])
+}
+
+enum AdminRole {
+  SUPER_ADMIN  // Full access
+  ADMIN        // Can view and export data
+  VIEWER       // Read-only access
+}

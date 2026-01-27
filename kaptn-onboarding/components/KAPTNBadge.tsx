@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
 interface KAPTNBadgeProps {
   size?: number;
@@ -8,6 +9,8 @@ interface KAPTNBadgeProps {
 }
 
 export default function KAPTNBadge({ size = 200, animate = false }: KAPTNBadgeProps) {
+  const t = useTranslations("onboarding.badge");
+
   return (
     <motion.div
       initial={animate ? { scale: 0, rotate: -180 } : {}}
@@ -108,7 +111,7 @@ export default function KAPTNBadge({ size = 200, animate = false }: KAPTNBadgePr
           fontFamily="monospace"
         >
           <textPath href="#topCurve" startOffset="50%" textAnchor="middle">
-            KAPTN
+            {t("title")}
           </textPath>
         </text>
 
@@ -126,7 +129,7 @@ export default function KAPTNBadge({ size = 200, animate = false }: KAPTNBadgePr
           opacity="0.8"
         >
           <textPath href="#bottomCurve" startOffset="50%" textAnchor="middle">
-            BRIDGE SYSTEM
+            {t("subtitle")}
           </textPath>
         </text>
 

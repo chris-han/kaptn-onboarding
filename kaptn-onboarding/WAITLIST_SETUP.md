@@ -6,7 +6,7 @@ The onboarding game now includes a **waitlist registration phase** that appears 
 
 ---
 
-## The Five Bridge Services
+## The Four Bridge Services
 
 ### 1. **COMPASS** - Intelligence & Decision Support
 - Real-time AI assistant
@@ -14,28 +14,22 @@ The onboarding game now includes a **waitlist registration phase** that appears 
 - Decision clarity system
 - **Protocols:** K (Knowledge) + T (Thesis)
 
-### 2. **GENESIS** - Entity Formation
-- China business launch
-- Complete entity formation
-- Compliance handling
-- **Protocols:** P (Prioritize) + A (Action)
-
-### 3. **LEDGER** - Financial Operations
+### 2. **LEDGER** - Financial Operations
 - Professional bookkeeping
 - Monthly reconciliation
 - Financial clarity & insights
 - **Protocols:** K (Knowledge) + N (Navigation)
 
-### 4. **SHIELD** - Tax Compliance
+### 3. **SHIELD** - Tax Compliance
 - Tax preparation & filing
 - Deduction optimization
 - Compliance protection
 - **Protocols:** P (Prioritize) + N (Navigation)
 
-### 5. **ORACLE** - Analytics & Intelligence
+### 4. **SONAR** - Analytics & Intelligence
 - Business data analytics
-- Ad performance tracking
-- Trend identification
+- Cash flow tracking
+- Contract proofing
 - **Protocols:** T (Thesis) + P (Prioritize)
 
 ---
@@ -90,7 +84,7 @@ For production:
 1. User completes 5 decision scenarios
 2. User takes the Captain's Oath
 3. **Waitlist screen appears**
-4. User sees 5 bridge services
+4. User sees 4 bridge services
 5. User selects services of interest
 6. User enters: name, email, company (optional)
 7. User submits or skips

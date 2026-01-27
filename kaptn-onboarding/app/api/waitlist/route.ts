@@ -1,16 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
+import { prisma, isDatabaseConfigured } from '@/lib/prisma';
 
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const RECIPIENT_EMAIL = process.env.RECIPIENT_EMAIL || "your-email@example.com";
-
-if (!RESEND_API_KEY) {
-  throw new Error("RESEND_API_KEY environment variable is not set");
-}
-
-const resend = new Resend(RESEND_API_KEY);
-
-// Rate limiting: Track email submissions (email -> timestamp)
+// Rate limiting: Track submissions (email -> timestamp)
 const recentSubmissions = new Map<string, number>();
 const RATE_LIMIT_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
 
@@ -58,109 +49,96 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create email content
-    const interestsList = interests?.length
-      ? interests.join(", ")
-      : "No specific interests selected";
-
-    const textContent = `
-BRIDGE SIGNAL RECEIVED
-Status: New Captain Registration
-
-======================
-CAPTAIN PROFILE
-======================
-Name: ${name}
-Email: ${email}
-Company: ${company || "Not provided"}
-
-======================
-SYSTEMS OF INTEREST
-======================
-${interestsList}
-
-======================
-ONBOARDING STATUS
-======================
-Decision Profile: Calibrated
-Bridge Oath: Affirmed
-Waitlist Status: Active
-
-This Captain has completed the bridge activation protocol and is ready for mission assignment.
-
----
-KAPTN Enterprise Bridge
-"The unknown awaits."
-    `;
-
-    const htmlContent = `
-<!DOCTYPE html>
-<html>
-<head>
-  <style>
-    body { font-family: monospace; background: #000; color: #fff; padding: 20px; }
-    .header { border-bottom: 2px solid #0066FF; padding-bottom: 10px; margin-bottom: 20px; }
-    .section { margin: 20px 0; padding: 15px; border-left: 3px solid #00FF00; }
-    .label { color: #FFD700; font-weight: bold; }
-    .value { color: #fff; margin-left: 10px; }
-    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; color: #666; }
-  </style>
-</head>
-<body>
-  <div class="header">
-    <h2>BRIDGE SIGNAL RECEIVED</h2>
-    <p>Status: <span style="color: #00FF00;">New Captain Registration</span></p>
-  </div>
-
-  <div class="section">
-    <h3>CAPTAIN PROFILE</h3>
-    <p><span class="label">Name:</span><span class="value">${name}</span></p>
-    <p><span class="label">Email:</span><span class="value">${email}</span></p>
-    <p><span class="label">Company:</span><span class="value">${company || "Not provided"}</span></p>
-  </div>
-
-  <div class="section">
-    <h3>SYSTEMS OF INTEREST</h3>
-    <p>${interestsList}</p>
-  </div>
-
-  <div class="section">
-    <h3>ONBOARDING STATUS</h3>
-    <p><span class="label">Decision Profile:</span><span class="value">Calibrated</span></p>
-    <p><span class="label">Bridge Oath:</span><span class="value">Affirmed</span></p>
-    <p><span class="label">Waitlist Status:</span><span class="value" style="color: #00FF00;">Active</span></p>
-  </div>
-
-  <div class="footer">
-    <p>This Captain has completed the bridge activation protocol and is ready for mission assignment.</p>
-    <br/>
-    <p>KAPTN Enterprise Bridge<br/>"The unknown awaits."</p>
-  </div>
-</body>
-</html>
-    `;
-
-    // Send via Resend
-    const { data, error } = await resend.emails.send({
-      from: "KAPTN Enterprise Bridge <noreply@kaptn.ai>",
-      to: RECIPIENT_EMAIL,
-      subject: `New KAPTN Waitlist Registration: ${name}`,
-      text: textContent,
-      html: htmlContent,
-    });
-
-    if (error) {
-      console.error("Resend error:", error);
-      throw new Error(`Resend API error: ${error.message}`);
+    // Database is required for the user journey
+    if (!isDatabaseConfigured || !prisma) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "System temporarily unavailable. Please try again later.",
+        },
+        { status: 503 }
+      );
     }
 
-    // Track this submission to prevent duplicates
-    recentSubmissions.set(email.toLowerCase(), Date.now());
+    try {
+      console.log('[Waitlist] Starting database operations...');
 
-    return NextResponse.json({
-      success: true,
-      message: "Registration received. Welcome to the bridge.",
-    });
+      // Find or create user
+      console.log('[Waitlist] Finding user with email:', email.toLowerCase());
+      let user = await prisma.user.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+      console.log('[Waitlist] User found:', !!user);
+
+      if (!user) {
+        console.log('[Waitlist] Creating new user...');
+        user = await prisma.user.create({
+          data: {
+            email: email.toLowerCase(),
+            name,
+          },
+        });
+        console.log('[Waitlist] User created:', user.id);
+      }
+
+      // Check if waitlist entry already exists
+      console.log('[Waitlist] Checking for existing waitlist entry...');
+      const existingEntry = await prisma.waitlistEntry.findUnique({
+        where: { email: email.toLowerCase() },
+      });
+      console.log('[Waitlist] Existing entry found:', !!existingEntry);
+
+      if (existingEntry) {
+        // User already on waitlist, return their userId for signup
+        return NextResponse.json({
+          success: true,
+          userId: user.id,
+          message: "You're already registered. Proceeding to account creation.",
+        });
+      }
+
+      // Create waitlist entry
+      console.log('[Waitlist] Creating waitlist entry...');
+      await prisma.waitlistEntry.create({
+        data: {
+          userId: user.id,
+          name,
+          email: email.toLowerCase(),
+          company: company || null,
+          interests: interests || [],
+        },
+      });
+      console.log('[Waitlist] Waitlist entry created successfully');
+
+      // Track this submission to prevent duplicates
+      recentSubmissions.set(email.toLowerCase(), Date.now());
+
+      return NextResponse.json({
+        success: true,
+        userId: user.id,
+        message: "Registration received. Proceeding to account creation.",
+      });
+    } catch (dbError) {
+      console.error('[Waitlist] Database operation failed:', {
+        error: dbError,
+        errorMessage: dbError instanceof Error ? dbError.message : String(dbError),
+        errorStack: dbError instanceof Error ? dbError.stack : undefined,
+        errorName: dbError instanceof Error ? dbError.name : undefined,
+        prismaAvailable: !!prisma,
+        isDatabaseConfigured,
+        // @ts-ignore
+        errorCode: dbError?.code,
+        // @ts-ignore
+        errorMeta: dbError?.meta,
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unable to process registration. Please try again.",
+        },
+        { status: 500 }
+      );
+    }
   } catch (error) {
     console.error("Waitlist error:", error);
     return NextResponse.json(

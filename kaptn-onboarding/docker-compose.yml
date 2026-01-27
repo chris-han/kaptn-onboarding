@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: pg_kaptn
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kaptn_admin
+      POSTGRES_PASSWORD: kaptn_dev_2024
+      POSTGRES_DB: pg_kaptn
+    ports:
+      - "15432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kaptn_admin -d pg_kaptn"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  default:
+    name: kaptn_network
