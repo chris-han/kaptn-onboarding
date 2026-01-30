@@ -19,6 +19,7 @@
     "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.2.0",
     "@prisma/extension-accelerate": "^3.0.1",
+    "@vercel/analytics": "^1.6.1",
     "framer-motion": "^11.0.0",
     "gsap": "^3.14.2",
     "html2canvas": "^1.4.1",
