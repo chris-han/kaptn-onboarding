@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>接接乐</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/twemoji@14.0.2/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+  :root{
+    --bg-a:#EAF4FF;
+    --bg-b:#FCE8FF;
+    --ink:#2B2145;
+    --ink-soft:#6B6285;
+    --good:#2FBE68;
+    --good-dark:#1F9950;
+    --bad:#8C5FD1;
+    --bad-dark:#6E45AE;
+    --heart:#FF4D6D;
+    --heart-empty:#F0DCE3;
+    --accent:#FFC93C;
+    --accent-dark:#F0A800;
+    --card:#FFFFFF;
+    --shadow: 0 10px 30px rgba(60,40,100,0.14);
+    --radius-lg: 28px;
+    --radius-md: 18px;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Nunito', sans-serif;
+    color:var(--ink);
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior:none;
+  }
+  body{
+    background: radial-gradient(circle at 15% 10%, var(--bg-b), transparent 55%),
+                radial-gradient(circle at 85% 90%, #E6FFF1, transparent 50%),
+                linear-gradient(160deg, var(--bg-a), var(--bg-b) 100%);
+    min-height:100vh;
+    overflow:hidden;
+  }
+  h1,h2,h3, .display{
+    font-family:'Baloo 2', sans-serif;
+  }
+  button{ font-family:inherit; cursor:pointer; border:none; }
+  #app{ position:relative; width:100%; height:100dvh; }
+  .page{
+    position:absolute; inset:0;
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    overflow-y:auto;
+    padding: 28px 20px 40px;
+  }
+  .page.active{ display:flex; }
+
+  /* ---------- START PAGE ---------- */
+  .start-hero{
+    display:flex; flex-direction:column; align-items:center;
+    margin-top: 4vh;
+    text-align:center;
+  }
+  .mascot-bounce{
+    font-size: 74px;
+    animation: bob 2.4s ease-in-out infinite;
+    filter: drop-shadow(0 12px 14px rgba(60,40,100,0.18));
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0) rotate(-3deg); }
+    50%{ transform: translateY(-14px) rotate(3deg); }
+  }
+  .title-block h1{
+    font-size: 44px;
+    margin: 6px 0 4px;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--good-dark), var(--bad-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .tagline{
+    color: var(--ink-soft);
+    font-weight:700;
+    margin: 0 0 26px;
+    font-size:15px;
+  }
+  .btn-primary{
+    background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+    color: #4A2E00;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:20px;
+    padding: 16px 46px;
+    border-radius: 999px;
+    box-shadow: 0 8px 0 #C98600, var(--shadow);
+    transition: transform .08s ease;
+  }
+  .btn-primary:active{ transform: translateY(4px); box-shadow: 0 4px 0 #C98600; }
+  .btn-primary:disabled{
+    background:#E4DFEE; color:#a79fc0; box-shadow:none; cursor:not-allowed;
+  }
+  .btn-secondary{
+    background: var(--card);
+    color: var(--ink-soft);
+    font-weight:800;
+    font-size:15px;
+    padding: 12px 28px;
+    border-radius: 999px;
+    box-shadow: var(--shadow);
+    margin-top:14px;
+  }
+
+  .history-panel{
+    width:100%;
+    max-width: 440px;
+    margin-top: 34px;
+  }
+  .history-panel h2{
+    font-size:16px;
+    color: var(--ink-soft);
+    margin: 0 0 12px 6px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .history-list{
+    display:flex; flex-direction:column; gap:10px;
+    max-height: 34vh;
+    overflow-y:auto;
+    padding-bottom:4px;
+  }
+  .history-empty{
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    text-align:center;
+    color: var(--ink-soft);
+    font-weight:700;
+    box-shadow: var(--shadow);
+  }
+  .history-item{
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display:flex; align-items:center; justify-content:space-between;
+    box-shadow: 0 4px 14px rgba(60,40,100,0.08);
+  }
+  .history-item .hi-left{ display:flex; flex-direction:column; gap:2px; }
+  .hi-diff{ font-weight:800; font-size:14px; }
+  .hi-diff.简单{ color: var(--good-dark); }
+  .hi-diff.普通{ color: var(--accent-dark); }
+  .hi-diff.困难{ color: var(--bad-dark); }
+  .hi-date{ font-size:11px; color: var(--ink-soft); }
+  .hi-good{
+    font-weight:800; font-size:15px; color: var(--good-dark);
+    display:flex; align-items:center; gap:4px;
+  }
+
+  /* ---------- SETUP PAGE ---------- */
+  #page-setup h2{ margin-top: 6vh; font-size:26px; }
+  .setup-sub{ color:var(--ink-soft); font-weight:700; margin-top:-10px; margin-bottom:22px; font-size:14px;}
+  .difficulty-options{
+    display:flex; flex-direction:column; gap:14px;
+    width:100%; max-width: 360px;
+  }
+  .diff-card{
+    background: var(--card);
+    border-radius: var(--radius-md);
+    padding: 16px 18px;
+    display:flex; align-items:center; gap:14px;
+    box-shadow: var(--shadow);
+    border: 3px solid transparent;
+    text-align:left;
+    transition: transform .1s ease, border-color .15s ease;
+  }
+  .diff-card:active{ transform: scale(0.98); }
+  .diff-card.selected{ border-color: var(--accent-dark); transform: scale(1.02);}
+  .diff-icon{ font-size:30px; }
+  .diff-text b{ display:block; font-family:'Baloo 2'; font-size:17px; }
+  .diff-text span{ font-size:12.5px; color:var(--ink-soft); font-weight:700; }
+  #page-setup .btn-primary{ margin-top: 30px; }
+
+  /* ---------- GAME PAGE ---------- */
+  #page-game{ padding:0; }
+  .hud{
+    width:100%;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 14px 16px;
+    gap: 10px;
+    z-index: 5;
+  }
+  .hud-btn{
+    background: var(--card);
+    border-radius: 999px;
+    padding: 9px 16px;
+    font-weight:800;
+    font-size:13px;
+    color: var(--ink-soft);
+    box-shadow: var(--shadow);
+  }
+  .hud-stats{ display:flex; align-items:center; gap:10px; }
+  .stat{
+    background: var(--card);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-weight:800;
+    font-size:13px;
+    box-shadow: var(--shadow);
+    display:flex; align-items:center; gap:4px;
+  }
+  .stat.good{ color: var(--good-dark); }
+  .stat.bad{ color: var(--bad-dark); }
+  .hearts{ display:flex; gap:2px; background:var(--card); border-radius:999px; padding:8px 10px; box-shadow:var(--shadow); }
+  .heart-icon{ font-size:15px; line-height:1; }
+
+  .stage{
+    position:relative;
+    flex:1;
+    width:100%;
+    touch-action:none;
+    user-select:none;
+    overflow:hidden;
+  }
+  .food{
+    position:absolute;
+    top:0; left:0;
+    font-size:34px;
+    line-height:1;
+    will-change: transform;
+    pointer-events:none;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.15));
+  }
+  img.emoji{
+    display:inline-block;
+    height:1em;
+    width:1em;
+    margin:0 .02em .1em .02em;
+    vertical-align:-0.1em;
+  }
+  .char{
+    position:absolute;
+    bottom: 14px;
+    left:0;
+    width:96px; height:96px;
+    margin-left:-48px;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #FFF1D6 70%);
+    box-shadow: 0 10px 18px rgba(60,40,100,0.2), inset 0 -4px 0 rgba(0,0,0,0.05);
+    will-change: transform;
+  }
+  .char-emoji{ font-size: 52px; }
+  .char.pop-good .char-emoji{ animation: pop .3s ease; }
+  .char.pop-bad .char-emoji{ animation: shake .2s ease; }
+  @keyframes pop{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(1.3) rotate(-6deg); }
+    100%{ transform: scale(1); }
+  }
+  @keyframes shake{
+    0%,100%{ transform: translateX(0) rotate(0); }
+    25%{ transform: translateX(-6px) rotate(-8deg); }
+    75%{ transform: translateX(6px) rotate(8deg); }
+  }
+  .floater{
+    position:absolute;
+    font-family:'Baloo 2';
+    font-weight:800;
+    font-size:16px;
+    pointer-events:none;
+    animation: floatUp .7s ease-out forwards;
+  }
+  .floater.good{ color: var(--good-dark); }
+  .floater.bad{ color: var(--bad-dark); }
+  @keyframes floatUp{
+    0%{ opacity:1; transform: translateY(0); }
+    100%{ opacity:0; transform: translateY(-40px); }
+  }
+
+  /* ---------- OVERLAY ---------- */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(43,33,69,0.55);
+    display:flex; align-items:center; justify-content:center;
+    z-index: 50;
+    padding: 20px;
+  }
+  .overlay.hidden{ display:none; }
+  .overlay-card{
+    background: var(--card);
+    border-radius: var(--radius-lg);
+    padding: 30px 26px;
+    text-align:center;
+    max-width: 320px;
+    width:100%;
+    box-shadow: var(--shadow);
+  }
+  .overlay-card .oc-emoji{ font-size:52px; }
+  .overlay-card h2{ margin: 6px 0 14px; font-size:24px; }
+  .overlay-card p{ margin: 6px 0; font-weight:700; color: var(--ink-soft); font-size:15px; }
+  .overlay-card strong{ color: var(--good-dark); font-size:18px; }
+  .overlay-card .btn-primary{ margin-top: 18px; width:100%; }
+
+  @media (max-width: 380px){
+    .title-block h1{ font-size:36px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- START PAGE -->
+  <section id="page-start" class="page active">
+    <div class="start-hero">
+      <div class="mascot-bounce">🧺😊</div>
+      <div class="title-block"><h1>接接乐</h1></div>
+      <p class="tagline">左右移动，接住掉落的美味 · 躲开坏东西</p>
+      <button id="btn-start" class="btn-primary">开始游戏</button>
+    </div>
+    <div class="history-panel">
+      <h2>📜 历史记录</h2>
+      <div id="history-list" class="history-list"></div>
+    </div>
+  </section>
+
+  <!-- SETUP PAGE -->
+  <section id="page-setup" class="page">
+    <h2>选择难度</h2>
+    <p class="setup-sub">难度越高，坏东西出现越频繁、下落越快</p>
+    <div class="difficulty-options">
+      <button class="diff-card" data-diff="简单">
+        <span class="diff-icon">🍃</span>
+        <span class="diff-text"><b>简单</b><span>坏东西较少，速度较慢，适合热身</span></span>
+      </button>
+      <button class="diff-card" data-diff="普通">
+        <span class="diff-icon">🍯</span>
+        <span class="diff-text"><b>普通</b><span>坏东西适中，速度适中，考验反应</span></span>
+      </button>
+      <button class="diff-card" data-diff="困难">
+        <span class="diff-icon">🌶️</span>
+        <span class="diff-text"><b>困难</b><span>坏东西频繁，速度飞快，高手挑战</span></span>
+      </button>
+    </div>
+    <button id="btn-confirm" class="btn-primary" disabled>确定</button>
+    <button id="btn-back-start" class="btn-secondary">返回</button>
+  </section>
+
+  <!-- GAME PAGE -->
+  <section id="page-game" class="page">
+    <div class="hud">
+      <button id="btn-exit" class="hud-btn">← 退出</button>
+      <div class="hud-stats">
+        <span class="stat good">🍎 <span id="good-count">0</span></span>
+        <span class="stat bad">🍄 <span id="bad-count">0</span></span>
+        <div class="hearts" id="hearts"></div>
+      </div>
+    </div>
+    <div id="stage" class="stage">
+      <div id="character" class="char state-1"><span class="char-emoji">😊</span></div>
+    </div>
+  </section>
+
+</div>
+
+<!-- GAME OVER OVERLAY -->
+<div id="gameover-overlay" class="overlay hidden">
+  <div class="overlay-card">
+    <div class="oc-emoji">😵</div>
+    <h2>游戏结束</h2>
+    <p>难度：<strong id="go-diff" style="color:var(--ink);"></strong></p>
+    <p>共接到 <strong id="go-good">0</strong> 个有益食物</p>
+    <p>误食 <strong id="go-bad" style="color:var(--bad-dark);">0</strong> 个有害食物</p>
+    <button id="btn-back-to-start" class="btn-primary">返回首页</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- CONFIG ----------
+  const GOOD_FOODS = ['🍎','🍇','🍌','🍓','🍉','🍑','🍒','🍍','🥕','🌽','🍅','🍞','🧀','🍰'];
+  const BAD_FOODS  = ['🍄','🐛','🦴','🕷️','🗑️'];
+  const DIFF_CONFIG = {
+    '简单': { badProb: 0.12, minSpeed: 110, maxSpeed: 170, spawnInterval: 950 },
+    '普通': { badProb: 0.22, minSpeed: 160, maxSpeed: 250, spawnInterval: 760 },
+    '困难': { badProb: 0.34, minSpeed: 220, maxSpeed: 340, spawnInterval: 580 }
+  };
+  const MAX_HEARTS = 5;
+  const GOOD_SPRITE_MS = 300;
+  const BAD_SPRITE_MS = 200;
+
+  // ---------- STATE ----------
+  let selectedDifficulty = null;
+  let currentDifficulty = null;
+  let hearts = MAX_HEARTS;
+  let goodCount = 0;
+  let badCount = 0;
+  let foods = [];
+  let foodIdSeq = 0;
+  let spriteToken = 0;
+  let gameActive = false;
+  let charX = 0;
+  let stageEl, charEl, charEmojiEl;
+  let stageRect = { width: 360, height: 600 };
+  let spawnAccumulator = 0;
+  let lastTimestamp = 0;
+  let rafId = null;
+
+  // ---------- DOM refs ----------
+  const pages = {
+    start: document.getElementById('page-start'),
+    setup: document.getElementById('page-setup'),
+    game: document.getElementById('page-game')
+  };
+  const historyListEl = document.getElementById('history-list');
+  const goodCountEl = document.getElementById('good-count');
+  const badCountEl = document.getElementById('bad-count');
+  const heartsEl = document.getElementById('hearts');
+  const overlayEl = document.getElementById('gameover-overlay');
+
+  function showPage(name){
+    Object.values(pages).forEach(p => p.classList.remove('active'));
+    pages[name].classList.add('active');
+  }
+
+  function parseEmoji(node){
+    if(window.twemoji){
+      twemoji.parse(node, {folder: 'svg', ext: '.svg'});
+    }
+  }
+
+  // ---------- STORAGE ----------
+  async function loadHistory(){
+    try{
+      const res = await window.storage.get('接接乐_history', false);
+      return res ? JSON.parse(res.value) : [];
+    }catch(e){
+      return [];
+    }
+  }
+  async function pushHistory(record){
+    try{
+      const list = await loadHistory();
+      list.push(record);
+      await window.storage.set('接接乐_history', JSON.stringify(list), false);
+    }catch(e){
+      console.error('save history failed', e);
+    }
+  }
+
+  function formatDate(ts){
+    const d = new Date(ts);
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getMonth()+1}/${d.getDate()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }
+
+  async function renderHistory(){
+    historyListEl.innerHTML = '<div class="history-empty">加载中…</div>';
+    const list = await loadHistory();
+    if(!list.length){
+      historyListEl.innerHTML = '<div class="history-empty">暂无游玩记录，快来玩第一局吧！</div>';
+      return;
+    }
+    // 倒叙：最新的在最前
+    const reversed = list.slice().reverse();
+    historyListEl.innerHTML = reversed.map(r => `
+      <div class="history-item">
+        <div class="hi-left">
+          <span class="hi-diff ${r.difficulty}">难度：${r.difficulty}</span>
+          <span class="hi-date">${formatDate(r.timestamp)}</span>
+        </div>
+        <span class="hi-good">🍎 ${r.good}</span>
+      </div>
+    `).join('');
+    parseEmoji(historyListEl);
+  }
+
+  // ---------- HEARTS UI ----------
+  function renderHearts(){
+    heartsEl.innerHTML = '';
+    for(let i=0;i<MAX_HEARTS;i++){
+      const s = document.createElement('span');
+      s.className = 'heart-icon';
+      s.textContent = i < hearts ? '❤️' : '🤍';
+      heartsEl.appendChild(s);
+      parseEmoji(s);
+    }
+  }
+
+  // ---------- SETUP PAGE ----------
+  const diffCards = document.querySelectorAll('.diff-card');
+  const btnConfirm = document.getElementById('btn-confirm');
+  diffCards.forEach(card => {
+    card.addEventListener('click', () => {
+      diffCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedDifficulty = card.dataset.diff;
+      btnConfirm.disabled = false;
+    });
+  });
+  document.getElementById('btn-back-start').addEventListener('click', () => {
+    showPage('start');
+  });
+  document.getElementById('btn-start').addEventListener('click', () => {
+    selectedDifficulty = null;
+    diffCards.forEach(c => c.classList.remove('selected'));
+    btnConfirm.disabled = true;
+    showPage('setup');
+  });
+  btnConfirm.addEventListener('click', () => {
+    if(!selectedDifficulty) return;
+    startGame(selectedDifficulty);
+  });
+
+  // ---------- GAME SETUP ----------
+  function initGameDOM(){
+    stageEl = document.getElementById('stage');
+    charEl = document.getElementById('character');
+    charEmojiEl = charEl.querySelector('.char-emoji');
+  }
+
+  function updateStageRect(){
+    const r = stageEl.getBoundingClientRect();
+    stageRect = { width: r.width, height: r.height, left: r.left, top: r.top };
+  }
+
+  function startGame(difficulty){
+    currentDifficulty = difficulty;
+    hearts = MAX_HEARTS;
+    goodCount = 0;
+    badCount = 0;
+    foods.forEach(f => f.el && f.el.remove());
+    foods = [];
+    spriteToken = 0;
+    spawnAccumulator = 0;
+    lastTimestamp = 0;
+
+    if(!stageEl) initGameDOM();
+
+    goodCountEl.textContent = '0';
+    badCountEl.textContent = '0';
+    renderHearts();
+    setCharState(1);
+
+    showPage('game');
+    updateStageRect();
+    charX = stageRect.width / 2;
+    applyCharTransform();
+
+    attachPointerListeners();
+    window.addEventListener('resize', updateStageRect);
+
+    gameActive = true;
+    rafId = requestAnimationFrame(gameLoop);
+  }
+
+  // ---------- POINTER CONTROL ----------
+  function onPointerMove(clientX){
+    const rel = clientX - stageRect.left;
+    const half = 48;
+    charX = Math.max(half, Math.min(stageRect.width - half, rel));
+    applyCharTransform();
+  }
+  function applyCharTransform(){
+    charEl.style.transform = `translateX(${charX}px)`;
+  }
+  function mouseHandler(e){ onPointerMove(e.clientX); }
+  function touchHandler(e){
+    if(e.touches && e.touches.length){
+      onPointerMove(e.touches[0].clientX);
+    }
+    e.preventDefault();
+  }
+  function attachPointerListeners(){
+    stageEl.addEventListener('mousemove', mouseHandler);
+    stageEl.addEventListener('touchmove', touchHandler, { passive:false });
+    stageEl.addEventListener('touchstart', touchHandler, { passive:false });
+  }
+  function detachPointerListeners(){
+    stageEl.removeEventListener('mousemove', mouseHandler);
+    stageEl.removeEventListener('touchmove', touchHandler);
+    stageEl.removeEventListener('touchstart', touchHandler);
+    window.removeEventListener('resize', updateStageRect);
+  }
+
+  // ---------- SPRITE STATE MACHINE ----------
+  function setCharState(n){
+    charEl.classList.remove('state-1','state-2','state-3','pop-good','pop-bad');
+    charEl.classList.add('state-' + n);
+    charEmojiEl.textContent = n === 1 ? '😊' : (n === 2 ? '😆' : '😖');
+    parseEmoji(charEmojiEl);
+  }
+  function triggerSprite(type){
+    spriteToken++;
+    const myToken = spriteToken;
+    const isGood = type === 'good';
+    setCharState(isGood ? 2 : 3);
+    // retrigger pop animation
+    void charEl.offsetWidth;
+    charEl.classList.add(isGood ? 'pop-good' : 'pop-bad');
+    const duration = isGood ? GOOD_SPRITE_MS : BAD_SPRITE_MS;
+    setTimeout(() => {
+      if(myToken === spriteToken){
+        setCharState(1);
+      }
+    }, duration);
+  }
+
+  // ---------- FOOD SPAWN / UPDATE ----------
+  function spawnFood(){
+    const cfg = DIFF_CONFIG[currentDifficulty];
+    const isBad = Math.random() < cfg.badProb;
+    const emoji = isBad
+      ? BAD_FOODS[Math.floor(Math.random()*BAD_FOODS.length)]
+      : GOOD_FOODS[Math.floor(Math.random()*GOOD_FOODS.length)];
+    const speed = cfg.minSpeed + Math.random() * (cfg.maxSpeed - cfg.minSpeed);
+    const x = 24 + Math.random() * (stageRect.width - 48);
+
+    const el = document.createElement('div');
+    el.className = 'food';
+    el.textContent = emoji;
+    parseEmoji(el);
+    stageEl.appendChild(el);
+
+    foods.push({
+      id: ++foodIdSeq,
+      x, y: -40,
+      speed,
+      type: isBad ? 'bad' : 'good',
+      el
+    });
+  }
+
+  function spawnFloater(text, cls, x, y){
+    const f = document.createElement('div');
+    f.className = 'floater ' + cls;
+    f.textContent = text;
+    parseEmoji(f);
+    f.style.left = x + 'px';
+    f.style.top = y + 'px';
+    stageEl.appendChild(f);
+    setTimeout(() => f.remove(), 720);
+  }
+
+  const CATCH_ZONE_TOP = -60;    // relative offset from bottom
+  const CATCH_ZONE_BOTTOM = 20;
+  const CATCH_HALF_WIDTH = 62;
+
+  function updateFoods(dt){
+    const bottomY = stageRect.height;
+    const catchCenterY = bottomY - 62; // roughly character vertical center
+    const zoneTop = catchCenterY - 46;
+    const zoneBottom = catchCenterY + 46;
+
+    for(let i = foods.length - 1; i >= 0; i--){
+      const f = foods[i];
+      f.y += f.speed * (dt / 1000);
+      f.el.style.transform = `translate(${f.x - 17}px, ${f.y - 17}px)`;
+
+      let handled = false;
+
+      if(f.y >= zoneTop && f.y <= zoneBottom){
+        const dx = Math.abs(f.x - charX);
+        if(dx <= CATCH_HALF_WIDTH){
+          handled = true;
+          catchFood(f);
+        }
+      }
+
+      if(!handled && f.y - 20 > bottomY){
+        // missed, remove silently
+        f.el.remove();
+        foods.splice(i, 1);
+      } else if(handled){
+        f.el.remove();
+        foods.splice(i, 1);
+      }
+    }
+  }
+
+  function catchFood(f){
+    if(f.type === 'good'){
+      goodCount++;
+      goodCountEl.textContent = String(goodCount);
+      spawnFloater('+1', 'good', f.x - 10, stageRect.height - 130);
+      triggerSprite('good');
+    } else {
+      badCount++;
+      badCountEl.textContent = String(badCount);
+      hearts = Math.max(0, hearts - 1);
+      renderHearts();
+      spawnFloater('-1❤', 'bad', f.x - 10, stageRect.height - 130);
+      triggerSprite('bad');
+      if(hearts <= 0){
+        endGame(true);
+      }
+    }
+  }
+
+  // ---------- GAME LOOP ----------
+  function gameLoop(timestamp){
+    if(!gameActive) return;
+    if(!lastTimestamp) lastTimestamp = timestamp;
+    const dt = Math.min(50, timestamp - lastTimestamp);
+    lastTimestamp = timestamp;
+
+    const cfg = DIFF_CONFIG[currentDifficulty];
+    spawnAccumulator += dt;
+    const jitteredInterval = cfg.spawnInterval * (0.75 + Math.random() * 0.5);
+    if(spawnAccumulator > jitteredInterval){
+      spawnAccumulator = 0;
+      spawnFood();
+    }
+
+    updateFoods(dt);
+
+    rafId = requestAnimationFrame(gameLoop);
+  }
+
+  // ---------- END / EXIT ----------
+  async function endGame(byHeartsDepleted){
+    if(!gameActive) return;
+    gameActive = false;
+    cancelAnimationFrame(rafId);
+    detachPointerListeners();
+
+    await pushHistory({
+      difficulty: currentDifficulty,
+      good: goodCount,
+      bad: badCount,
+      timestamp: Date.now()
+    });
+
+    if(byHeartsDepleted){
+      document.getElementById('go-diff').textContent = currentDifficulty;
+      document.getElementById('go-good').textContent = String(goodCount);
+      document.getElementById('go-bad').textContent = String(badCount);
+      overlayEl.classList.remove('hidden');
+    } else {
+      showPage('start');
+      renderHistory();
+    }
+  }
+
+  document.getElementById('btn-exit').addEventListener('click', () => {
+    endGame(false);
+  });
+
+  document.getElementById('btn-back-to-start').addEventListener('click', () => {
+    overlayEl.classList.add('hidden');
+    showPage('start');
+    renderHistory();
+  });
+
+  // ---------- INIT ----------
+  initGameDOM();
+  parseEmoji(document.getElementById('app'));
+  renderHistory();
+})();
+</script>
+</body>
+</html>
