@@ -111,6 +111,19 @@
     box-shadow: var(--shadow);
     margin-top:14px;
   }
+  .start-actions{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:12px;
+  }
+  .btn-guide{
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding-inline:22px;
+  }
 
   .history-panel{
     width:100%;
@@ -197,6 +210,29 @@
     font-size:13px;
     color: var(--ink-soft);
     box-shadow: var(--shadow);
+  }
+  .hud-btn.on{
+    color: var(--good-dark);
+  }
+  .hud-audio{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background: var(--card);
+    border-radius: 999px;
+    padding: 7px 12px 7px 10px;
+    box-shadow: var(--shadow);
+  }
+  .hud-volume{
+    width: 92px;
+    accent-color: var(--accent-dark);
+  }
+  .hud-volume-label{
+    min-width: 36px;
+    text-align:right;
+    font-weight:800;
+    font-size:12px;
+    color: var(--ink-soft);
   }
   .hud-stats{ display:flex; align-items:center; gap:10px; }
   .stat{
@@ -315,7 +351,10 @@
       <div class="mascot-bounce">🧺😊</div>
       <div class="title-block"><h1>接接乐</h1></div>
       <p class="tagline">左右移动，接住掉落的美味 · 躲开坏东西</p>
-      <button id="btn-start" class="btn-primary">开始游戏</button>
+      <div class="start-actions">
+        <button id="btn-start" class="btn-primary">开始游戏</button>
+        <a href="./code-explanation.html" class="btn-secondary btn-guide">Code Explanation</a>
+      </div>
     </div>
     <div class="history-panel">
       <h2>📜 历史记录</h2>
@@ -353,6 +392,11 @@
         <span class="stat good">🍎 <span id="good-count">0</span></span>
         <span class="stat bad">🍄 <span id="bad-count">0</span></span>
         <div class="hearts" id="hearts"></div>
+      </div>
+      <div class="hud-audio">
+        <button id="btn-music" class="hud-btn">♪ 音乐：开</button>
+        <input id="music-volume" class="hud-volume" type="range" min="0" max="100" step="1" aria-label="Music volume">
+        <span id="music-volume-label" class="hud-volume-label">75%</span>
       </div>
     </div>
     <div id="stage" class="stage">
@@ -418,6 +462,11 @@
   const badCountEl = document.getElementById('bad-count');
   const heartsEl = document.getElementById('hearts');
   const overlayEl = document.getElementById('gameover-overlay');
+  const musicButtonEl = document.getElementById('btn-music');
+  const musicVolumeEl = document.getElementById('music-volume');
+  const musicVolumeLabelEl = document.getElementById('music-volume-label');
+  let musicEnabled = true;
+  let musicVolume = 0.75;
 
   function showPage(name){
     Object.values(pages).forEach(p => p.classList.remove('active'));
@@ -428,6 +477,220 @@
     if(window.twemoji){
       twemoji.parse(node, {folder: 'svg', ext: '.svg'});
     }
+  }
+
+  // ---------- MUSIC ----------
+  // The game uses a tiny Web Audio loop so it works without shipping an mp3 file.
+  // Browsers only allow audio after a user gesture, so we start it from the game button.
+  function createMusicController(){
+    let ctx = null;
+    let master = null;
+    let filter = null;
+    let schedulerTimer = null;
+    let playing = false;
+    let step = 0;
+    let nextNoteTime = 0;
+
+    let tempo = 112;
+    const patterns = {
+      normal: {
+        name: 'normal',
+        melody: [74, 76, 79, 81, 79, 76, 74, 72, 74, 76, 79, 81, 84, 81, 79, 76],
+        bass: [50, 50, 53, 53, 55, 55, 48, 48],
+        leadWave: 'triangle',
+        bassWave: 'sine',
+        leadGain: 0.04,
+        bassGain: 0.03,
+        leadDur: 0.72,
+        bassDur: 1.35,
+        accentEvery: 4,
+        accentNoteOffset: 12,
+        accentGain: 0.01,
+        accentDur: 0.12
+      },
+      fast: {
+        name: 'fast',
+        melody: [79, 83, 86, 88, 86, 83, 79, 76],
+        bass: [55, 55, 57, 60, 57, 55, 52, 50],
+        leadWave: 'square',
+        bassWave: 'square',
+        leadGain: 0.028,
+        bassGain: 0.02,
+        leadDur: 0.32,
+        bassDur: 0.66,
+        accentEvery: 1,
+        accentNoteOffset: 12,
+        accentGain: 0.008,
+        accentDur: 0.05,
+        arpPattern: [0, 4, 7, 12],
+        arpGain: 0.014,
+        arpDur: 0.06
+      }
+    };
+    const lookaheadMs = 25;
+    const scheduleAheadTime = 0.25;
+
+    function ensureContext(){
+      if(!ctx){
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if(!AudioCtx) return null;
+        ctx = new AudioCtx();
+        master = ctx.createGain();
+        filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.value = 1200;
+        master.gain.value = musicEnabled ? musicVolume : 0;
+        master.connect(filter);
+        filter.connect(ctx.destination);
+      }
+      return ctx;
+    }
+
+    function midiToFreq(midi){
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    function setMasterVolume(value){
+      musicVolume = Math.max(0, Math.min(1, value));
+      if(master){
+        master.gain.value = musicEnabled ? musicVolume : 0;
+      }
+    }
+
+    function updateTempoFromSpawnInterval(spawnInterval){
+      // Convert the food spawn interval into beats per minute so the music
+      // speeds up and slows down with the same rhythm used by the game.
+      tempo = Math.max(72, Math.min(132, 60000 / spawnInterval));
+    }
+
+    function getPattern(){
+      // Faster rounds use a separate musical phrase so the soundtrack feels
+      // intentional instead of simply being the same melody played quicker.
+      return tempo >= 96 ? patterns.fast : patterns.normal;
+    }
+
+    function playTone(midi, startTime, duration, type, gain){
+      const audio = ensureContext();
+      if(!audio) return;
+      const osc = audio.createOscillator();
+      const amp = audio.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(midiToFreq(midi), startTime);
+      amp.gain.setValueAtTime(0.0001, startTime);
+      amp.gain.exponentialRampToValueAtTime(gain, startTime + 0.02);
+      amp.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      osc.connect(amp);
+      amp.connect(master);
+      osc.start(startTime);
+      osc.stop(startTime + duration + 0.05);
+    }
+
+    function playSpawnPulse(isBad){
+      if(!playing || !musicEnabled) return;
+      const audio = ensureContext();
+      if(!audio) return;
+      const now = audio.currentTime + 0.01;
+      const pattern = getPattern();
+      // Give each spawn a tiny accent so the beat and the gameplay feel linked.
+      playTone(isBad ? 69 : 76, now, pattern.accentDur, pattern.leadWave, isBad ? 0.018 : pattern.accentGain);
+    }
+
+    function scheduleNote(stepIndex, when){
+      const pattern = getPattern();
+      const beat = 60 / tempo;
+      const idx = stepIndex % pattern.melody.length;
+      const note = pattern.melody[idx];
+      const bassNote = pattern.bass[Math.floor(stepIndex / 2) % pattern.bass.length];
+
+      // The fast pattern is a distinct motif with shorter notes and a more
+      // active contour so it sounds musical instead of merely compressed.
+      playTone(note, when, beat * pattern.leadDur, pattern.leadWave, pattern.leadGain);
+      if(stepIndex % 2 === 0){
+        playTone(bassNote, when, beat * pattern.bassDur, pattern.bassWave, pattern.bassGain);
+      }
+      if(stepIndex % pattern.accentEvery === 0){
+        playTone(note + pattern.accentNoteOffset, when + beat * 0.03, beat * pattern.accentDur, pattern.leadWave, pattern.accentGain);
+      }
+      if(pattern.arpPattern){
+        const arpOffset = pattern.arpPattern[stepIndex % pattern.arpPattern.length];
+        playTone(note + arpOffset, when + beat * 0.18, beat * pattern.arpDur, pattern.leadWave, pattern.arpGain);
+      }
+    }
+
+    function scheduler(){
+      if(!playing || !musicEnabled) return;
+      const audio = ensureContext();
+      if(!audio) return;
+      while(nextNoteTime < audio.currentTime + scheduleAheadTime){
+        scheduleNote(step, nextNoteTime);
+        const beat = 60 / tempo;
+        nextNoteTime += beat;
+        step++;
+      }
+      schedulerTimer = window.setTimeout(scheduler, lookaheadMs);
+    }
+
+      return {
+        async start(){
+          if(!musicEnabled) return;
+          const audio = ensureContext();
+          if(!audio) return;
+        if(audio.state === 'suspended'){
+          await audio.resume();
+        }
+        setMasterVolume(musicVolume);
+        if(playing) return;
+        playing = true;
+        step = 0;
+        nextNoteTime = audio.currentTime + 0.05;
+        scheduler();
+      },
+      stop(){
+        playing = false;
+        if(schedulerTimer){
+          clearTimeout(schedulerTimer);
+          schedulerTimer = null;
+        }
+        if(ctx && ctx.state === 'running'){
+          ctx.suspend().catch(() => {});
+        }
+      },
+      async setEnabled(enabled){
+        musicEnabled = enabled;
+        updateMusicButton();
+        setMasterVolume(musicVolume);
+        if(!musicEnabled){
+          this.stop();
+          return;
+        }
+        if(gameActive){
+          await this.start();
+        }
+      },
+      setVolume(value){
+        setMasterVolume(value);
+        },
+        setTempoFromSpawnInterval(spawnInterval){
+          updateTempoFromSpawnInterval(spawnInterval);
+        },
+      pulse(isBad){
+        playSpawnPulse(isBad);
+      },
+        getEnabled(){
+          return musicEnabled;
+        }
+      };
+  }
+
+  const music = createMusicController();
+
+  function updateMusicButton(){
+    musicButtonEl.textContent = musicEnabled ? '♪ 音乐：开' : '♪ 音乐：关';
+    musicButtonEl.classList.toggle('on', musicEnabled);
+  }
+
+  function updateVolumeLabel(){
+    musicVolumeLabelEl.textContent = `${Math.round(musicVolume * 100)}%`;
   }
 
   // ---------- STORAGE ----------
@@ -526,7 +789,10 @@
   }
 
   function startGame(difficulty){
+    // Reset all round-specific values before the new round begins.
     currentDifficulty = difficulty;
+    const cfg = DIFF_CONFIG[currentDifficulty];
+    music.setTempoFromSpawnInterval(cfg.spawnInterval);
     hearts = MAX_HEARTS;
     goodCount = 0;
     badCount = 0;
@@ -552,6 +818,7 @@
     window.addEventListener('resize', updateStageRect);
 
     gameActive = true;
+    music.start();
     rafId = requestAnimationFrame(gameLoop);
   }
 
@@ -586,6 +853,8 @@
 
   // ---------- SPRITE STATE MACHINE ----------
   function setCharState(n){
+    // The character has three visual states:
+    // 1 = idle, 2 = happy after a catch, 3 = sad after a mistake.
     charEl.classList.remove('state-1','state-2','state-3','pop-good','pop-bad');
     charEl.classList.add('state-' + n);
     charEmojiEl.textContent = n === 1 ? '😊' : (n === 2 ? '😆' : '😖');
@@ -609,6 +878,8 @@
 
   // ---------- FOOD SPAWN / UPDATE ----------
   function spawnFood(){
+    // Choose whether this object is helpful or harmful, then assign a random
+    // horizontal lane and a falling speed based on the selected difficulty.
     const cfg = DIFF_CONFIG[currentDifficulty];
     const isBad = Math.random() < cfg.badProb;
     const emoji = isBad
@@ -630,6 +901,7 @@
       type: isBad ? 'bad' : 'good',
       el
     });
+    return isBad;
   }
 
   function spawnFloater(text, cls, x, y){
@@ -648,6 +920,8 @@
   const CATCH_HALF_WIDTH = 62;
 
   function updateFoods(dt){
+    // Move each food item downward. If it reaches the catch zone, check whether
+    // the player is close enough to catch it; otherwise delete it when it falls off screen.
     const bottomY = stageRect.height;
     const catchCenterY = bottomY - 62; // roughly character vertical center
     const zoneTop = catchCenterY - 46;
@@ -710,7 +984,7 @@
     const jitteredInterval = cfg.spawnInterval * (0.75 + Math.random() * 0.5);
     if(spawnAccumulator > jitteredInterval){
       spawnAccumulator = 0;
-      spawnFood();
+      music.pulse(spawnFood());
     }
 
     updateFoods(dt);
@@ -724,6 +998,7 @@
     gameActive = false;
     cancelAnimationFrame(rafId);
     detachPointerListeners();
+    music.stop();
 
     await pushHistory({
       difficulty: currentDifficulty,
@@ -747,6 +1022,16 @@
     endGame(false);
   });
 
+  musicButtonEl.addEventListener('click', () => {
+    music.setEnabled(!musicEnabled);
+  });
+
+  musicVolumeEl.addEventListener('input', () => {
+    const value = Number(musicVolumeEl.value) / 100;
+    music.setVolume(value);
+    updateVolumeLabel();
+  });
+
   document.getElementById('btn-back-to-start').addEventListener('click', () => {
     overlayEl.classList.add('hidden');
     showPage('start');
@@ -755,6 +1040,9 @@
 
   // ---------- INIT ----------
   initGameDOM();
+  musicVolumeEl.value = String(Math.round(musicVolume * 100));
+  updateMusicButton();
+  updateVolumeLabel();
   parseEmoji(document.getElementById('app'));
   renderHistory();
 })();

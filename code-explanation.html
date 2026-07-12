@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>接接乐 | Code Explanation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg-a:#eef6ff;
+    --bg-b:#fff0f8;
+    --card:#ffffff;
+    --text:#2b2145;
+    --muted:#6d6486;
+    --accent:#f0a800;
+    --accent-2:#2fbe68;
+    --accent-3:#6e45ae;
+    --shadow:0 16px 40px rgba(64,40,110,.12);
+    --radius:24px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;min-height:100%;font-family:'Nunito',sans-serif;color:var(--text);}
+  body{
+    background:
+      radial-gradient(circle at 10% 10%, rgba(255,201,60,.24), transparent 36%),
+      radial-gradient(circle at 90% 15%, rgba(110,69,174,.16), transparent 30%),
+      radial-gradient(circle at 80% 90%, rgba(47,190,104,.14), transparent 26%),
+      linear-gradient(160deg,var(--bg-a),var(--bg-b));
+  }
+  a{color:inherit;}
+  .shell{max-width:1240px;margin:0 auto;padding:24px 18px 42px;}
+  .hero{
+    background:linear-gradient(135deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
+    border:1px solid rgba(255,255,255,.7);
+    border-radius:32px;
+    box-shadow:var(--shadow);
+    padding:28px 26px;
+    display:grid;
+    grid-template-columns:1.3fr .7fr;
+    gap:20px;
+    align-items:center;
+    backdrop-filter: blur(16px);
+  }
+  .hero h1{
+    font-family:'Baloo 2',sans-serif;
+    font-size:clamp(32px,4vw,52px);
+    margin:0 0 10px;
+    line-height:1;
+    background:linear-gradient(90deg,var(--accent-2),var(--accent-3));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .hero p{margin:0;color:var(--muted);font-size:15px;line-height:1.7;max-width:70ch;}
+  .hero-card{
+    background:linear-gradient(180deg,#fff, #fdf8ff);
+    border-radius:24px;
+    padding:18px;
+    box-shadow:0 10px 20px rgba(64,40,110,.08);
+    border:1px solid rgba(255,255,255,.8);
+  }
+  .hero-card strong{display:block;font-family:'Baloo 2';font-size:22px;margin-bottom:8px;}
+  .hero-card ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.8;}
+  .toolbar{
+    margin:18px 0 22px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .chip,.ghost-link{
+    border:none;
+    border-radius:999px;
+    padding:10px 16px;
+    font:700 14px/1 'Nunito',sans-serif;
+    text-decoration:none;
+    transition:transform .12s ease, box-shadow .12s ease, background .12s ease;
+  }
+  .chip{
+    background:var(--card);
+    color:var(--text);
+    box-shadow:var(--shadow);
+  }
+  .chip.active{background:linear-gradient(180deg,#ffe17c,#ffcb41);}
+  .ghost-link{
+    background:rgba(255,255,255,.7);
+    color:var(--muted);
+    border:1px solid rgba(109,100,134,.14);
+  }
+  .chip:hover,.ghost-link:hover{transform:translateY(-1px);}
+  .layout{
+    display:grid;
+    grid-template-columns:260px minmax(0,1fr);
+    gap:18px;
+    align-items:start;
+  }
+  .toc,.content-card,.mini-card{
+    background:rgba(255,255,255,.9);
+    border:1px solid rgba(255,255,255,.7);
+    box-shadow:var(--shadow);
+    border-radius:var(--radius);
+    backdrop-filter:blur(10px);
+  }
+  .toc{padding:16px;position:sticky;top:16px;}
+  .toc h2,.section h2,.section h3,.mini-card h3{font-family:'Baloo 2',sans-serif;}
+  .toc h2{margin:0 0 8px;font-size:22px;}
+  .toc button{
+    width:100%;
+    display:block;
+    margin-top:8px;
+    padding:12px 14px;
+    border:none;
+    border-radius:16px;
+    background:#f7f4ff;
+    color:var(--text);
+    text-align:left;
+    font:800 14px/1.2 'Nunito',sans-serif;
+  }
+  .toc button.active{background:linear-gradient(135deg,#fff1b7,#ffd96f);}
+  .content-card{padding:18px;min-height:520px;}
+  .section{display:none;animation:fade .18s ease;}
+  .section.active{display:block;}
+  @keyframes fade{from{opacity:.2;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+  .bilingual-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+  .mini-card{padding:16px;}
+  .mini-card h3{margin:0 0 10px;font-size:22px;}
+  .mini-card p,.mini-card li,.section p,.section li{color:var(--muted);line-height:1.7;}
+  .lang-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#f3f0ff;
+    color:#5a4a88;
+    font-size:12px;
+    font-weight:800;
+    margin-bottom:10px;
+  }
+  .lang-badge.en{background:#eef8ff;color:#305b8f;}
+  .section-note{
+    margin:0 0 14px;
+    color:var(--muted);
+    font-size:14px;
+  }
+  .callout{
+    border-left:5px solid var(--accent-2);
+    background:#f4fff8;
+    padding:14px 16px;
+    border-radius:18px;
+    margin:16px 0;
+  }
+  .callout strong{display:block;margin-bottom:6px;}
+  .diagram-box{
+    background:#fbfbff;
+    border:1px solid #ece8ff;
+    border-radius:20px;
+    padding:14px;
+    overflow:auto;
+  }
+  .mermaid{display:flex;justify-content:center;}
+  pre{
+    margin:0;
+    background:#111827;
+    color:#e5e7eb;
+    padding:16px;
+    border-radius:18px;
+    overflow:auto;
+    font-size:13px;
+    line-height:1.65;
+  }
+  code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;}
+  details{
+    background:#fff;
+    border-radius:18px;
+    border:1px solid #eee;
+    padding:12px 14px;
+    margin-top:12px;
+  }
+  summary{cursor:pointer;font-weight:800;}
+  .sim{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px;
+    margin-top:14px;
+  }
+  .sim button,.quiz button{
+    border:none;
+    border-radius:18px;
+    padding:12px 14px;
+    background:#fff7dd;
+    font-weight:800;
+    color:#5c4300;
+  }
+  .sim button.active,.quiz button.correct{background:#dff8e8;color:#166534;}
+  .sim button.wrong,.quiz button.wrong{background:#ffe1e1;color:#8a1f1f;}
+  .step-panel{
+    margin-top:14px;
+    background:linear-gradient(135deg,#fff,#f7f1ff);
+    border-radius:20px;
+    padding:16px;
+    border:1px solid rgba(110,69,174,.12);
+  }
+  .step-panel strong{display:block;font-size:18px;margin-bottom:6px;}
+  .quiz{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px;}
+  .footer-note{margin-top:16px;color:var(--muted);font-size:13px;}
+  @media (max-width: 980px){
+    .hero,.layout,.grid-2,.bilingual-grid,.quiz,.sim{grid-template-columns:1fr;}
+    .toc{position:static;}
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div>
+        <h1>接接乐 Code Explanation</h1>
+        <p>
+          This page turns the game into a bilingual learning module. Each section shows Chinese and English
+          side by side, so students can compare the same idea in both languages.
+        </p>
+        <div class="toolbar">
+          <a class="chip active" href="./接接乐.html">Back to Game</a>
+          <button class="chip active" data-section="intro">Overview</button>
+          <button class="chip" data-section="flow">Game Flow</button>
+          <button class="chip" data-section="music">Music</button>
+          <button class="chip" data-section="practice">Practice</button>
+        </div>
+      </div>
+      <div class="hero-card">
+        <strong>What students should learn / 学习目标</strong>
+        <ul>
+          <li>How HTML, CSS, and JavaScript cooperate in one file / HTML、CSS 和 JavaScript 如何协作。</li>
+          <li>Why the game loop uses <code>requestAnimationFrame</code> / 为什么使用 <code>requestAnimationFrame</code>。</li>
+          <li>How DOM elements move, collide, and disappear / DOM 元素如何移动、碰撞和消失。</li>
+          <li>How the audio controller creates background music / 音频控制器如何生成背景音乐。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="layout">
+      <aside class="toc">
+        <h2>Chapters</h2>
+        <button class="active" data-panel="intro">1. Big picture</button>
+        <button data-panel="flow">2. Game loop</button>
+        <button data-panel="music">3. Music system</button>
+        <button data-panel="code">4. Annotated code</button>
+        <button data-panel="practice">5. Interactive practice</button>
+      </aside>
+
+      <main class="content-card">
+        <section id="intro" class="section active">
+          <p class="section-note">Each topic below is shown in Chinese on the left and English on the right.</p>
+          <div class="bilingual-grid">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>页面是怎么组织的</h3>
+              <p>
+                这个游戏是一个单文件 HTML 程序。HTML 负责页面结构，CSS 负责外观，JavaScript 负责游戏状态、
+                动画、存储和音频。
+              </p>
+              <div class="callout">
+                <strong>像浏览器一样思考</strong>
+                浏览器先读 HTML，再应用 CSS，最后执行 JavaScript。JavaScript 不是替代浏览器，而是告诉浏览器
+                该显示什么、什么时候改变。
+              </div>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>How the page is organized</h3>
+              <p>
+                The game is a single HTML file with three jobs: the markup creates the pages, the CSS paints the
+                interface, and the JavaScript controls state, animation, storage, and audio.
+              </p>
+              <div class="callout">
+                <strong>Think like a browser</strong>
+                The browser reads the HTML, paints the CSS, and then runs the JavaScript. The JavaScript does not
+                replace the browser; it tells the browser what to show and when to change it.
+              </div>
+            </div>
+          </div>
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>核心数据</h3>
+              <ul>
+                <li><code>pages</code> 保存开始、设置和游戏页面。</li>
+                <li><code>foods</code> 保存当前屏幕上的所有下落物体。</li>
+                <li><code>hearts</code>、<code>goodCount</code> 和 <code>badCount</code> 保存分数状态。</li>
+                <li><code>music</code> 负责启动和停止 Web Audio 音乐循环。</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Core building blocks</h3>
+              <ul>
+                <li><code>pages</code> stores the start, setup, and game sections.</li>
+                <li><code>foods</code> stores every falling object currently on screen.</li>
+                <li><code>hearts</code>, <code>goodCount</code>, and <code>badCount</code> store score state.</li>
+                <li><code>music</code> starts and stops the Web Audio loop.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>HTML 和 JavaScript 各自做什么？</h3>
+              <p>
+                HTML 像舞台搭建图，负责把按钮、分数、角色和页面区域放出来。JavaScript 像导演和控制台，负责决定
+                什么时候切页、什么时候生成食物、什么时候播放音乐、什么时候结束游戏。
+              </p>
+              <div class="callout">
+                <strong>初学者记忆法</strong>
+                HTML 管“有什么”，JavaScript 管“什么时候发生”和“发生什么变化”。
+              </div>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>What do HTML and JavaScript do?</h3>
+              <p>
+                HTML is like the stage plan: it places the buttons, score, character, and page areas. JavaScript is
+                like the director and control panel: it decides when to switch pages, when to spawn food, when to play
+                music, and when the round ends.
+              </p>
+              <div class="callout">
+                <strong>Beginner memory trick</strong>
+                HTML answers "what exists," while JavaScript answers "when something happens" and "what changes."
+              </div>
+            </div>
+          </div>
+
+          <div class="diagram-box" style="margin-top:16px;">
+            <div class="mermaid">
+flowchart TD
+  A[Open 接接乐.html] --> B[Start page]
+  B --> C[Choose difficulty]
+  C --> D[Game page]
+  D --> E[requestAnimationFrame loop]
+  E --> F[Spawn food]
+  E --> G[Move food downward]
+  G --> H{Catch or miss?}
+  H -->|Catch good food| I[Increase score]
+  H -->|Catch bad food| J[Reduce hearts]
+  H -->|Miss| K[Remove object]
+  J --> L{Hearts = 0?}
+  L -->|Yes| M[Game over overlay]
+  L -->|No| E
+  I --> E
+  K --> E
+            </div>
+          </div>
+        </section>
+
+        <section id="flow" class="section">
+          <p class="section-note">This section explains the frame loop and collision logic in both languages.</p>
+          <div class="bilingual-grid">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>游戏循环一句话理解</h3>
+              <p>
+                每一帧，游戏都会测量时间、移动食物、检查碰撞、更新界面，然后请求浏览器继续下一帧。
+              </p>
+              <details open>
+                <summary>为什么不用普通定时器？</summary>
+                <p>
+                  <code>setInterval</code> 虽然简单，但浏览器忙的时候可能会延迟。<code>requestAnimationFrame</code>
+                  更适合动画，因为它和屏幕刷新同步。
+                </p>
+              </details>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Game loop in one sentence</h3>
+              <p>
+                The game repeats a small set of steps every frame: measure time, move foods, check collisions,
+                update the UI, then ask the browser for the next frame.
+              </p>
+              <details open>
+                <summary>Why not use a normal timer?</summary>
+                <p>
+                  A fixed timer like <code>setInterval</code> is easier to write, but the browser may delay it when
+                  the tab is busy. <code>requestAnimationFrame</code> is better for smooth animation because it is
+                  synchronized with the screen refresh rate.
+                </p>
+              </details>
+            </div>
+          </div>
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>食物到达玩家时会发生什么？</h3>
+              <p>
+                每个食物对象都有 <code>x</code> 和 <code>y</code> 坐标。下落物进入接取区域后，如果玩家在水平距离
+                上足够接近，就会被判定为接住。
+              </p>
+              <details>
+                <summary>适合初学者的重点</summary>
+                <p>
+                  这里不需要复杂物理引擎。因为玩家只左右移动，食物只向下移动，所以只要做简单的距离检测就够了。
+                </p>
+              </details>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>What happens when food reaches the player?</h3>
+              <p>
+                Each food item has an <code>x</code> and <code>y</code> position. If a falling item enters the catch
+                zone and the player is close enough horizontally, the item is considered caught.
+              </p>
+              <details>
+                <summary>Important beginner idea</summary>
+                <p>
+                  Collision detection does not need advanced physics here. A simple distance check works because the
+                  player only moves left and right, and the falling items move straight down.
+                </p>
+              </details>
+            </div>
+          </div>
+
+          <div class="diagram-box" style="margin-top:16px;">
+            <div class="mermaid">
+sequenceDiagram
+  participant P as Player
+  participant UI as Game page
+  participant JS as JavaScript loop
+  participant A as Audio
+  P->>UI: Click Start Game
+  UI->>JS: startGame()
+  JS->>A: music.start()
+  loop every frame
+    JS->>JS: spawnFood() sometimes
+    JS->>JS: updateFoods(dt)
+    JS->>UI: move DOM nodes
+    JS->>JS: requestAnimationFrame()
+  end
+  P->>UI: Catch good food
+  JS->>UI: score +1, pop animation
+  P->>UI: Lose all hearts
+  JS->>UI: show game over overlay
+            </div>
+          </div>
+        </section>
+
+        <section id="music" class="section">
+          <p class="section-note">The audio chapter explains design, controls, and rhythm sync in both languages.</p>
+          <div class="bilingual-grid">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>为什么这里使用 Web Audio？</h3>
+              <p>
+                游戏没有携带音频文件，而是在浏览器里直接生成振荡器。这样可以让项目更轻量，也能展示“代码生成音乐”
+                的工作方式。
+              </p>
+              <div class="callout">
+                <strong>浏览器规则</strong>
+                大多数浏览器不允许页面一打开就自动播放声音，所以音乐必须等用户点击之后再开始。
+              </div>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Why use Web Audio here?</h3>
+              <p>
+                The game does not ship with an audio file. Instead, it creates oscillators in the browser. That keeps
+                the project lightweight and shows how music can be synthesized with code.
+              </p>
+              <div class="callout">
+                <strong>Browser rule</strong>
+                Audio usually cannot start until the user clicks or taps. That is why the music begins when the game
+                starts, not when the page first loads.
+              </div>
+            </div>
+          </div>
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>音乐控制器做了什么</h3>
+              <ul>
+                <li>只在需要时创建 <code>AudioContext</code>。</li>
+                <li>通过低通滤波器让音色更柔和。</li>
+                <li>安排循环旋律和低音线。</li>
+                <li>在关卡结束或关闭音乐时安全停止。</li>
+              </ul>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>What the music controller does</h3>
+              <ul>
+                <li>Creates an <code>AudioContext</code> only when needed.</li>
+                <li>Uses a low-pass filter so the tones sound softer.</li>
+                <li>Schedules a repeating melody and bass line.</li>
+                <li>Stops cleanly when the round ends or the player turns music off.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>控制方式</h3>
+              <p>
+                音乐有两个独立控制：一个开关控制“播不播放”，一个滑条控制“多大声”。这是一种很好的程序设计方式，
+                因为“是否播放”和“音量多大”是两种不同的数据。
+              </p>
+              <ul>
+                <li><code>musicEnabled</code> 保存开关状态。</li>
+                <li><code>musicVolume</code> 保存 0 到 1 的音量值。</li>
+                <li>滑条直接更新 master gain 节点。</li>
+              </ul>
+              <div class="callout">
+                <strong>初学者收获</strong>
+                一个变量可以表示布尔选择，另一个变量可以表示连续范围。不同类型的数据应该配合不同的界面控件。
+              </div>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>How the controls work</h3>
+              <p>
+                The music has two independent controls: one switch turns sound on or off, and one slider changes
+                loudness. That is a useful pattern in programming because it separates the idea of <em>whether</em>
+                audio plays from <em>how loud</em> it plays.
+              </p>
+              <ul>
+                <li><code>musicEnabled</code> stores the on/off state.</li>
+                <li><code>musicVolume</code> stores the number from 0 to 1.</li>
+                <li>The slider updates the master gain node directly.</li>
+              </ul>
+              <div class="callout">
+                <strong>Beginner takeaway</strong>
+                One variable can represent a boolean choice, and another can represent a continuous range. The UI
+                uses different controls because the data behaves differently.
+              </div>
+            </div>
+          </div>
+
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card demo-card">
+              <span class="lang-badge">中文</span>
+              <h3>互动示例</h3>
+              <p>
+                这个示例不会真正播放声音，只是演示音量和节奏同步的关系。
+              </p>
+              <label for="demo-volume-zh"><strong>音量</strong></label>
+              <input class="demo-volume" id="demo-volume-zh" type="range" min="0" max="100" value="75" style="width:100%;accent-color:var(--accent-dark);">
+              <p class="demo-volume-label" id="demo-volume-label-zh" style="margin:8px 0 12px;">75%</p>
+              <label for="demo-tempo-zh"><strong>生成间隔</strong></label>
+              <input class="demo-tempo" id="demo-tempo-zh" type="range" min="450" max="1100" value="760" style="width:100%;accent-color:var(--accent-dark);">
+              <p class="demo-tempo-label" id="demo-tempo-label-zh" style="margin:8px 0 0;">760 ms per spawn</p>
+            </div>
+            <div class="mini-card demo-card">
+              <span class="lang-badge en">English</span>
+              <h3>Interactive control demo</h3>
+              <p>
+                This demo does not play sound. It just shows the relationship between volume and tempo sync.
+              </p>
+              <label for="demo-volume-en"><strong>Volume</strong></label>
+              <input class="demo-volume" id="demo-volume-en" type="range" min="0" max="100" value="75" style="width:100%;accent-color:var(--accent-dark);">
+              <p class="demo-volume-label" id="demo-volume-label-en" style="margin:8px 0 12px;">75%</p>
+              <label for="demo-tempo-en"><strong>Spawn interval</strong></label>
+              <input class="demo-tempo" id="demo-tempo-en" type="range" min="450" max="1100" value="760" style="width:100%;accent-color:var(--accent-dark);">
+              <p class="demo-tempo-label" id="demo-tempo-label-en" style="margin:8px 0 0;">760 ms per spawn</p>
+            </div>
+          </div>
+
+          <div class="diagram-box" style="margin-top:16px;">
+            <div class="mermaid">
+flowchart LR
+  A[User clicks Start] --> B[AudioContext resumes]
+  B --> C[Tick scheduler]
+  C --> D[Melody oscillator]
+  C --> E[Bass oscillator]
+  D --> F[Master gain]
+  E --> F
+  F --> G[Low-pass filter]
+  G --> H[Speaker output]
+            </div>
+          </div>
+
+          <div class="diagram-box" style="margin-top:16px;">
+            <div class="mermaid">
+flowchart TD
+  A[Food spawn interval] --> B[tempo = 60000 / spawnInterval]
+  B --> C[Music tick spacing]
+  C --> D[Melody notes]
+  A --> E[Spawn rhythm]
+  E --> F[Gameplay feel]
+  D --> F
+            </div>
+          </div>
+        </section>
+
+        <section id="code" class="section">
+          <p class="section-note">The code chapter keeps the same sample code, but explains it in both languages.</p>
+          <div class="bilingual-grid">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>标注版 startGame()</h3>
+              <pre><code>// 在新一局开始前重置所有状态。
+function startGame(difficulty){
+  currentDifficulty = difficulty;
+  hearts = MAX_HEARTS;
+  goodCount = 0;
+  badCount = 0;
+  foods.forEach(f => f.el && f.el.remove());
+  foods = [];
+
+  // 切换到游戏页面并把角色放到中间。
+  showPage('game');
+  updateStageRect();
+  charX = stageRect.width / 2;
+  applyCharTransform();
+
+  // 音乐只在玩家点击之后开始。
+  music.start();
+  gameActive = true;
+  rafId = requestAnimationFrame(gameLoop);
+}</code></pre>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Annotated startGame()</h3>
+<pre><code>// Reset the round before it begins.
+function startGame(difficulty){
+  currentDifficulty = difficulty;
+  hearts = MAX_HEARTS;
+  goodCount = 0;
+  badCount = 0;
+  foods.forEach(f => f.el && f.el.remove());
+  foods = [];
+
+  // Show the game page and move the character to the center.
+  showPage('game');
+  updateStageRect();
+  charX = stageRect.width / 2;
+  applyCharTransform();
+
+  // Music starts only after the player's click.
+  music.start();
+  gameActive = true;
+  rafId = requestAnimationFrame(gameLoop);
+}</code></pre>
+            </div>
+          </div>
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>标注版 spawnFood()</h3>
+<pre><code>// 决定这次掉落的是好东西还是坏东西。
+function spawnFood(){
+  const cfg = DIFF_CONFIG[currentDifficulty];
+  const isBad = Math.random() < cfg.badProb;
+  const emoji = isBad ? BAD_FOODS[...] : GOOD_FOODS[...];
+  const speed = cfg.minSpeed + Math.random() * (cfg.maxSpeed - cfg.minSpeed);
+  const x = 24 + Math.random() * (stageRect.width - 48);
+
+  // 创建真实的 DOM 节点，让浏览器负责动画。
+  const el = document.createElement('div');
+  el.className = 'food';
+  el.textContent = emoji;
+  stageEl.appendChild(el);
+
+  foods.push({ x, y:-40, speed, type:isBad ? 'bad' : 'good', el });
+}</code></pre>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Annotated spawnFood()</h3>
+<pre><code>// Decide whether the falling object is good or bad.
+function spawnFood(){
+  const cfg = DIFF_CONFIG[currentDifficulty];
+  const isBad = Math.random() < cfg.badProb;
+  const emoji = isBad ? BAD_FOODS[...] : GOOD_FOODS[...];
+  const speed = cfg.minSpeed + Math.random() * (cfg.maxSpeed - cfg.minSpeed);
+  const x = 24 + Math.random() * (stageRect.width - 48);
+
+  // Create a real DOM node so the browser can animate it.
+  const el = document.createElement('div');
+  el.className = 'food';
+  el.textContent = emoji;
+  stageEl.appendChild(el);
+
+  foods.push({ x, y:-40, speed, type:isBad ? 'bad' : 'good', el });
+}</code></pre>
+            </div>
+          </div>
+
+          <details style="margin-top:16px;">
+            <summary>What the detailed comments in the game file are teaching</summary>
+            <p>
+              The comments explain why each block exists, not just what it does. For example, the music section
+              explains the browser autoplay rule, the collision section explains why a simple distance check works,
+              and the state section explains the three character moods.
+            </p>
+          </details>
+        </section>
+
+        <section id="practice" class="section">
+          <p class="section-note">The practice section lets students click through the logic in both languages.</p>
+          <div class="bilingual-grid">
+            <div class="mini-card walkthrough-card">
+              <span class="lang-badge">中文</span>
+              <h3>互动走读</h3>
+              <p>
+                点击下面的按钮，按浏览器执行的顺序一步一步查看逻辑。
+              </p>
+              <div class="sim">
+                <button data-step="0" class="active">1. 开始</button>
+                <button data-step="1">2. 生成</button>
+                <button data-step="2">3. 接住</button>
+                <button data-step="3">4. 结束</button>
+              </div>
+              <div class="step-panel" id="step-panel-zh">
+                <strong>第 1 步：开始游戏</strong>
+                <p>玩家点击开始按钮，页面从菜单切换到游戏界面。</p>
+              </div>
+            </div>
+            <div class="mini-card walkthrough-card">
+              <span class="lang-badge en">English</span>
+              <h3>Interactive walkthrough</h3>
+              <p>
+                Click the buttons below to step through the logic the same way the browser executes it.
+              </p>
+              <div class="sim">
+                <button data-step="0" class="active">1. Start</button>
+                <button data-step="1">2. Spawn</button>
+                <button data-step="2">3. Catch</button>
+                <button data-step="3">4. End</button>
+              </div>
+              <div class="step-panel" id="step-panel-en">
+                <strong>Step 1: Start the game</strong>
+                <p>The player clicks the start button. The page switches from the menu to the game board.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card quiz quiz-card">
+              <span class="lang-badge">中文</span>
+              <h3>小测验</h3>
+              <p>哪个对象保存所有正在下落的食物？</p>
+              <button data-answer="wrong">hearts</button>
+              <button data-answer="correct">foods</button>
+              <button data-answer="wrong">overlayEl</button>
+              <button data-answer="wrong">historyListEl</button>
+            </div>
+            <div class="mini-card quiz quiz-card">
+              <span class="lang-badge en">English</span>
+              <h3>Mini quiz</h3>
+              <p>Which object stores all falling foods?</p>
+              <button data-answer="wrong">hearts</button>
+              <button data-answer="correct">foods</button>
+              <button data-answer="wrong">overlayEl</button>
+              <button data-answer="wrong">historyListEl</button>
+            </div>
+          </div>
+
+          <div class="bilingual-grid" style="margin-top:16px;">
+            <div class="mini-card">
+              <span class="lang-badge">中文</span>
+              <h3>练习建议</h3>
+              <p>
+                找到 <code>startGame()</code>、<code>spawnFood()</code>、<code>updateFoods()</code> 和
+                <code>createMusicController()</code>，分别解释它们负责什么：初始化、生成、移动还是声音。
+              </p>
+              <p class="footer-note">
+                如果想做更深入的实验，可以修改音乐控制器里的节奏数值，看看背景音乐的感觉会怎样变化。
+              </p>
+            </div>
+            <div class="mini-card">
+              <span class="lang-badge en">English</span>
+              <h3>Try this in the code</h3>
+              <p>
+                Search for the functions <code>startGame()</code>, <code>spawnFood()</code>,
+                <code>updateFoods()</code>, and <code>createMusicController()</code>. Then explain to yourself
+                what each one owns: setup, spawning, movement, or sound.
+              </p>
+              <p class="footer-note">
+                If you want a stronger exercise, change the tempo number in the music controller and observe how the
+                background loop feels.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+<script>
+  if(window.mermaid){
+    mermaid.initialize({ startOnLoad:false, securityLevel:'loose', theme:'base' });
+    mermaid.run({ querySelector: '.mermaid' });
+  }
+
+  const sectionButtons = document.querySelectorAll('[data-section]');
+  const tocButtons = document.querySelectorAll('[data-panel]');
+  const sections = document.querySelectorAll('.section');
+
+  function openSection(id){
+    sections.forEach(section => section.classList.toggle('active', section.id === id));
+    tocButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.panel === id));
+    sectionButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.section === id));
+    if(window.mermaid){
+      mermaid.run({ querySelector: `#${id} .mermaid` });
+    }
+  }
+
+  sectionButtons.forEach(btn => btn.addEventListener('click', () => openSection(btn.dataset.section)));
+  tocButtons.forEach(btn => btn.addEventListener('click', () => openSection(btn.dataset.panel)));
+
+  const walkthroughSteps = [
+    {
+      title: {
+        zh: '第 1 步：开始游戏',
+        en: 'Step 1: Start the game'
+      },
+      body: {
+        zh: '玩家点击开始按钮，页面从菜单切换到游戏界面。',
+        en: 'The player clicks the start button. The page switches from the menu to the game board.'
+      }
+    },
+    {
+      title: {
+        zh: '第 2 步：生成物体',
+        en: 'Step 2: Spawn a falling object'
+      },
+      body: {
+        zh: '循环选择一个好食物或坏食物，赋予随机速度，然后插入新的 DOM 节点。',
+        en: 'The loop chooses a good or bad food, gives it a random speed, and inserts a new DOM node.'
+      }
+    },
+    {
+      title: {
+        zh: '第 3 步：接住或错过',
+        en: 'Step 3: Catch or miss'
+      },
+      body: {
+        zh: '物体进入接取区域后，如果玩家足够接近，就会改变分数。',
+        en: 'The object enters the catch zone. If the player is close enough, the score changes.'
+      }
+    },
+    {
+      title: {
+        zh: '第 4 步：结束回合',
+        en: 'Step 4: End the round'
+      },
+      body: {
+        zh: '当心心用完或玩家退出时，游戏停止并显示结果覆盖层。',
+        en: 'When hearts reach zero or the player exits, the game stops and the result overlay appears.'
+      }
+    }
+  ];
+
+  document.querySelectorAll('.demo-card').forEach(card => {
+    const volumeInput = card.querySelector('.demo-volume');
+    const volumeLabel = card.querySelector('.demo-volume-label');
+    const tempoInput = card.querySelector('.demo-tempo');
+    const tempoLabel = card.querySelector('.demo-tempo-label');
+
+    volumeInput.addEventListener('input', () => {
+      volumeLabel.textContent = `${volumeInput.value}%`;
+    });
+    tempoInput.addEventListener('input', () => {
+      tempoLabel.textContent = `${tempoInput.value} ms per spawn`;
+    });
+  });
+
+  document.querySelectorAll('.walkthrough-card').forEach(card => {
+    const isChinese = card.querySelector('.lang-badge').textContent.trim() === '中文';
+    const stepPanel = card.querySelector('.step-panel');
+    const stepButtons = card.querySelectorAll('.sim button');
+    stepButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        stepButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const step = walkthroughSteps[Number(btn.dataset.step)];
+        const lang = isChinese ? 'zh' : 'en';
+        stepPanel.innerHTML = `<strong>${step.title[lang]}</strong><p>${step.body[lang]}</p>`;
+      });
+    });
+  });
+
+  document.querySelectorAll('.quiz-card').forEach(card => {
+    const buttons = card.querySelectorAll('button');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+        if(btn.dataset.answer === 'correct'){
+          btn.classList.add('correct');
+        }else{
+          btn.classList.add('wrong');
+          card.querySelector('button[data-answer="correct"]').classList.add('correct');
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>
